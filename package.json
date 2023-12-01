@@ -1,15 +1,10 @@
 {
-  "name": "gatsby-starter-ts",
-  "description": "A TypeScript starter for Gatsby that includes all you need to build amazing projects",
+  "name": "cli-portfolio",
+  "description": "A static portfolio website based on the bash terminal.",
   "version": "1.0.0",
   "private": true,
-  "author": "João Pedro Schmitz <hey@joaopedro.dev> (https://joaopedro.dev)",
+  "author": "Nico Ismaili",
   "license": "MIT",
-  "keywords": [
-    "gatsby",
-    "starter",
-    "typescript"
-  ],
   "scripts": {
     "start": "gatsby develop",
     "build": "gatsby build",
@@ -32,8 +27,8 @@
     ]
   },
   "dependencies": {
+    "clsx": "2.0.0",
     "gatsby": "^5.12.11",
-    "gatsby-plugin-pnpm": "1.2.10",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tsconfig-paths-webpack-plugin": "4.1.0"
@@ -53,6 +48,7 @@
     "@typescript-eslint/eslint-plugin": "6.13.1",
     "@typescript-eslint/parser": "6.13.1",
     "@vitejs/plugin-react": "4.2.0",
+    "autoprefixer": "10.4.16",
     "babel-preset-gatsby": "3.12.1",
     "c8": "8.0.1",
     "eslint": "8.54.0",
@@ -66,20 +62,17 @@
     "eslint-plugin-promise": "6.1.1",
     "eslint-plugin-react": "7.33.2",
     "eslint-plugin-react-hooks": "4.6.0",
+    "gatsby-plugin-postcss": "6.12.0",
     "husky": "8.0.3",
     "identity-obj-proxy": "3.0.0",
     "jsdom": "23.0.1",
     "lint-staged": "15.1.0",
+    "postcss": "8.4.31",
     "prettier": "3.1.0",
+    "prettier-plugin-tailwindcss": "0.5.7",
+    "tailwindcss": "3.3.5",
     "typescript": "5.3.2",
     "vite-tsconfig-paths": "4.2.1",
     "vitest": "0.34.6"
-  },
-  "pnpm": {
-    "overrides": {
-      "gatsby@>=5.0.0 <=5.9.0": ">=5.9.1",
-      "engine.io@>=5.1.0 <6.4.2": ">=6.4.2",
-      "axios@>=0.8.1 <1.6.0": ">=1.6.0"
-    }
   }
 }

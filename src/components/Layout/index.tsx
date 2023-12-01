@@ -1,4 +1,5 @@
 import MacroBar from '@/components/MacroBar';
+import { navigate } from 'gatsby';
 import { ReactNode } from 'react';
 
 interface LayoutProps {
@@ -7,11 +8,11 @@ interface LayoutProps {
 
 const Layout = ({ children }: Readonly<LayoutProps>) => {
   const macros = {
-    About: () => console.log(`About`),
-    Projects: () => console.log(`Projects`),
-    Skills: () => console.log(`Skills`),
-    Contact: () => console.log(`Contact`),
-    Help: () => console.log(`Help`),
+    About: () => navigate(`/#about`),
+    Projects: () => navigate(`/#projects`),
+    Skills: () => navigate(`/#skills`),
+    Contact: () => navigate(`/#contact`),
+    Help: () => navigate(`/#help`),
   };
 
   return (

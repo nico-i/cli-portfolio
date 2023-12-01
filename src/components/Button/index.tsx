@@ -3,10 +3,15 @@ import { ReactNode } from 'react';
 
 type ButtonProps = {
   onClick: () => void;
+  className?: string;
   children: ReactNode;
 };
 
-export default function Button({ onClick, children }: Readonly<ButtonProps>) {
+export default function Button({
+  onClick,
+  children,
+  className,
+}: Readonly<ButtonProps>) {
   return (
     <button
       className={clsx(
@@ -16,8 +21,8 @@ export default function Button({ onClick, children }: Readonly<ButtonProps>) {
         after:content-['']
         after:absolute
         after:inset-0
-
         hover:after:backdrop-invert`,
+        className,
       )}
       onClick={onClick}
     >

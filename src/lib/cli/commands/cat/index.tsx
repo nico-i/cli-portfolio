@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 
 export const help = `Usage: cat [file] - Prints the contents of a file to the terminal`;
 
-export default function cat({ flags, args }: CmdProps): ReactNode {
+export function cat({ flags, args }: CmdProps): ReactNode {
   if (Object.keys(flags).length > 0) {
     throw new Error(`Unknown flag(s): ${Object.keys(flags).join(`, `)}`);
   }

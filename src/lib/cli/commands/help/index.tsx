@@ -1,7 +1,7 @@
 import { CmdProps } from '@/lib/cli';
 import { ReactNode } from 'react';
 
-export default function help({ flags, args }: CmdProps): ReactNode {
+export function help({ flags, args }: CmdProps): ReactNode {
   if (Object.keys(flags).length > 0) {
     throw new Error(`Unknown flag(s): ${Object.keys(flags).join(`, `)}`);
   }

@@ -1,4 +1,6 @@
 import MacroBar from '@/components/MacroBar';
+import { PromptHistoryProvider } from '@/context/promptHistoryContext';
+import { CustomEvents } from '@/util/types';
 import { navigate } from 'gatsby';
 import { ReactNode } from 'react';
 
@@ -12,7 +14,9 @@ const Layout = ({ children }: Readonly<LayoutProps>) => {
 
     if (window.location.search === newSearchStr) {
       // If last macro was the same, dispatch custom event instead of navigating
-      const customEvent = new CustomEvent(`macroEvent`, { detail: { cmd } });
+      const customEvent = new CustomEvent(CustomEvents.macro, {
+        detail: { cmd },
+      });
       // Dispatch the event
       window.dispatchEvent(customEvent);
       return;
@@ -30,8 +34,10 @@ const Layout = ({ children }: Readonly<LayoutProps>) => {
 
   return (
     <>
-      <MacroBar macros={macros} />
-      {children}
+      <PromptHistoryProvider>
+        <MacroBar macros={macros} />
+        {children}
+      </PromptHistoryProvider>
     </>
   );
 };

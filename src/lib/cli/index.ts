@@ -1,6 +1,7 @@
-import cat from '@/lib/cli/commands/cat';
-import echo from '@/lib/cli/commands/echo';
-import help from '@/lib/cli/commands/help';
+import { cat } from '@/lib/cli/commands/cat';
+import { clear } from '@/lib/cli/commands/clear';
+import { echo } from '@/lib/cli/commands/echo';
+import { help } from '@/lib/cli/commands/help';
 import { ReactNode } from 'react';
 
 export enum Cmd {
@@ -8,6 +9,7 @@ export enum Cmd {
   cat = `cat`,
   help = `help`,
   echo = `echo`,
+  clear = `clear`,
 }
 
 export interface CmdProps {
@@ -30,6 +32,8 @@ export default function cli({ cmd, flags, args }: CliProps): ReactNode {
       return help(cmdProps);
     case Cmd.echo:
       return echo(cmdProps);
+    case Cmd.clear:
+      return clear(cmdProps);
     default:
       throw new Error(`Unknown command: ${cmd}`);
   }

@@ -10,6 +10,7 @@ export default function MacroBar({ macros }: Readonly<MacroBarProps>) {
       className={`
         xl:top-0
         px-5
+        z-10
         h-min
         w-full
         invert

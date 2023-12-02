@@ -7,12 +7,15 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: Readonly<LayoutProps>) => {
+  const updateQueryStr = (cmd: string) => {
+    navigate(`?cmd=${encodeURIComponent(cmd)}`, { replace: true });
+  };
   const macros = {
-    About: () => navigate(`/#about`),
-    Projects: () => navigate(`/#projects`),
-    Skills: () => navigate(`/#skills`),
-    Contact: () => navigate(`/#contact`),
-    Help: () => navigate(`/#help`),
+    About: () => updateQueryStr(`viu -w 256 selfie.jpg && cat about.txt`),
+    Projects: () => updateQueryStr(`gcc projects.c && a.out`),
+    Skills: () => updateQueryStr(`javac skills.java && java skills`),
+    Contact: () => updateQueryStr(`cat contact.txt`),
+    Help: () => updateQueryStr(`help`),
   };
 
   return (

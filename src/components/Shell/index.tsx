@@ -1,6 +1,10 @@
+import cli, { Cmd } from '@/lib/cli';
+import { updateQueryString } from '@/lib/helper';
+import { useLocation } from '@reach/router';
 import {
   FormEventHandler,
   KeyboardEventHandler,
+  ReactNode,
   useEffect,
   useRef,
   useState,
@@ -22,7 +26,42 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
   const [userTextAreaValue, setUserTextAreaValue] = useState<string>(
     promptPrefixPlaceholder,
   );
-  const [history, setHistory] = useState<string[]>([]);
+  const [history, setHistory] = useState<[string, ReactNode][]>([]);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    // Run macro if query param changes
+    const searchParams = new URLSearchParams(location.search);
+    if (!searchParams.has(`cmd`)) return;
+
+    const myQueryParam = searchParams.get(`cmd`);
+    if (!myQueryParam) return;
+
+    setUserTextAreaValue(
+      [promptPrefixPlaceholder, decodeURIComponent(myQueryParam)].join(``),
+    );
+    textAreaRef.current?.focus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
+
+  useEffect(() => {
+    window.scrollTo(0, document.body.scrollHeight);
+  }, [history]);
+
+  useEffect(() => {
+    window.scrollTo(0, document.body.scrollHeight);
+    // update search string with current userInput
+    if (userTextAreaValue === promptPrefixPlaceholder) {
+      updateQueryString();
+      return;
+    }
+    const userPrompt = userTextAreaValue.slice(promptPrefix.length);
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set(`cmd`, encodeURIComponent(userPrompt));
+    updateQueryString(searchParams);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userTextAreaValue]);
 
   useEffect(() => {
     if (isBusy) {
@@ -32,6 +71,7 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
 
     document.body.style.cursor = `auto`;
 
+    if (busyMem.length === 0) return;
     const userInputDuringBusy = busyMem.join(``);
     setBusyMem([]);
 
@@ -53,17 +93,18 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
   const handleUserTextAreaChange: FormEventHandler<HTMLTextAreaElement> = (
     event,
   ) => {
-    const value = event.currentTarget.value;
+    const userInput = event.currentTarget.value;
 
-    if (value.length < promptPrefix.length) {
+    if (userInput.length < promptPrefix.length) {
       setUserTextAreaValue(promptPrefixPlaceholder);
       return;
     }
 
-    event.currentTarget.style.height = `auto`; // Reset the height
+    // Resize textarea to fit content
+    event.currentTarget.style.height = `auto`;
     event.currentTarget.style.height = event.currentTarget.scrollHeight + `px`;
 
-    setUserTextAreaValue(value);
+    setUserTextAreaValue(userInput);
   };
 
   const handleUserTextAreaKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
@@ -85,24 +126,58 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
       return;
     }
 
-    if (event.key === `Enter` && !event.shiftKey) {
-      event.preventDefault();
-      processCmd(userTextAreaValue.trim());
+    switch (event.key) {
+      case `Enter`:
+        if (!event.shiftKey) {
+          event.preventDefault();
+          processCmd(userTextAreaValue.trim());
+        }
+        break;
+      case `Tab`:
+        event.preventDefault();
+        // TODO: Add tab completion
+        break;
+      case `ArrowUp`:
+        event.preventDefault();
+        // TODO: Add command history
+        break;
+      case `ArrowDown`:
+        event.preventDefault();
+        // TODO: Add command history
+        break;
     }
   };
 
   const processCmd = async (userInput: string) => {
+    // TODO: handle &&
     setIsBusy(true);
     // TODO: Add real shell command handling
-    const res = await new Promise((resolve) =>
-      setTimeout(() => {
-        resolve(`I'm a fake shell, I don't do anything.`);
-      }, 2000),
-    ); // Simulate a 2000s process
+    let res: ReactNode = null;
+    try {
+      const cmd = userInput.split(` `)[0] as Cmd;
+      const args = userInput.split(` `).slice(1);
+      const flags: Record<string, string> = {};
+
+      args.forEach((arg) => {
+        if (arg.startsWith(`-`)) {
+          if (!arg.includes(`=`)) {
+            throw new Error(`Invalid flag: ${arg}`);
+          }
+          const flag = arg.split(`=`)[0];
+          const value = arg.split(`=`)[1] || ``;
+          flags[flag] = value;
+        }
+      });
+      res = cli({ cmd, args, flags });
+    } catch (e) {
+      res = (e as Error).message;
+    }
 
     setIsBusy(false);
-    setHistory((history) => [...history, [userInput, res].join(`\n`)]);
+    setHistory((history) => [...history, [userInput, res]]);
+    setUserTextAreaValue(promptPrefixPlaceholder);
 
+    updateQueryString();
     textAreaRef.current?.focus();
   };
 
@@ -111,21 +186,20 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
       className={`
         px-[10px]
         pt-[10px]
+        pb-8
+        xl:pb-0
         h-full
         flex
         flex-col
         w-full`}
     >
       {history.length > 0 &&
-        history.map((cmd, i) => (
+        history.slice().map((entryTuple, i) => (
           <span key={i}>
             {promptPrefixHtml}
-            {cmd.split(`\n`).map((line, j) => (
-              <span key={j}>
-                {line}
-                <br />
-              </span>
-            ))}
+            <span>{entryTuple[0]}</span>
+            <br />
+            {entryTuple[1]}
           </span>
         ))}
       <div className="w-full flex h-full relative">

@@ -21,7 +21,6 @@ export interface CliProps extends CmdProps {
 
 export default function cli({ cmd, flags, args }: CliProps): ReactNode {
   const cmdProps = { flags, args };
-
   switch (cmd) {
     case Cmd.none:
       return null;

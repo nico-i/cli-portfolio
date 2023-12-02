@@ -6,4 +6,16 @@
   * {
     @apply bg-neutral-1000 text-neutral-0;
   }
+
+  html,
+  body,
+  #gatsby-focus-wrapper,
+  #___gatsby {
+    height: 100%;
+  }
+
+  #gatsby-focus-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
 }

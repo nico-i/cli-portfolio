@@ -43,9 +43,9 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
     if (!searchParams.has(SearchParams.clear)) return;
     const clearQueryParam = searchParams.get(SearchParams.clear);
     if (!clearQueryParam) return;
-    clearHistory();
-    setHistoryIndex(0);
+    setHistoryIndex(-1);
     updateCmdSearchParam();
+    clearHistory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 
@@ -134,23 +134,20 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
     }
     event.currentTarget.style.height = `auto`;
     event.currentTarget.style.height = event.currentTarget.scrollHeight + `px`;
-    if (event.key.length > 1) return;
-    setCurrentPrompt(stripPrefix(promptValue));
-    setHistoryIndex(-1);
   };
 
   return (
     <main
+      id="shell"
       className={`
-        px-2.5
-        pt-0
-        pb-8
-        xl:pb-2.5
-        h-full
+        p-2.5
         flex
         flex-col
-        w-full`}
-      onClick={() => textAreaRef.current?.focus()}
+        flex-[1_0_auto]
+        relative
+        w-full
+        h-full`}
+      onClickCapture={() => textAreaRef.current?.focus()}
     >
       {history.length > 0 &&
         history.map((entryTuple, i) => (
@@ -161,7 +158,7 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
             {entryTuple[1]}
           </span>
         ))}
-      <div className="w-full flex relative h-full">
+      <div id="active-prompt" className="w-full flex relative">
         <PromptPrefix
           className="absolute"
           username={username}
@@ -173,7 +170,9 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
           ref={textAreaRef}
           onKeyDown={handleUserTextAreaKeyDown}
           onChange={(e) => {
-            setPromptValue(stripPrefix(e.target.value));
+            const strippedValue = stripPrefix(e.target.value);
+            setPromptValue(strippedValue);
+            setCurrentPrompt(strippedValue);
             setHistoryIndex(-1);
           }}
           value={promptValue}

@@ -30,11 +30,7 @@ export const PromptHistoryProvider = ({
     });
   };
 
-  const clearHistory = () =>
-    setHistory((history) => {
-      // remove all except the last one
-      return history.slice(-1);
-    });
+  const clearHistory = () => setHistory([] as PromptHistoryEntry[]);
 
   return (
     <PromptHistoryContext.Provider

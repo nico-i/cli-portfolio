@@ -8,16 +8,13 @@ export default function MacroBar({ macros }: Readonly<MacroBarProps>) {
   return (
     <nav
       className={`
-        xl:top-0
+       shrink-0
+        xl:order-first
         px-5
-        z-10
         h-min
         w-full
         invert
         flex
-        fixed
-        xl:sticky
-        bottom-0
         justify-center
         xl:justify-start`}
     >

@@ -7,15 +7,25 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: Readonly<LayoutProps>) => {
-  const updateQueryStr = (cmd: string) => {
-    navigate(`?cmd=${encodeURIComponent(cmd)}`, { replace: true });
+  const applyMacro = async (cmd: string) => {
+    const newSearchStr = `?cmd=${encodeURIComponent(cmd)}`;
+
+    if (window.location.search === newSearchStr) {
+      // If last macro was the same, dispatch custom event instead of navigating
+      const customEvent = new CustomEvent(`macroEvent`, { detail: { cmd } });
+      // Dispatch the event
+      window.dispatchEvent(customEvent);
+      return;
+    }
+
+    await navigate(`/?cmd=${encodeURIComponent(cmd)}`, { replace: true });
   };
   const macros = {
-    About: () => updateQueryStr(`viu -w 256 selfie.jpg && cat about.txt`),
-    Projects: () => updateQueryStr(`gcc projects.c && a.out`),
-    Skills: () => updateQueryStr(`javac skills.java && java skills`),
-    Contact: () => updateQueryStr(`cat contact.txt`),
-    Help: () => updateQueryStr(`help`),
+    About: () => applyMacro(`viu -w 256 selfie.jpg && cat about.txt`),
+    Projects: () => applyMacro(`projects.sh`),
+    Skills: () => applyMacro(`skills.sh`),
+    Contact: () => applyMacro(`cat contact.txt`),
+    Help: () => applyMacro(`help`),
   };
 
   return (

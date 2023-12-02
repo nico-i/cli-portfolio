@@ -1,5 +1,4 @@
 import cli, { Cmd } from '@/lib/cli';
-import { updateQueryString } from '@/lib/helper';
 import { useLocation } from '@reach/router';
 import {
   FormEventHandler,
@@ -30,38 +29,40 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
 
   const location = useLocation();
 
+  const insertCmd = (cmd: string) => {
+    setUserTextAreaValue([promptPrefixPlaceholder, cmd].join(``));
+    textAreaRef.current?.focus();
+  };
+
   useEffect(() => {
-    // Run macro if query param changes
+    const handleMacroEvent = (event: any) => {
+      insertCmd(event.detail.cmd);
+    };
+
+    // Add event listener
+    window.addEventListener(`macroEvent`, handleMacroEvent);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener(`myCustomEvent`, handleMacroEvent);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     if (!searchParams.has(`cmd`)) return;
 
     const myQueryParam = searchParams.get(`cmd`);
     if (!myQueryParam) return;
 
-    setUserTextAreaValue(
-      [promptPrefixPlaceholder, decodeURIComponent(myQueryParam)].join(``),
-    );
-    textAreaRef.current?.focus();
+    insertCmd(decodeURIComponent(myQueryParam));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 
   useEffect(() => {
     window.scrollTo(0, document.body.scrollHeight);
-  }, [history]);
-
-  useEffect(() => {
-    window.scrollTo(0, document.body.scrollHeight);
-    // update search string with current userInput
-    if (userTextAreaValue === promptPrefixPlaceholder) {
-      updateQueryString();
-      return;
-    }
-    const userPrompt = userTextAreaValue.slice(promptPrefix.length);
-    const searchParams = new URLSearchParams(location.search);
-    searchParams.set(`cmd`, encodeURIComponent(userPrompt));
-    updateQueryString(searchParams);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userTextAreaValue]);
+  }, [history, userTextAreaValue, isBusy]);
 
   useEffect(() => {
     if (isBusy) {
@@ -177,7 +178,6 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
     setHistory((history) => [...history, [userInput, res]]);
     setUserTextAreaValue(promptPrefixPlaceholder);
 
-    updateQueryString();
     textAreaRef.current?.focus();
   };
 

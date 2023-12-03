@@ -1,6 +1,6 @@
 import PromptPrefix from '@/components/Shell/PromptPrefix';
 import { PromptHistoryContext } from '@/context/promptHistoryContext';
-import { cli as runPrompt } from '@/lib/cli/cli';
+import { CommandName, cli as runPrompt } from '@/lib/cli/cli';
 import {
   CustomEvents,
   PromptHistoryEntry,
@@ -54,8 +54,10 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
     const cmdResTuple = processRunRequest(event.detail.prompt);
     setIsBusy(false);
 
-    insertHistory(cmdResTuple[0], cmdResTuple[1]);
-    updateCmdSearchParam(cmdResTuple[0]);
+    if (cmdResTuple[0] !== CommandName.clear) {
+      insertHistory(cmdResTuple[0], cmdResTuple[1]);
+      updateCmdSearchParam(cmdResTuple[0]);
+    }
 
     setTAValueAndAddPrefix(``);
     setCurrentPrompt(``);
@@ -140,9 +142,11 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
       return;
     }
 
+    const prompt = tAValueWithPrefix.slice(promptPrefix.length);
+
     if (event.key.length === 1) {
       // Reset the history if user starts typing
-      setCurrentPrompt(tAValueWithPrefix.slice(promptPrefix.length));
+      setCurrentPrompt([prompt, event.key].join(``));
       setHistoryIndex(-1);
     } else {
       switch (event.key) {
@@ -151,7 +155,7 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
             break;
           }
           event.preventDefault();
-          window.dispatchEvent(RunEvent(currentPrompt));
+          window.dispatchEvent(RunEvent(prompt));
           break;
         }
         case `Tab`:
@@ -207,7 +211,11 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
           username={username}
           domain={domain}
         />
+        <label className="sr-only" htmlFor="prompt">
+          CLI prompt
+        </label>
         <textarea
+          id="prompt"
           rows={1}
           readOnly={isBusy}
           ref={textAreaRef}

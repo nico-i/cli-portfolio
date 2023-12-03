@@ -24,10 +24,10 @@ const Layout = ({ children }: Readonly<LayoutProps>) => {
   return (
     <>
       <PromptHistoryProvider>
+        <MacroBar macros={macros} />
         <div className="flex-[1_0_auto]" id="content">
           {children}
         </div>
-        <MacroBar macros={macros} />
       </PromptHistoryProvider>
     </>
   );

@@ -108,6 +108,8 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
         insertHistory(cmdResTuple[0], cmdResTuple[1]);
         updateCmdSearchParam(cmdResTuple[0]);
 
+        setCurrentPrompt(``);
+        setHistoryIndex(-1);
         setPromptValue(``);
 
         textAreaRef.current?.focus();

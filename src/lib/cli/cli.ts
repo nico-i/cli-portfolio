@@ -3,6 +3,7 @@ import { Cat } from '@/lib/cli/commands/cat';
 import { Clear } from '@/lib/cli/commands/clear';
 import { Echo } from '@/lib/cli/commands/echo';
 import { Help } from '@/lib/cli/commands/help';
+import { Ls } from '@/lib/cli/commands/ls';
 import { ReactNode } from 'react';
 
 export enum CommandName {
@@ -10,6 +11,7 @@ export enum CommandName {
   help = `help`,
   echo = `echo`,
   clear = `clear`,
+  ls = `ls`,
 }
 
 export const allCommandsByName: Record<CommandName, Command> = {
@@ -17,6 +19,7 @@ export const allCommandsByName: Record<CommandName, Command> = {
   [CommandName.cat]: new Cat(),
   [CommandName.help]: new Help(),
   [CommandName.echo]: new Echo(),
+  [CommandName.ls]: new Ls(),
 };
 
 export function cli(args: string[]): ReactNode {

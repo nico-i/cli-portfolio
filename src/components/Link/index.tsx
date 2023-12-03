@@ -1,19 +1,19 @@
+import clsx from 'clsx';
 import { Link as GatsbyLink } from 'gatsby';
 import { ReactNode } from 'react';
-import { FaArrowAltCircleDown, FaExternalLinkAlt } from 'react-icons/fa';
-
+import { FaExternalLinkAlt, FaFileDownload } from 'react-icons/fa';
 interface LinkButtonProps {
   href: string;
-  isDownload?: boolean;
+  download?: boolean;
   children: ReactNode;
 }
 
 export default function Link({
   href,
   children,
-  isDownload = false,
+  download = false,
 }: Readonly<LinkButtonProps>) {
-  if (href.startsWith(`/`)) {
+  if (href.startsWith(`/`) && !download) {
     return (
       <span
         className={`
@@ -26,11 +26,11 @@ export default function Link({
     );
   }
 
-  const iconClasses = `
-  ml-1
+  const commonIconClasses = `
+  mx-1
+  w-2.5
   fill-log-500
-  group-hover:fill-log-400
-  w-2.5`;
+  group-hover:fill-log-400`;
 
   return (
     <a
@@ -43,6 +43,7 @@ export default function Link({
         items-center
         `}
     >
+      {download && <FaFileDownload className={clsx(commonIconClasses)} />}
       <span
         className={`
         text-log-500
@@ -51,11 +52,7 @@ export default function Link({
       >
         {children}
       </span>
-      {isDownload ? (
-        <FaArrowAltCircleDown className={iconClasses} />
-      ) : (
-        <FaExternalLinkAlt className={iconClasses} />
-      )}
+      {!download && <FaExternalLinkAlt className={clsx(commonIconClasses)} />}
     </a>
   );
 }

@@ -1,11 +1,20 @@
+import Link from '@/components/Link';
 import { Command, RunProps } from '@/lib/cli/Command';
-import { TxtFile, TxtFileContentByFileName, allFiles } from '@/lib/cli/files';
+import {
+  StaticFiles,
+  TxtFile,
+  TxtFileContentByFileName,
+  allFiles,
+} from '@/lib/cli/files';
 import { ReactNode } from 'react';
 
 export class Cat extends Command {
   constructor() {
     super([
-      [`cat [file]`, `Prints the contents of a text file to the terminal.`],
+      [
+        `cat [file]`,
+        `Displays the contents of a file or shows a download link.`,
+      ],
     ]);
   }
 
@@ -17,12 +26,17 @@ export class Cat extends Command {
       throw new Error(`Expected 1 argument, got ${values.length}`);
     }
     if (!Object.values(allFiles).includes(values[0])) {
-      throw new Error(`Unknown .txt file: ${values[0]}`);
-    } else if (!Object.values(TxtFile).includes(values[0] as TxtFile)) {
-      throw new Error(
-        `This version of cat does not support ${values[0]}. Only text files are supported.`,
+      throw new Error(`Unknown file: ${values[0]}`);
+    }
+    if (Object.values(TxtFile).includes(values[0] as TxtFile)) {
+      return TxtFileContentByFileName[values[0] as TxtFile];
+    }
+    if (Object.values(StaticFiles).includes(values[0] as StaticFiles)) {
+      return (
+        <Link href={`/${values[0]}`} download>
+          {values[0]}
+        </Link>
       );
     }
-    return TxtFileContentByFileName[values[0] as TxtFile];
   }
 }

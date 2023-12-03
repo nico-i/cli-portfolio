@@ -1,23 +1,30 @@
-import { CmdProps } from '@/lib/cli';
+import { Command, RunProps } from '@/lib/cli/Command';
 import { ReactNode } from 'react';
 
-export function echo({ flags, args }: CmdProps): ReactNode {
-  if (Object.keys(flags).length > 0) {
-    throw new Error(`Unknown flag(s): ${Object.keys(flags).join(`, `)}`);
+export class Echo extends Command {
+  constructor() {
+    super([[`echo`, `Prints the provided string to the terminal`]]);
   }
 
-  if (args.length === 0) {
-    return ``;
-  }
+  public run({ flags, values }: RunProps): ReactNode {
+    if (Object.keys(flags).length > 0) {
+      throw new Error(`Unknown flag(s): ${Object.keys(flags).join(`, `)}`);
+    }
 
-  if (
-    (args.length === 1 &&
-      (!args[0].startsWith(`"`) || !args[0].endsWith(`"`))) ||
-    (args.length >= 2 &&
-      (!args[0].startsWith(`"`) || !args[args.length - 1].endsWith(`"`)))
-  ) {
-    throw new Error(`Expected string, got ${args.length}`);
-  }
+    if (values.length === 0) {
+      return ``;
+    }
 
-  return args.join(` `).replace(/"/g, ``);
+    if (
+      (values.length === 1 &&
+        (!values[0].startsWith(`"`) || !values[0].endsWith(`"`))) ||
+      (values.length >= 2 &&
+        (!values[0].startsWith(`"`) ||
+          !values[values.length - 1].endsWith(`"`)))
+    ) {
+      throw new Error(`Expected string, got ${values.length}`);
+    }
+
+    return values.join(` `).replace(/"/g, ``);
+  }
 }

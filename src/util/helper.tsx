@@ -1,4 +1,4 @@
-import cli, { Cmd } from '@/lib/cli';
+import { cli } from '@/lib/cli/cli';
 import { PromptHistoryEntry, SearchParams } from '@/util/types';
 
 export const updateCmdSearchParam = (cmd?: string) => {
@@ -32,24 +32,7 @@ export function processPrompt(userPrompt: string): PromptHistoryEntry {
     return res;
   }
   try {
-    const cmd = userPrompt.split(` `)[0] as Cmd;
-    const args = userPrompt.split(` `).slice(1);
-    const flags: Record<string, string> = {};
-
-    for (let i = 0; i < args.length; i++) {
-      const arg = args[i];
-      if (!arg.startsWith(`-`) || !/^--?/.test(arg)) {
-        continue;
-      }
-      flags[arg] = ``;
-      if (i + 1 >= args.length) {
-        break;
-      }
-      flags[arg] = args[i + 1];
-      i++;
-    }
-
-    res[1] = cli({ cmd, args, flags });
+    res[1] = cli(userPrompt.split(` `));
   } catch (e) {
     res[1] = (e as Error).message;
   }

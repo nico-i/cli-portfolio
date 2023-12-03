@@ -1,18 +1,28 @@
-import { CmdProps } from '@/lib/cli';
-import { TxtFile, TxtFileContentByFileName } from '@/lib/files/txt';
+import { Command, RunProps } from '@/lib/cli/Command';
+import { TxtFile, TxtFileContentByFileName, allFiles } from '@/lib/cli/files';
 import { ReactNode } from 'react';
 
-export const help = `Usage: cat [file] - Prints the contents of a file to the terminal`;
+export class Cat extends Command {
+  constructor() {
+    super([
+      [`cat [file]`, `Prints the contents of a text file to the terminal.`],
+    ]);
+  }
 
-export function cat({ flags, args }: CmdProps): ReactNode {
-  if (Object.keys(flags).length > 0) {
-    throw new Error(`Unknown flag(s): ${Object.keys(flags).join(`, `)}`);
+  public run({ flags, values }: RunProps): ReactNode {
+    if (Object.keys(flags).length > 0) {
+      throw new Error(`Unknown flag(s): ${Object.keys(flags).join(`, `)}`);
+    }
+    if (values.length !== 1) {
+      throw new Error(`Expected 1 argument, got ${values.length}`);
+    }
+    if (!Object.values(allFiles).includes(values[0])) {
+      throw new Error(`Unknown .txt file: ${values[0]}`);
+    } else if (!Object.values(TxtFile).includes(values[0] as TxtFile)) {
+      throw new Error(
+        `This version of cat does not support ${values[0]}. Only text files are supported.`,
+      );
+    }
+    return TxtFileContentByFileName[values[0] as TxtFile];
   }
-  if (args.length !== 1) {
-    throw new Error(`Expected 1 argument, got ${args.length}`);
-  }
-  if (!Object.values(TxtFile).includes(args[0] as TxtFile)) {
-    throw new Error(`Unknown file: ${args[0]}`);
-  }
-  return TxtFileContentByFileName[args[0] as TxtFile];
 }

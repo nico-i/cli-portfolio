@@ -33,6 +33,7 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
 
   const stripPrefix = (input: string) => input.slice(promptPrefix.length);
 
+  // TODO: Handle initial cmd from search params
   useSearchParamsCmd((cmd: string) => {
     setPromptValue(cmd);
     textAreaRef.current?.focus();
@@ -151,12 +152,12 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
     >
       {history.length > 0 &&
         history.map((entryTuple, i) => (
-          <span key={i}>
+          <div key={i}>
             <PromptPrefix username={username} domain={domain} />
             <span>{entryTuple[0]}</span>
             <br />
             {entryTuple[1]}
-          </span>
+          </div>
         ))}
       <div id="active-prompt" className="w-full flex relative">
         <PromptPrefix

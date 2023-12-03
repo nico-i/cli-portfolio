@@ -146,9 +146,8 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
     const prompt = tAValueWithPrefix.slice(promptPrefix.length);
 
     if (event.key.length === 1) {
-      // Reset the history if user starts typing
-      setCurrentPrompt([prompt, event.key].join(``));
       setHistoryIndex(-1);
+      setCurrentPrompt(prompt);
     } else {
       switch (event.key) {
         case `Enter`: {
@@ -192,6 +191,7 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
         flex
         flex-col
         flex-[1_0_auto]
+        hover:cursor-text
         relative
         w-full
         h-full`}

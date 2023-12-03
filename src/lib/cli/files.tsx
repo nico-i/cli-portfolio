@@ -1,13 +1,22 @@
 import Link from '@/components/Link';
+import { StaticImage } from 'gatsby-plugin-image';
 import { ReactNode } from 'react';
 import { FaGithub, FaInstagram, FaLinkedin, FaYoutube } from 'react-icons/fa';
 import { IoIosMail } from 'react-icons/io';
 
-export enum TextFile {
-  intro = `intro.html`,
-  about = `about.html`,
-  contact = `contact.html`,
+export enum ImageFile {
+  selfie = `selfie.jpg`,
 }
+
+export const imageByFileName: Record<ImageFile, ReactNode> = {
+  [ImageFile.selfie]: (
+    <StaticImage
+      src={`../../assets/img/selfie.jpg`}
+      alt={`Portrait`}
+      objectFit="contain"
+    />
+  ),
+};
 
 export enum StaticFile {
   cv = `cv.pdf`,
@@ -17,11 +26,11 @@ export const StaticFilePathByFileName: Record<StaticFile, string> = {
   [StaticFile.cv]: `/cv.pdf`,
 };
 
-export const allFiles: string[] = [
-  ...Object.values(TextFile),
-  ...Object.values(StaticFile),
-];
-
+export enum TextFile {
+  intro = `intro.html`,
+  about = `about.html`,
+  contact = `contact.html`,
+}
 const iconClasses = `
   inline
     mr-2
@@ -95,3 +104,11 @@ export const TextFileContentByFileName: Record<TextFile, ReactNode> = {
     </div>
   ),
 };
+
+export function getAllFiles(): string[] {
+  return [
+    ...Object.values(TextFile),
+    ...Object.values(StaticFile),
+    ...Object.values(ImageFile),
+  ];
+}

@@ -4,7 +4,7 @@ import {
   StaticFile,
   TextFile,
   TextFileContentByFileName,
-  allFiles,
+  getAllFiles,
 } from '@/lib/cli/files';
 import { ReactNode } from 'react';
 
@@ -13,7 +13,7 @@ export class Cat extends Command {
     super([
       [
         `cat [file]`,
-        `Displays the contents of a file or shows a download link.`,
+        `Displays the contents of a file or shows a download link`,
       ],
     ]);
   }
@@ -25,7 +25,7 @@ export class Cat extends Command {
     if (values.length !== 1) {
       throw new Error(`Expected 1 argument, got ${values.length}`);
     }
-    if (!Object.values(allFiles).includes(values[0])) {
+    if (!Object.values(getAllFiles()).includes(values[0])) {
       throw new Error(`Unknown file: ${values[0]}`);
     }
     if (Object.values(TextFile).includes(values[0] as TextFile)) {

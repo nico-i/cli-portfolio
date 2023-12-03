@@ -1,6 +1,6 @@
 import { Command } from '@/lib/cli/Command';
 import { allFiles } from '@/lib/cli/files';
-import { ReactNode } from 'react';
+import { Fragment, ReactNode } from 'react';
 
 export class Ls extends Command {
   constructor() {
@@ -9,9 +9,9 @@ export class Ls extends Command {
 
   public run = (): ReactNode =>
     allFiles.map((fileName) => (
-      <>
+      <Fragment key={fileName}>
         {fileName}
         <br />
-      </>
+      </Fragment>
     ));
 }

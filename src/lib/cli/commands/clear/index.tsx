@@ -1,5 +1,5 @@
 import { Command, RunProps } from '@/lib/cli/Command';
-import { navigate } from 'gatsby';
+import { ClearEvent } from '@/util/types';
 import { ReactNode } from 'react';
 
 export class Clear extends Command {
@@ -16,7 +16,7 @@ export class Clear extends Command {
       throw new Error(`Unknown flag(s): ${Object.keys(flags).join(`, `)}`);
     }
 
-    navigate(`/?clear=true`, { replace: true });
+    window.dispatchEvent(ClearEvent);
     return null;
   }
 }

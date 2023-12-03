@@ -1,7 +1,7 @@
 import MacroBar from '@/components/MacroBar';
 import { PromptHistoryProvider } from '@/context/promptHistoryContext';
-import { CustomEvents } from '@/util/types';
-import { navigate } from 'gatsby';
+import { TextFile } from '@/lib/cli/files';
+import { RunEvent } from '@/util/types';
 import { ReactNode } from 'react';
 
 interface LayoutProps {
@@ -9,27 +9,16 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: Readonly<LayoutProps>) => {
-  const applyMacro = async (cmd: string) => {
-    const newSearchStr = `?cmd=${encodeURIComponent(cmd)}`;
-
-    if (window.location.search === newSearchStr) {
-      // If last macro was the same, dispatch custom event instead of navigating
-      const customEvent = new CustomEvent(CustomEvents.macro, {
-        detail: { cmd },
-      });
-      // Dispatch the event
-      window.dispatchEvent(customEvent);
-      return;
-    }
-
-    await navigate(`/?cmd=${encodeURIComponent(cmd)}`, { replace: true });
-  };
   const macros = {
-    About: () => applyMacro(`viu -w 256 selfie.jpg && cat about.txt`),
-    Projects: () => applyMacro(`projects.sh`),
-    Skills: () => applyMacro(`skills.sh`),
-    Contact: () => applyMacro(`cat contact.txt`),
-    Help: () => applyMacro(`help`),
+    About: () =>
+      window.dispatchEvent(
+        RunEvent(`viu -w 256 selfie.jpg && cat ${TextFile.about}`),
+      ),
+    Projects: () => window.dispatchEvent(RunEvent(`projects.sh`)),
+    Skills: () => window.dispatchEvent(RunEvent(`skills.sh`)),
+    Contact: () => window.dispatchEvent(RunEvent(`cat ${TextFile.contact}`)),
+    Clear: () => window.dispatchEvent(RunEvent(`clear`)),
+    Help: () => window.dispatchEvent(RunEvent(`help`)),
   };
 
   return (

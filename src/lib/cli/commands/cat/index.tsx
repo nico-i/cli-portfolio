@@ -2,8 +2,8 @@ import Link from '@/components/Link';
 import { Command, RunProps } from '@/lib/cli/Command';
 import {
   StaticFiles,
-  TxtFile,
-  TxtFileContentByFileName,
+  TextFile,
+  TextFileContentByFileName,
   allFiles,
 } from '@/lib/cli/files';
 import { ReactNode } from 'react';
@@ -28,8 +28,8 @@ export class Cat extends Command {
     if (!Object.values(allFiles).includes(values[0])) {
       throw new Error(`Unknown file: ${values[0]}`);
     }
-    if (Object.values(TxtFile).includes(values[0] as TxtFile)) {
-      return TxtFileContentByFileName[values[0] as TxtFile];
+    if (Object.values(TextFile).includes(values[0] as TextFile)) {
+      return TextFileContentByFileName[values[0] as TextFile];
     }
     if (Object.values(StaticFiles).includes(values[0] as StaticFiles)) {
       return (

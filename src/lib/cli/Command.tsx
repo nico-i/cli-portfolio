@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { Fragment, ReactNode } from 'react';
 export interface RunProps {
   flags: Record<string, string>;
   values: string[];
@@ -27,10 +27,10 @@ export abstract class Command {
         >
           <span className="md:w-52 w-auto">
             {usage.split(` `).map((word: string, i) => (
-              <>
+              <Fragment key={word}>
                 {i > 0 && <>&nbsp;</>}
                 {word}
-              </>
+              </Fragment>
             ))}
           </span>
           <span className="w-7/12">{description}</span>

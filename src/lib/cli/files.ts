@@ -1,16 +1,16 @@
 import Contact from '@/components/Contact';
 import { ReactNode } from 'react';
 
-export enum TxtFile {
+export enum TextFile {
   intro = `intro.txt`,
   about = `about.txt`,
   contact = `contact.html`,
 }
 
-export const TxtFileContentByFileName: Record<TxtFile, ReactNode> = {
-  [TxtFile.intro]: `This is the intro text`,
-  [TxtFile.about]: `This is the about text`,
-  [TxtFile.contact]: Contact(),
+export const TextFileContentByFileName: Record<TextFile, ReactNode> = {
+  [TextFile.intro]: `This is the intro text`,
+  [TextFile.about]: `This is the about text`,
+  [TextFile.contact]: Contact(),
 };
 
 export enum StaticFiles {
@@ -22,6 +22,6 @@ export const StaticFilePathByFileName: Record<StaticFiles, string> = {
 };
 
 export const allFiles: string[] = [
-  ...Object.values(TxtFile),
+  ...Object.values(TextFile),
   ...Object.values(StaticFiles),
 ];

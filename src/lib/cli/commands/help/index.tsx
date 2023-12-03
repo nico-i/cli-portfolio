@@ -1,5 +1,5 @@
 import { Command, RunProps } from '@/lib/cli/Command';
-import { ReactNode } from 'react';
+import { Fragment, ReactNode } from 'react';
 import { CommandName, allCommandsByName } from '../../cli';
 
 export class Help extends Command {
@@ -25,9 +25,9 @@ export class Help extends Command {
 
     return (
       <div className="w-full flex flex-col">
-        {Object.values(allCommandsByName).map((command) =>
-          command.quickHelpToHTML(),
-        )}
+        {Object.values(allCommandsByName).map((command, i) => (
+          <Fragment key={i}>{command.quickHelpToHTML()}</Fragment>
+        ))}
       </div>
     );
   }

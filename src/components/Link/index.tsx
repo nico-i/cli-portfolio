@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { Link as GatsbyLink } from 'gatsby';
 import { ReactNode } from 'react';
 import { FaExternalLinkAlt, FaFileDownload } from 'react-icons/fa';
 interface LinkButtonProps {
@@ -13,21 +12,8 @@ export default function Link({
   children,
   download = false,
 }: Readonly<LinkButtonProps>) {
-  if (href.startsWith(`/`) && !download) {
-    return (
-      <span
-        className={`
-        text-neutral-0
-        font-bold
-        underline`}
-      >
-        <GatsbyLink to={href}>{children}</GatsbyLink>;
-      </span>
-    );
-  }
-
   const commonIconClasses = `
-  mx-1
+  ml-1
   w-2.5
   fill-log-500
   group-hover:fill-log-400`;
@@ -43,7 +29,6 @@ export default function Link({
         items-center
         `}
     >
-      {download && <FaFileDownload className={clsx(commonIconClasses)} />}
       <span
         className={`
         text-log-500
@@ -52,7 +37,11 @@ export default function Link({
       >
         {children}
       </span>
-      {!download && <FaExternalLinkAlt className={clsx(commonIconClasses)} />}
+      {download ? (
+        <FaFileDownload className={clsx(commonIconClasses)} />
+      ) : (
+        <FaExternalLinkAlt className={clsx(commonIconClasses)} />
+      )}
     </a>
   );
 }

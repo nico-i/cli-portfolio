@@ -17,7 +17,6 @@ const Layout = ({ children }: Readonly<LayoutProps>) => {
     Projects: () => window.dispatchEvent(RunEvent(`projects.sh`)),
     Skills: () => window.dispatchEvent(RunEvent(`skills.sh`)),
     Contact: () => window.dispatchEvent(RunEvent(`cat ${TextFile.contact}`)),
-    Clear: () => window.dispatchEvent(RunEvent(`clear`)),
     Help: () => window.dispatchEvent(RunEvent(`help`)),
   };
 

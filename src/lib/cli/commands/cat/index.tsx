@@ -1,7 +1,7 @@
 import Link from '@/components/Link';
 import { Command, RunProps } from '@/lib/cli/Command';
 import {
-  StaticFiles,
+  StaticFile,
   TextFile,
   TextFileContentByFileName,
   allFiles,
@@ -31,7 +31,7 @@ export class Cat extends Command {
     if (Object.values(TextFile).includes(values[0] as TextFile)) {
       return TextFileContentByFileName[values[0] as TextFile];
     }
-    if (Object.values(StaticFiles).includes(values[0] as StaticFiles)) {
+    if (Object.values(StaticFile).includes(values[0] as StaticFile)) {
       return (
         <Link href={`/${values[0]}`} download>
           {values[0]}

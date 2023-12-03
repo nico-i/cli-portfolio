@@ -1,3 +1,4 @@
+import Contact from '@/components/Contact';
 import { ReactNode } from 'react';
 
 export enum TxtFile {
@@ -9,5 +10,5 @@ export enum TxtFile {
 export const TxtFileContentByFileName: Record<TxtFile, ReactNode> = {
   [TxtFile.intro]: `This is the intro text`,
   [TxtFile.about]: `This is the about text`,
-  [TxtFile.contact]: `This is the contact text`,
+  [TxtFile.contact]: Contact(),
 };

@@ -24,9 +24,11 @@ module.exports = {
       },
       info: {
         500: `#16c60c`,
+        400: `#1ef113`,
       },
       log: {
         500: `#3b78ff`,
+        400: `#709dff`,
       },
     },
     extend: {},

@@ -52,6 +52,7 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
     }
     setIsBusy(true);
     const cmdResTuple = processRunRequest(event.detail.prompt);
+    console.log(`return`, cmdResTuple);
     setIsBusy(false);
 
     if (cmdResTuple[0] !== CommandName.clear) {
@@ -198,10 +199,11 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
     >
       {history.length > 0 &&
         history.map((entryTuple, i) => (
-          <div key={i}>
-            <PromptPrefix username={username} domain={domain} />
-            <span>{entryTuple[0]}</span>
-            <br />
+          <div key={i} className="flex flex-col">
+            <span>
+              <PromptPrefix username={username} domain={domain} />
+              {entryTuple[0]}
+            </span>
             {entryTuple[1]}
           </div>
         ))}
@@ -248,7 +250,8 @@ const updateCmdSearchParam = (cmd?: string) => {
 
 function processRunRequest(userPrompt: string): PromptHistoryEntry {
   const res: PromptHistoryEntry = [userPrompt, null];
-  const consecutivePrompts = userPrompt.split(`&&`);
+  const consecutivePrompts = userPrompt.split(`&&`).map((cmd) => cmd.trim());
+  console.log(consecutivePrompts);
   // recursively process commands
   if (consecutivePrompts.length > 1) {
     for (const cmd of consecutivePrompts) {

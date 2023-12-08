@@ -1,10 +1,10 @@
-import Button from '../Button';
+import { Button } from '@/components/Button';
 
 type MacroBarProps = {
   macros: Record<string, () => void>;
 };
 
-export default function MacroBar({ macros }: Readonly<MacroBarProps>) {
+export const MacroBar = ({ macros }: Readonly<MacroBarProps>) => {
   return (
     <nav
       className={`
@@ -31,4 +31,4 @@ export default function MacroBar({ macros }: Readonly<MacroBarProps>) {
       ))}
     </nav>
   );
-}
+};

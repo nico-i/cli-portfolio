@@ -4,11 +4,11 @@ interface PromptPrefixProps {
   className?: string;
 }
 
-export default function PromptPrefix({
+export const PromptPrefix = ({
   username,
   domain,
   className,
-}: PromptPrefixProps) {
+}: Readonly<PromptPrefixProps>) => {
   return (
     <span className={className}>
       <span className="text-info-500">{`${username}@${domain}`}</span>
@@ -17,4 +17,4 @@ export default function PromptPrefix({
       <span>$</span>&nbsp;
     </span>
   );
-}
+};

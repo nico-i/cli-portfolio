@@ -1,4 +1,4 @@
-import Link from '@/components/Link';
+import { Link } from '@/components/Link';
 import { StaticImage } from 'gatsby-plugin-image';
 import { ReactNode } from 'react';
 import { FaGithub, FaInstagram, FaLinkedin, FaYoutube } from 'react-icons/fa';

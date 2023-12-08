@@ -1,4 +1,4 @@
-import MacroBar from '@/components/MacroBar';
+import { MacroBar } from '@/components/MacroBar';
 import { PromptHistoryProvider } from '@/context/promptHistoryContext';
 import { TextFile } from '@/lib/cli/files';
 import { RunEvent } from '@/util/types';
@@ -8,7 +8,7 @@ interface LayoutProps {
   children: ReactNode;
 }
 
-const Layout = ({ children }: Readonly<LayoutProps>) => {
+export const Layout = ({ children }: Readonly<LayoutProps>) => {
   const macros = {
     About: () =>
       window.dispatchEvent(
@@ -30,4 +30,3 @@ const Layout = ({ children }: Readonly<LayoutProps>) => {
     </PromptHistoryProvider>
   );
 };
-export default Layout;

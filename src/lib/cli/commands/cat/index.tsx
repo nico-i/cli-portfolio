@@ -1,4 +1,4 @@
-import Link from '@/components/Link';
+import { Link } from '@/components/Link';
 import { Command, RunProps } from '@/lib/cli/Command';
 import {
   StaticFile,

@@ -1,4 +1,4 @@
-import PromptPrefix from '@/components/Shell/PromptPrefix';
+import { PromptPrefix } from '@/components/Shell/PromptPrefix';
 import { PromptHistoryContext } from '@/context/promptHistoryContext';
 import { CommandName, cli as runPrompt } from '@/lib/cli/cli';
 import {
@@ -23,7 +23,7 @@ interface ShellProps {
   domain: URL['hostname'];
 }
 
-export default function Shell({ username, domain }: Readonly<ShellProps>) {
+export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   const promptPrefix = `${username}@${domain}: ~$ `;
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -231,7 +231,7 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
       </div>
     </main>
   );
-}
+};
 
 const updateCmdSearchParam = (cmd?: string) => {
   const newSearchParams = new URLSearchParams(window.location.search);
@@ -246,7 +246,7 @@ const updateCmdSearchParam = (cmd?: string) => {
   window.history.replaceState({}, ``, currentUrl);
 };
 
-function processRunRequest(userPrompt: string): PromptHistoryEntry {
+const processRunRequest = (userPrompt: string): PromptHistoryEntry => {
   const res: PromptHistoryEntry = [userPrompt, null];
   const consecutivePrompts = userPrompt.split(`&&`).map((cmd) => cmd.trim());
   // recursively process commands
@@ -270,4 +270,4 @@ function processRunRequest(userPrompt: string): PromptHistoryEntry {
   }
   res.push([userPrompt, res] as PromptHistoryEntry);
   return res;
-}
+};

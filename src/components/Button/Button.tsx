@@ -7,11 +7,11 @@ type ButtonProps = {
   children: ReactNode;
 };
 
-export default function Button({
+export const Button = ({
   onClick,
   children,
   className,
-}: Readonly<ButtonProps>) {
+}: Readonly<ButtonProps>) => {
   return (
     <button
       className={clsx(
@@ -29,4 +29,4 @@ export default function Button({
       {children}
     </button>
   );
-}
+};

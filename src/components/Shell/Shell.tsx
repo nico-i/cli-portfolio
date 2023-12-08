@@ -1,6 +1,6 @@
+import { CommandName, runPrompt } from '@/components/Cli';
 import { PromptPrefix } from '@/components/Shell/PromptPrefix';
 import { PromptHistoryContext } from '@/context/promptHistoryContext';
-import { CommandName, cli as runPrompt } from '@/lib/cli/cli';
 import {
   CustomEvents,
   PromptHistoryEntry,

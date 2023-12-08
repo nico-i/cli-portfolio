@@ -1,11 +1,11 @@
-import { Link } from '@/components/Link';
-import { Command, RunProps } from '@/lib/cli/Command';
+import { Command, RunProps } from '@/components/Cli/Command';
 import {
   StaticFile,
   TextFile,
   TextFileContentByFileName,
   getAllFiles,
-} from '@/lib/cli/files';
+} from '@/components/Cli/files';
+import { Link } from '@/components/Link';
 import { ReactNode } from 'react';
 
 export class Cat extends Command {

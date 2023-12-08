@@ -1,4 +1,4 @@
-import { Command, RunProps } from '@/lib/cli/Command';
+import { Command, RunProps } from '@/components/Cli/Command';
 import { ClearEvent } from '@/util/types';
 import { ReactNode } from 'react';
 

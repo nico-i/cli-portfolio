@@ -1,6 +1,6 @@
-import { Command, RunProps } from '@/lib/cli/Command';
+import { CommandName, allCommandsByName } from '@/components/Cli';
+import { Command, RunProps } from '@/components/Cli/Command';
 import { Fragment, ReactNode } from 'react';
-import { CommandName, allCommandsByName } from '../../cli';
 
 export class Help extends Command {
   constructor() {

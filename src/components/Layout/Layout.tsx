@@ -1,6 +1,6 @@
+import { TextFile } from '@/components/Cli';
 import { MacroBar } from '@/components/MacroBar';
 import { PromptHistoryProvider } from '@/context/promptHistoryContext';
-import { TextFile } from '@/lib/cli/files';
 import { RunEvent } from '@/util/types';
 import { ReactNode } from 'react';
 

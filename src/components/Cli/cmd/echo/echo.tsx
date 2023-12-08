@@ -1,4 +1,4 @@
-import { Command, RunProps } from '@/lib/cli/Command';
+import { Command, RunProps } from '@/components/Cli/Command';
 import { ReactNode } from 'react';
 
 export class Echo extends Command {

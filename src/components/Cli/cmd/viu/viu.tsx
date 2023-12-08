@@ -1,5 +1,5 @@
-import { Command, RunProps } from '@/lib/cli/Command';
-import { ImageFile, imageByFileName } from '@/lib/cli/files';
+import { Command, RunProps } from '@/components/Cli/Command';
+import { ImageFile, imageByFileName } from '@/components/Cli/files';
 import { CSSProperties, ReactNode } from 'react';
 
 export class Viu extends Command {

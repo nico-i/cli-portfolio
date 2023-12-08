@@ -1,4 +1,4 @@
-import { Command } from '@/lib/cli/Command';
+import { Command } from '@/components/Cli/Command';
 import { Fragment, ReactNode } from 'react';
 import { getAllFiles } from '../../files';
 

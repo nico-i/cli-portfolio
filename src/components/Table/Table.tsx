@@ -15,18 +15,20 @@ export const Table = ({
   const childrenIsArray = Array.isArray(children);
   return (
     <table className={className}>
-      {Children.map(children, (child) => {
-        // @ts-expect-error
-        if (isValidElement(child) && child.type?.name === `TableRow`) {
-          return cloneElement(child, {
-            isLast: childrenIsArray
-              ? children?.indexOf(child) === children?.length - 1
-              : true,
-            gridTemplateColumns,
-          } as TableRowProps);
-        }
-        return child;
-      })}
+      <tbody className={className}>
+        {Children.map(children, (child) => {
+          // @ts-expect-error
+          if (isValidElement(child) && child.type?.name === `TableRow`) {
+            return cloneElement(child, {
+              isLast: childrenIsArray
+                ? children?.indexOf(child) === children?.length - 1
+                : true,
+              gridTemplateColumns,
+            } as TableRowProps);
+          }
+          return child;
+        })}
+      </tbody>
     </table>
   );
 };

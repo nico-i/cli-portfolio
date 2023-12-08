@@ -13,11 +13,13 @@ export interface TableRowProps {
     | ReactElement<TableCellProps>[]
     | ReactElement<TableCellProps | TableTextCellProps>;
   gridTemplateColumns?: string;
+  isHeader?: boolean;
   isLast?: boolean;
 }
 
 export const TableRow: FC<TableRowProps> = ({
   children,
+  isHeader = false,
   isLast,
   gridTemplateColumns,
 }: Readonly<TableRowProps>) => {
@@ -28,7 +30,6 @@ export const TableRow: FC<TableRowProps> = ({
     // @ts-expect-error
     children?.type?.name === `TableTextCell`
   ) {
-    console.log(`TableTextCell`);
     return (
       <tr
         className={`
@@ -64,6 +65,7 @@ export const TableRow: FC<TableRowProps> = ({
               ? children.indexOf(child) === children.length - 1
               : true,
             isLastRow: isLast,
+            isHeader,
           });
         }
         return child;

@@ -29,7 +29,10 @@ export const TableCell = ({
     <>
       <AsciiLine withEndCap={isLastChild} />
       <div className={clsx(`flex w-full justify-between`, isLastRow && `pb-6`)}>
-        <span>|&nbsp;{children}</span>
+        <div className="flex w-full">
+          <span>|&nbsp;</span>
+          {children}
+        </div>
         {isLastChild ? <span className="-translate-x-1.5">|</span> : null}
       </div>
       {isLastRow ? (

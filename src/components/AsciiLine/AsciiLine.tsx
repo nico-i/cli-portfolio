@@ -1,6 +1,5 @@
-import { getCharWidth } from '@/util/helper';
+import { useCharWidth } from '@/hooks/useCharWidth';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
 
 export interface AsciiLineProps {
   verticalAlign?: `top` | `bottom`;
@@ -13,11 +12,7 @@ export const AsciiLine = ({
   withEndCap,
   capChar = `+`,
 }: Readonly<AsciiLineProps>) => {
-  const [charWidth, setCharWidth] = useState<number>(0);
-
-  useEffect(() => {
-    setCharWidth(getCharWidth());
-  }, []);
+  const { charWidth } = useCharWidth();
 
   return (
     <span

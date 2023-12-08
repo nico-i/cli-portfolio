@@ -1,5 +1,5 @@
 import { AsciiLine } from '@/components/AsciiLine';
-import { getCharWidth } from '@/util/helper';
+import { useCharWidth } from '@/hooks/useCharWidth';
 import { useEffect, useRef, useState } from 'react';
 
 export interface TableTextCellProps {
@@ -9,11 +9,11 @@ export interface TableTextCellProps {
 export const TableTextCell = ({ children }: TableTextCellProps) => {
   const [textLines, setTextLines] = useState<string[]>([]);
   const cellRef = useRef<HTMLTableCellElement>(null);
+  const { charWidth } = useCharWidth();
 
   useEffect(() => {
     if (!cellRef?.current) return;
     const handleResize = () => {
-      const charWidth = getCharWidth();
       const cellWidth = cellRef?.current?.offsetWidth || 0;
       const words = children.split(` `);
       let line = ``;

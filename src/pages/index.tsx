@@ -1,3 +1,4 @@
+import { AsciiProgressBar } from '@/components/AsciiProgressBar/AsciiProgressBar';
 import { Table } from '@/components/Table';
 import { TableCell } from '@/components/Table/TableCell';
 import { TableRow } from '@/components/Table/TableRow';
@@ -10,9 +11,9 @@ export default function Home() {
     <>
       {/* <Shell username="guest" domain="localhost" /> */}
       <Table className="w-1/2" gridTemplateColumns="5rem auto">
-        <TableRow>
-          <TableCell isHeader={true}>Skill</TableCell>
-          <TableCell isHeader={true}>Proficiency</TableCell>
+        <TableRow isHeader={true}>
+          <TableCell>Skill</TableCell>
+          <TableCell>Proficiency</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>
@@ -20,7 +21,9 @@ export default function Home() {
               HTML
             </button>
           </TableCell>
-          <TableCell>test&nbsp;0&nbsp;0</TableCell>
+          <TableCell>
+            <AsciiProgressBar percentage={40} duration={200} />
+          </TableCell>
         </TableRow>
         {isOpened ? (
           <TableRow>

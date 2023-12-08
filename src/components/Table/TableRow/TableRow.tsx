@@ -1,5 +1,6 @@
 import { TableCellProps } from '@/components/Table/TableCell';
 import { TableTextCellProps } from '@/components/Table/TableTextCell';
+import clsx from 'clsx';
 import {
   Children,
   FC,
@@ -12,7 +13,7 @@ export interface TableRowProps {
   children:
     | ReactElement<TableCellProps>[]
     | ReactElement<TableCellProps | TableTextCellProps>;
-  gridTemplateColumns?: string;
+  className?: string;
   isHeader?: boolean;
   isLast?: boolean;
 }
@@ -21,7 +22,7 @@ export const TableRow: FC<TableRowProps> = ({
   children,
   isHeader = false,
   isLast,
-  gridTemplateColumns,
+  className,
 }: Readonly<TableRowProps>) => {
   const childrenIsArray = Array.isArray(children);
   if (
@@ -47,14 +48,20 @@ export const TableRow: FC<TableRowProps> = ({
 
   return (
     <tr
-      className={`
+      className={clsx(
+        `
         inline-grid
         w-full
-        `}
+        `,
+        className,
+      )}
       style={{
         gridTemplateColumns:
-          gridTemplateColumns ||
-          (childrenIsArray ? `1fr `.repeat(children.length) : `1fr`),
+          className === undefined
+            ? childrenIsArray
+              ? `1fr `.repeat(children.length)
+              : `1fr`
+            : undefined,
       }}
     >
       {Children.map(children, (child) => {

@@ -15,7 +15,10 @@ export const Layout = ({ children }: Readonly<LayoutProps>) => {
         RunEvent(`clear && viu -w 256 selfie.jpg && cat ${TextFile.about}`),
       ),
     Projects: () => window.dispatchEvent(RunEvent(`clear && projects.sh`)),
-    Skills: () => window.dispatchEvent(RunEvent(`clear && skills.sh`)),
+    Skills: () => {
+      window.dispatchEvent(RunEvent(`clear && skills.sh`));
+      console.log(`skills.sh`);
+    },
     Contact: () =>
       window.dispatchEvent(RunEvent(`clear && cat ${TextFile.contact}`)),
     Help: () => window.dispatchEvent(RunEvent(`clear && help`)),

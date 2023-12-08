@@ -5,7 +5,10 @@ import { useState } from 'react';
 export const Skills = () => {
   const [isOpened, setIsOpened] = useState(false);
   return (
-    <Table className="w-1/2" gridTemplateColumns="5rem auto">
+    <Table
+      className="w-11/12 md:w-2/3 lg:w-2/5"
+      rowClassName="grid-cols-[5rem_1fr] md:grid-cols-[5rem_minmax(10rem,1fr)]"
+    >
       <TableRow isHeader={true}>
         <TableCell>Skill</TableCell>
         <TableCell>Proficiency</TableCell>

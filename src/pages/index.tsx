@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <>
       {/* <Shell username="guest" domain="localhost" /> */}
-      <Table className="w-1/2" gridTemplateColumns="8% auto">
+      <Table className="w-1/2" gridTemplateColumns="5rem auto">
         <TableRow>
           <TableCell isHeader={true}>Skill</TableCell>
           <TableCell isHeader={true}>Proficiency</TableCell>

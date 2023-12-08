@@ -1,3 +1,4 @@
+import { getCharWidth } from '@/util/helper';
 import clsx from 'clsx';
 import { ReactNode } from 'react';
 
@@ -24,24 +25,41 @@ export const TableCell = ({
   pt-6
  `;
 
+  const charWidth = getCharWidth();
+
+  const borderLine = (isTop: boolean = true) => (
+    <span
+      className={clsx(
+        `absolute flex w-full justify-between left-0`,
+        isTop ? `top-0` : `bottom-0`,
+      )}
+    >
+      <span>+</span>
+      <svg width={`100%`} height={1} className="self-center">
+        <line
+          x1="0"
+          y1="50%"
+          x2="100%"
+          y2="50%"
+          stroke="white"
+          strokeWidth="1"
+          strokeDashoffset={-4.5}
+          strokeDasharray={`${charWidth}, ${charWidth}`}
+        />
+      </svg>
+
+      {isLastChild ? <span className="-translate-x-1.5">+</span> : null}
+    </span>
+  );
+
   const content = (
     <>
-      <span className="absolute flex w-full justify-between left-0 top-0">
-        <span>+</span>
-        <hr className="w-full mt-3 border-dashed" />
-        {isLastChild ? <span className="-translate-x-1.5">+</span> : null}
-      </span>
+      {borderLine()}
       <div className={clsx(`flex w-full justify-between`, isLastRow && `pb-6`)}>
         <span>|&nbsp;{children}</span>
         {isLastChild ? <span className="-translate-x-1.5">|</span> : null}
       </div>
-      {isLastRow ? (
-        <span className="absolute flex w-full justify-between left-0 bottom-0">
-          <span>+</span>
-          <hr className="w-full mt-3 border-dashed" />
-          {isLastChild ? <span className="-translate-x-1.5">+</span> : null}
-        </span>
-      ) : null}
+      {isLastRow ? borderLine(false) : null}
     </>
   );
 

@@ -1,12 +1,17 @@
 import { AsciiLine } from '@/components/AsciiLine';
 import { getCharWidth } from '@/util/helper';
+import clsx from 'clsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface TableTextCellProps {
   children: string;
+  isLastRow?: boolean;
 }
 
-export const TableTextCell = ({ children }: TableTextCellProps) => {
+export const TableTextCell = ({
+  children,
+  isLastRow = false,
+}: TableTextCellProps) => {
   const [textLines, setTextLines] = useState<string[]>([]);
   const cellRef = useRef<HTMLTableCellElement>(null);
 
@@ -17,26 +22,20 @@ export const TableTextCell = ({ children }: TableTextCellProps) => {
     const words = children.split(` `);
     let line = ``;
     const lines: string[] = [];
-    words.forEach((word, index) => {
+    for (let i = 0; i <= words.length; i++) {
+      if (i === words.length) {
+        lines.push(line);
+        break;
+      }
       const lineWidthPlusCurrentWordAndEnding =
-        (line.length + word.length + 4) * charWidth; // +4 for `| ` and ` |`
+        (line.length + words[i].length + 4) * charWidth; // +4 for `| ` and ` |`
 
-      if (lineWidthPlusCurrentWordAndEnding === cellWidth) {
-        line += `${word}`;
-        lines.push(line);
-        line = ``;
-        return;
-      }
-
-      if (
-        lineWidthPlusCurrentWordAndEnding > cellWidth ||
-        index === words.length - 1
-      ) {
+      if (lineWidthPlusCurrentWordAndEnding > cellWidth) {
         lines.push(line);
         line = ``;
       }
-      line += `${word} `;
-    });
+      line += `${words[i]} `;
+    }
     setTextLines(lines);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children]);
@@ -58,10 +57,18 @@ export const TableTextCell = ({ children }: TableTextCellProps) => {
     <td ref={cellRef} className="flex flex-col w-full relative pt-6">
       <AsciiLine verticalAlign="top" withEndCap={true} capChar="v" />
       {textLines.map((line, i) => (
-        <div key={i} className="flex justify-between w-full">
-          <span>|&nbsp;{line}</span>
-          <span className="-translate-x-1.5">|</span>
-        </div>
+        <>
+          <div
+            key={i}
+            className={clsx(`flex justify-between w-full`, isLastRow && `pb-6`)}
+          >
+            <span>|&nbsp;{line}</span>
+            <span className="-translate-x-1.5">|</span>
+          </div>
+          {isLastRow ? (
+            <AsciiLine verticalAlign="bottom" withEndCap={true} />
+          ) : null}
+        </>
       ))}
     </td>
   );

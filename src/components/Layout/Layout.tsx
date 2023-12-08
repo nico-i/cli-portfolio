@@ -17,7 +17,6 @@ export const Layout = ({ children }: Readonly<LayoutProps>) => {
     Projects: () => window.dispatchEvent(RunEvent(`clear && projects.sh`)),
     Skills: () => {
       window.dispatchEvent(RunEvent(`clear && skills.sh`));
-      console.log(`skills.sh`);
     },
     Contact: () =>
       window.dispatchEvent(RunEvent(`clear && cat ${TextFile.contact}`)),

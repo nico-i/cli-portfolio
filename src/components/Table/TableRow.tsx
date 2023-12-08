@@ -12,12 +12,14 @@ export interface TableRowProps {
   children:
     | ReactElement<TableCellProps>[]
     | ReactElement<TableCellProps | TableTextCellProps>;
+  gridTemplateColumns?: string;
   isLast?: boolean;
 }
 
 export const TableRow: FC<TableRowProps> = ({
   children,
   isLast,
+  gridTemplateColumns,
 }: Readonly<TableRowProps>) => {
   const childrenIsArray = Array.isArray(children);
   if (
@@ -45,13 +47,13 @@ export const TableRow: FC<TableRowProps> = ({
   return (
     <tr
       className={`
-        grid
+        inline-grid
         w-full
         `}
       style={{
-        gridTemplateColumns: childrenIsArray
-          ? `1fr `.repeat(children.length)
-          : `1fr`,
+        gridTemplateColumns:
+          gridTemplateColumns ||
+          (childrenIsArray ? `1fr `.repeat(children.length) : `1fr`),
       }}
     >
       {Children.map(children, (child) => {

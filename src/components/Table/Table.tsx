@@ -1,23 +1,29 @@
 import { TableRowProps } from '@/components/Table/TableRow';
-import { Children, ReactElement, cloneElement, isValidElement } from 'react';
+import { Children, ReactNode, cloneElement, isValidElement } from 'react';
 
 interface TableProps {
-  children: ReactElement<TableRowProps>[];
+  children: ReactNode;
+  className?: string;
+  gridTemplateColumns?: string;
 }
 
-export const Table = ({ children }: Readonly<TableProps>) => {
+export const Table = ({
+  children,
+  className,
+  gridTemplateColumns,
+}: Readonly<TableProps>) => {
+  const childrenIsArray = Array.isArray(children);
   return (
-    <table
-      className={`
-        w-full
-        table-fixed
-    `}
-    >
+    <table className={className}>
       {Children.map(children, (child) => {
-        if (isValidElement(child)) {
+        // @ts-expect-error
+        if (isValidElement(child) && child.type?.name === `TableRow`) {
           return cloneElement(child, {
-            isLast: children.indexOf(child) === children.length - 1,
-          });
+            isLast: childrenIsArray
+              ? children?.indexOf(child) === children?.length - 1
+              : true,
+            gridTemplateColumns,
+          } as TableRowProps);
         }
         return child;
       })}

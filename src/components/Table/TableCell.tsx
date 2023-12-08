@@ -46,7 +46,7 @@ export const TableCell = ({
   );
 
   if (isHeader) {
-    return <th className={commonClasses}>{content}</th>;
+    return <th className={clsx(`font-bold`, commonClasses)}>{content}</th>;
   }
 
   return <td className={commonClasses}>{content}</td>;

@@ -1,110 +1,62 @@
 import { getCharWidth } from '@/util/helper';
-import { ReactNode, RefObject, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export interface TableTextCellProps {
   children: string;
-  rowRef: RefObject<HTMLTableRowElement>;
 }
 
-export const TableTextCell = ({ children, rowRef }: TableTextCellProps) => {
-  const [lines, setLines] = useState<ReactNode[]>([]);
+export const TableTextCell = ({ children }: TableTextCellProps) => {
+  const [textLines, setTextLines] = useState<string[]>([]);
+  const cellRef = useRef<HTMLTableCellElement>(null);
 
   useEffect(() => {
+    if (!cellRef?.current) return;
     const handleResize = () => {
       const charWidth = getCharWidth();
-      const rowWidth = rowRef.current?.offsetWidth || 0;
+      const cellWidth = cellRef?.current?.offsetWidth || 0;
       const words = children.split(` `);
-      let line = `| `;
+      let line = ``;
       const lines: string[] = [];
       words.forEach((word, index) => {
         const lineWidthPlusCurrentWordAndEnding =
-          (line.length + word.length + 2) * charWidth; // +2 for \w + ` |`
+          (line.length + word.length + 4) * charWidth; // +4 for `| ` and ` |`
 
-        if (lineWidthPlusCurrentWordAndEnding === rowWidth) {
-          line += `${word}&nbsp;|`;
+        if (lineWidthPlusCurrentWordAndEnding === cellWidth) {
+          line += `${word}`;
           lines.push(line);
-          line = `| `;
+          line = ``;
           return;
         }
 
         if (
-          lineWidthPlusCurrentWordAndEnding > rowWidth ||
+          lineWidthPlusCurrentWordAndEnding > cellWidth ||
           index === words.length - 1
         ) {
-          const lineWidth = (line.length + 2) * charWidth; // +1 for ` |`
-          const remainingWidth = rowWidth - lineWidth;
-          const remainingChars = Math.floor(remainingWidth / charWidth);
-          lines.push(
-            line +
-              (remainingChars > 0 ? `&nbsp;`.repeat(remainingChars) : ``) +
-              `&nbsp;|`,
-          );
-          line = `| `;
+          lines.push(line);
+          line = ``;
         }
         line += `${word} `;
       });
-      // consistent line length
-      const linesWithSpace = lines.map((line) => line.replace(/&nbsp;/g, ` `));
-      const lineLengths = linesWithSpace.map((line) => line.length);
-      const mostCommonLineLength = lineLengths.reduce((a, b, i, arr) => {
-        const aCount = arr.filter((item) => item === a).length;
-        const bCount = arr.filter((item) => item === b).length;
-        return aCount > bCount ? a : b;
-      });
-      linesWithSpace
-        .filter((line) => line.length !== mostCommonLineLength)
-        .forEach((line) => {
-          const indexes: number[] = [];
-          for (let i = 0; i < linesWithSpace.length; i++)
-            if (linesWithSpace[i] === line) indexes.push(i);
-
-          const diff = mostCommonLineLength - line.length;
-          const nbspCount = (line.match(/&nbsp;/g) || []).length;
-
-          let editFunction = (line: string) => line;
-          if (diff > 0) {
-            if (nbspCount === 0) {
-              editFunction = (line: string) =>
-                line.replace(`&nbsp;|`, `&nbsp;`.repeat(diff) + `|`);
-            } else {
-              editFunction = (line: string) =>
-                line.replace(` |`, `&nbsp;`.repeat(diff) + `|`);
-            }
-          } else if (nbspCount === 0) {
-            editFunction = (line: string) => line.replace(`&nbsp;|`, `|`);
-          } else {
-            editFunction = (line: string) =>
-              line.replace(`&nbsp;`.repeat(Math.abs(diff)) + `|`, ``);
-          }
-
-          indexes.forEach((index) => {
-            lines[index] = editFunction(lines[index]);
-          });
-        });
-
-      const content = lines.map((line, index) => (
-        <span
-          className={`
-        flex
-        max-w-full
-        w-full
-        `}
-          key={index}
-          dangerouslySetInnerHTML={{ __html: line }}
-        />
-      ));
-
-      setLines(content);
+      setTextLines(lines);
     };
-
-    // Add the event listener
     window.addEventListener(`resize`, handleResize);
-
     handleResize();
-
-    // Clean up the event listener on component unmount
     return () => window.removeEventListener(`resize`, handleResize);
-  }, [children, rowRef]);
+  }, [children, cellRef]);
 
-  return <td>{lines}</td>;
+  return (
+    <td ref={cellRef} className="flex flex-col w-full relative pt-6">
+      <span className="absolute flex w-full justify-between left-0 top-0">
+        <span>v</span>
+        <hr className="w-full mt-3 border-dashed" />
+        <span className="-translate-x-1.5">v</span>
+      </span>
+      {textLines.map((line, i) => (
+        <div key={i} className="flex justify-between w-full">
+          <span>|&nbsp;{line}</span>
+          <span className="-translate-x-1.5">|</span>
+        </div>
+      ))}
+    </td>
+  );
 };

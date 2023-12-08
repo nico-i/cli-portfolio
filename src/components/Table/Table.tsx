@@ -1,8 +1,8 @@
 import { TableRowProps } from '@/components/Table/TableRow';
-import { ReactElement } from 'react';
+import { Children, ReactElement, cloneElement, isValidElement } from 'react';
 
 interface TableProps {
-  children: ReactElement<TableRowProps>[] | ReactElement<TableRowProps>;
+  children: ReactElement<TableRowProps>[];
 }
 
 export const Table = ({ children }: Readonly<TableProps>) => {
@@ -10,10 +10,17 @@ export const Table = ({ children }: Readonly<TableProps>) => {
     <table
       className={`
         w-full
-        max-w-screen
+        table-fixed
     `}
     >
-      {children}
+      {Children.map(children, (child) => {
+        if (isValidElement(child)) {
+          return cloneElement(child, {
+            isLast: children.indexOf(child) === children.length - 1,
+          });
+        }
+        return child;
+      })}
     </table>
   );
 };

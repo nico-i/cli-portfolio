@@ -46,13 +46,11 @@ export default function Shell({ username, domain }: Readonly<ShellProps>) {
   const location = useLocation();
 
   const handleRunEvent = (event: any) => {
-    console.log(event.detail.prompt);
     if (event.detail.prompt === undefined) {
       throw new Error(`No prompt provided in run event!`);
     }
     setIsBusy(true);
     const cmdResTuple = processRunRequest(event.detail.prompt);
-    console.log(`return`, cmdResTuple);
     setIsBusy(false);
 
     if (cmdResTuple[0] !== CommandName.clear) {
@@ -251,7 +249,6 @@ const updateCmdSearchParam = (cmd?: string) => {
 function processRunRequest(userPrompt: string): PromptHistoryEntry {
   const res: PromptHistoryEntry = [userPrompt, null];
   const consecutivePrompts = userPrompt.split(`&&`).map((cmd) => cmd.trim());
-  console.log(consecutivePrompts);
   // recursively process commands
   if (consecutivePrompts.length > 1) {
     for (const cmd of consecutivePrompts) {

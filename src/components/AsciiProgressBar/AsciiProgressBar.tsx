@@ -45,7 +45,7 @@ export const AsciiProgressBar = ({
 
   useEffect(() => {
     handleResize();
-  }, [isVisible]);
+  }, [handleResize, isVisible]);
 
   useEffect(() => {
     window.addEventListener(`resize`, handleResize);

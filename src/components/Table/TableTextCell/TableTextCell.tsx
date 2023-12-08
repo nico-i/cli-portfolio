@@ -1,3 +1,4 @@
+import { AsciiLine } from '@/components/AsciiLine';
 import { getCharWidth } from '@/util/helper';
 import { useEffect, useRef, useState } from 'react';
 
@@ -46,11 +47,7 @@ export const TableTextCell = ({ children }: TableTextCellProps) => {
 
   return (
     <td ref={cellRef} className="flex flex-col w-full relative pt-6">
-      <span className="absolute flex w-full justify-between left-0 top-0">
-        <span>v</span>
-        <hr className="w-full mt-3 border-dashed" />
-        <span className="-translate-x-1.5">v</span>
-      </span>
+      <AsciiLine verticalAlign="top" withEndCap={true} capChar="v" />
       {textLines.map((line, i) => (
         <div key={i} className="flex justify-between w-full">
           <span>|&nbsp;{line}</span>

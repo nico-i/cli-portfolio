@@ -1,4 +1,4 @@
-import { Table } from '@/components/Table/Table';
+import { Table } from '@/components/Table';
 import { TableCell } from '@/components/Table/TableCell';
 import { TableRow } from '@/components/Table/TableRow';
 import { TableTextCell } from '@/components/Table/TableTextCell';

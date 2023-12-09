@@ -1,5 +1,6 @@
 import { AsciiProgressBar } from '@/components/AsciiProgressBar/AsciiProgressBar';
-import { Skill } from '@/components/Cli/scripts/skills/SkillTableRow';
+import { TextButton } from '@/components/Button/TextButton/TextButton';
+import { Skill } from '@/components/Cli/scripts/skills/types';
 import { Table, TableCell, TableRow, TableTextCell } from '@/components/Table';
 import { Fragment, useState } from 'react';
 
@@ -43,16 +44,15 @@ export const Skills = () => {
               }
             >
               <TableCell>
-                <button
+                <TextButton
                   onClick={() =>
                     setCurrentOpenedSkill((prev) =>
                       prev === skill.name ? null : skill.name,
                     )
                   }
-                  className="font-semibold underline decoration-2"
                 >
                   {skill.name}
-                </button>
+                </TextButton>
               </TableCell>
               <TableCell>
                 <AsciiProgressBar

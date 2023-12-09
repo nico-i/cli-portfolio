@@ -1,6 +1,5 @@
 import { Command } from '@/components/Cli/Command';
 import { Cat, Clear, Echo, Help, Ls, Viu } from '@/components/Cli/cmd';
-import { Projects } from '@/components/Cli/scripts/projects';
 import { Skills } from '@/components/Cli/scripts/skills';
 import { ReactNode } from 'react';
 
@@ -20,7 +19,7 @@ export enum ScriptName {
 
 export const allScriptsByName: Record<ScriptName, ReactNode> = {
   [ScriptName.skills]: <Skills />,
-  [ScriptName.projects]: <Projects />,
+  [ScriptName.projects]: <>TODO: add mock projects</>,
 };
 
 export const allCommandsByName: Record<CommandName, Command> = {

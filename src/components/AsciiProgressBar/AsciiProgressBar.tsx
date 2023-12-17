@@ -26,43 +26,62 @@ export const AsciiProgressBar = ({
     useState<number>(0);
   const [progressCharCount, setProgressCharCount] = useState<number>(0);
   const [widthInChars, setWidthInChars] = useState<number>(0);
-
+  const [currentInterval, setCurrentInterval] = useState<NodeJS.Timeout | null>(
+    null,
+  );
   useEffect(() => {
-    const handleResize = () => {
-      if (wrapperRef?.current === null) return;
-      const charWidth = getCharWidth();
-      const widthInChars =
-        Math.floor(wrapperRef.current.offsetWidth / charWidth) -
-        2 - // account for left and right end caps
-        (showPercentage ? 4 : 0); // account for percentage
-      setWidthInChars(widthInChars);
+    const currentRef = wrapperRef.current;
+    // find target width in chars
+    const observer = new ResizeObserver((entries) => {
+      if (entries?.[0]?.contentRect) {
+        setProgressCharCount(0);
+        const { width } = entries[0].contentRect;
+        setWidthInChars(0);
+        const charWidth = getCharWidth();
+        const widthInChars =
+          Math.floor(width / charWidth) -
+          2 - // account for left and right end caps
+          (showPercentage ? 4 : 0); // account for percentage
+        setWidthInChars(widthInChars);
+        const newProgressCharTargetCount = Math.floor(
+          (percentage / 100) * widthInChars,
+        );
+        setProgressCharTargetCount(
+          newProgressCharTargetCount === 0 ? 1 : newProgressCharTargetCount,
+        );
+      }
+    });
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
     };
-    window.addEventListener(`resize`, handleResize);
-    handleResize();
-    return () => window.removeEventListener(`resize`, handleResize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only update when percentage or showPercentage changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    const newProgressCharTargetCount = Math.floor(
-      (percentage / 100) * widthInChars,
-    );
-    setProgressCharTargetCount(
-      newProgressCharTargetCount === 0 ? 1 : newProgressCharTargetCount,
-    );
-    if (!duration) {
-      setProgressCharCount(newProgressCharTargetCount);
-      return;
+    if (currentInterval) {
+      clearInterval(currentInterval);
     }
-    for (let i = 0; i <= progressCharTargetCount; i++) {
-      setTimeout(
-        () => {
-          setProgressCharCount(i);
-        },
-        (duration / newProgressCharTargetCount) * i,
-      );
-    }
-  }, [duration, percentage, progressCharTargetCount, widthInChars]);
+    const interval = setInterval(() => {
+      setProgressCharCount((prev) => {
+        if (prev < progressCharTargetCount) {
+          return prev + 1;
+        } else {
+          return prev;
+        }
+      });
+    }, duration / widthInChars);
+    setCurrentInterval(interval);
+
+    return () => {
+      clearInterval(interval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progressCharTargetCount, duration]);
 
   const placeholderCount = progressCharTargetCount - progressCharCount;
   const emptyCharCount = widthInChars - progressCharTargetCount;

@@ -10,13 +10,26 @@ interface ProjectSlideProps {
 export const ProjectSlide = ({ project }: Readonly<ProjectSlideProps>) => {
   const [isExpanded, setIsExpanded] = useState(false);
   return (
-    <div className="flex flex-col gap-2">
+    <div
+      className={`
+        flex
+        flex-col
+        gap-2 
+        md:p-3
+        py-2
+        w-full
+        lg:w-[36rem]
+        h-[32rem]
+        lg:h-[27rem]
+        overflow-scroll `}
+    >
       <div
         className={`
         flex
+        gap-2
         justify-between`}
       >
-        <div className="w-96 h-60 bg-info-400" />
+        <div className="w-full h-60 bg-info-400" />
         <ul>
           {project.iconTitleUrlTuples.map((tuple) => (
             <li className="flex gap-0.5" key={tuple.title}>
@@ -26,11 +39,20 @@ export const ProjectSlide = ({ project }: Readonly<ProjectSlideProps>) => {
           ))}
         </ul>
       </div>
-      <h3 className="font-bold">tldr;</h3>
-      <p>{project.shortSummary}</p>
-      {isExpanded && project.fullSummary}
+
+      {isExpanded ? (
+        <>
+          <h3 className="font-bold">Summary</h3>
+          {project.fullSummary}
+        </>
+      ) : (
+        <>
+          <h3 className="font-bold">tldr;</h3>
+          <p className="h-full">{project.shortSummary}</p>
+        </>
+      )}
       <TextButton
-        className="self-start"
+        className="self-end"
         onClick={() => setIsExpanded((prev) => !prev)}
       >
         {isExpanded ? `Show less` : `Read more`}

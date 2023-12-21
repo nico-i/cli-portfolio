@@ -49,7 +49,7 @@ const mockProjects: Project[] = [
     ],
   },
   {
-    title: `Project 2`,
+    title: `Project 3`,
     shortSummary: `asda dasdf ahadfg asdf aha ga5hae gasdf aharg afg adfg adfhahaerg adfg `,
     fullSummary: `asda dasdf ahadfg asdf aha ga5hae gasdf aharg afg adfg adfhahaerg adfg  asda dasdf ahadfg asdf aha ga5hae gasdf aharg afg adfg adfhahaerg adfg asda dasdf ahadfg asdf aha ga5hae gasdf aharg afg adfg adfhahaerg adfg asda dasdf ahadfg asdf aha ga5hae gasdf aharg afg adfg adfhahaerg adfg asda dasdf ahadfg asdf aha ga5hae gasdf aharg afg adfg adfhahaerg adfg asda dasdf ahadfg asdf aha ga5hae gasdf aharg afg adfg adfhahaerg adfg `,
     iconTitleUrlTuples: [
@@ -73,7 +73,7 @@ export default function Home() {
       {/* <Shell username="guest" domain="localhost" /> */}
       <ProjectsCarousel
         projects={mockProjects}
-        className="w-11/12 md:w-2/3 lg:w-3/5"
+        onClose={() => console.log(`TODO: close projects carousel`)}
       />
     </>
   );

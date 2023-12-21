@@ -67,6 +67,10 @@ export const AsciiProgressBar = ({
       clearInterval(currentInterval);
     }
     const interval = setInterval(() => {
+      if (progressCharCount >= progressCharTargetCount) {
+        clearInterval(interval);
+        return;
+      }
       setProgressCharCount((prev) => {
         if (prev < progressCharTargetCount) {
           return prev + 1;
@@ -87,7 +91,7 @@ export const AsciiProgressBar = ({
   const emptyCharCount = widthInChars - progressCharTargetCount;
 
   return (
-    <div className="w-full flex relative" ref={wrapperRef}>
+    <div className="flex grow relative" ref={wrapperRef}>
       <div className="absolute">
         {leftEndCapChar}
         {progressCharCount > 0 ? progressChar.repeat(progressCharCount) : null}

@@ -3,14 +3,13 @@ import { ReactNode } from 'react';
 
 export class Echo extends Command {
   constructor() {
-    super([[`echo`, `Prints the provided string to the terminal`]]);
+    super([[`echo "[string]"`, `Prints the provided string to the terminal`]]);
   }
 
   public run({ flags, values }: RunProps): ReactNode {
     if (Object.keys(flags).length > 0) {
       throw new Error(`Unknown flag(s): ${Object.keys(flags).join(`, `)}`);
     }
-
     if (values.length === 0) {
       return ``;
     }

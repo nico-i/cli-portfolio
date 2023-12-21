@@ -180,7 +180,6 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     event.currentTarget.style.height = `auto`;
     event.currentTarget.style.height = event.currentTarget.scrollHeight + `px`;
   };
-
   return (
     <main
       id="shell"
@@ -202,7 +201,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
               <PromptPrefix username={username} domain={domain} />
               {entryTuple[0]}
             </span>
-            {entryTuple[1]}
+            {entryTuple[1] !== `` ? entryTuple[1] : <>&nbsp;</>}
           </div>
         ))}
       <div id="active-prompt" className="w-full flex relative">

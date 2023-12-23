@@ -1,12 +1,8 @@
 import { CommandName, runPrompt } from '@/components/Cli';
 import { PromptPrefix } from '@/components/Shell/PromptPrefix';
-import { PromptHistoryContext } from '@/context/promptHistoryContext';
-import {
-  CustomEvents,
-  PromptHistoryEntry,
-  RunEvent,
-  SearchParams,
-} from '@/util/types';
+import { PromptHistoryContext } from '@/context/PromptHistoryContext/PromptHistoryContext';
+import { PromptHistoryEntry } from '@/context/PromptHistoryContext/types';
+import { CustomEvents, RunEvent, SearchParams } from '@/util/types';
 import { useLocation } from '@reach/router';
 import {
   ChangeEventHandler,
@@ -37,15 +33,16 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     return [promptPrefix, newState].join(``);
   }, promptPrefix);
 
-  const { history, insertHistory, clearHistory } =
-    useContext(PromptHistoryContext);
+  const { history, setHistory } = useContext(PromptHistoryContext);
 
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const [currentPrompt, setCurrentPrompt] = useState<string>(``);
+  const [isProgramOpen, setIsProgramOpen] = useState(false);
 
   const location = useLocation();
 
   const handleRunEvent = (event: any) => {
+    setIsProgramOpen(false);
     if (event.detail.prompt === undefined) {
       throw new Error(`No prompt provided in run event!`);
     }
@@ -53,9 +50,9 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     const cmdResTuple = processRunRequest(event.detail.prompt);
     setIsBusy(false);
 
-    if (cmdResTuple[0] !== CommandName.clear) {
-      insertHistory(cmdResTuple[0], cmdResTuple[1]);
-      updateCmdSearchParam(cmdResTuple[0]);
+    if (cmdResTuple.prompt !== CommandName.clear) {
+      setHistory((history) => [...history, cmdResTuple]);
+      updateCmdSearchParam(cmdResTuple.prompt);
     }
 
     setTAValueAndAddPrefix(``);
@@ -68,7 +65,20 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   const handleClearEvent = () => {
     setHistoryIndex(-1);
     updateCmdSearchParam();
-    clearHistory();
+    setHistory([]);
+  };
+
+  const handleStartStandaloneEvent = () => {
+    setIsProgramOpen(true);
+  };
+
+  const handleStopStandaloneEvent = () => {
+    setIsProgramOpen(false);
+    setHistory((history) => {
+      const newHistory = [...history];
+      newHistory[newHistory.length - 1].response = null;
+      return newHistory;
+    });
   };
 
   useEffect(() => {
@@ -79,7 +89,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     if (historyIndex === -1) {
       setTAValueAndAddPrefix(currentPrompt);
     } else {
-      setTAValueAndAddPrefix(history.at(-1 - historyIndex)?.[0] || ``);
+      setTAValueAndAddPrefix(history.at(-1 - historyIndex)?.prompt || ``);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historyIndex]);
@@ -87,7 +97,14 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   useEffect(() => {
     window.addEventListener(CustomEvents.clear, handleClearEvent);
     window.addEventListener(CustomEvents.run, handleRunEvent);
-
+    window.addEventListener(
+      CustomEvents.startStandalone,
+      handleStartStandaloneEvent,
+    );
+    window.addEventListener(
+      CustomEvents.stopStandalone,
+      handleStopStandaloneEvent,
+    );
     // run cmd if in search string
     const searchParams = new URLSearchParams(location.search);
     const cmdParam = searchParams.get(SearchParams.cmd);
@@ -98,6 +115,14 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     return () => {
       window.removeEventListener(CustomEvents.clear, handleClearEvent);
       window.removeEventListener(CustomEvents.run, handleRunEvent);
+      window.removeEventListener(
+        CustomEvents.startStandalone,
+        handleStartStandaloneEvent,
+      );
+      window.removeEventListener(
+        CustomEvents.stopStandalone,
+        handleStopStandaloneEvent,
+      );
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -180,6 +205,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     event.currentTarget.style.height = `auto`;
     event.currentTarget.style.height = event.currentTarget.scrollHeight + `px`;
   };
+
   return (
     <main
       id="shell"
@@ -194,40 +220,47 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         h-full`}
       onClickCapture={() => textAreaRef.current?.focus()}
     >
-      {history.length > 0 &&
-        history.map((entryTuple, i) => (
-          <div key={i} className="flex flex-col">
-            <span>
-              <PromptPrefix username={username} domain={domain} />
-              {entryTuple[0]}
-            </span>
-            {entryTuple[1] !== `` ? entryTuple[1] : <>&nbsp;</>}
-          </div>
-        ))}
-      <div id="active-prompt" className="w-full flex relative">
-        <PromptPrefix
-          className="absolute"
-          username={username}
-          domain={domain}
-        />
-        <label className="sr-only" htmlFor="prompt">
-          CLI prompt
-        </label>
-        <textarea
-          id="prompt"
-          rows={1}
-          readOnly={isBusy}
-          ref={textAreaRef}
-          onKeyDown={handleUserTextAreaKeyDown}
-          onChange={handleUserTextValueChange}
-          value={tAValueWithPrefix}
-          className={`
+      {isProgramOpen ? (
+        history[history.length - 1].response
+      ) : (
+        <>
+          {history.length > 0 &&
+            history.map((entryTuple, i) => (
+              <div key={i} className="flex flex-col">
+                <span>
+                  <PromptPrefix username={username} domain={domain} />
+                  {entryTuple.prompt}
+                </span>
+                {entryTuple.response !== `` ? entryTuple.response : <>&nbsp;</>}
+              </div>
+            ))}
+          <div id="active-prompt" className="w-full flex relative">
+            <PromptPrefix
+              className="absolute"
+              username={username}
+              domain={domain}
+            />
+            <label className="sr-only" htmlFor="prompt">
+              CLI prompt
+            </label>
+            <textarea
+              autoFocus={true}
+              id="prompt"
+              rows={1}
+              readOnly={isBusy}
+              ref={textAreaRef}
+              onKeyDown={handleUserTextAreaKeyDown}
+              onChange={handleUserTextValueChange}
+              value={tAValueWithPrefix}
+              className={`
           w-full
           focus:outline-none
           resize-none
           overflow-hidden`}
-        />
-      </div>
+            />
+          </div>
+        </>
+      )}
     </main>
   );
 };
@@ -246,27 +279,29 @@ const updateCmdSearchParam = (cmd?: string) => {
 };
 
 const processRunRequest = (userPrompt: string): PromptHistoryEntry => {
-  const res: PromptHistoryEntry = [userPrompt, null];
+  const res: PromptHistoryEntry = {
+    prompt: userPrompt,
+    response: null,
+  };
   const consecutivePrompts = userPrompt.split(`&&`).map((cmd) => cmd.trim());
   // recursively process commands
   if (consecutivePrompts.length > 1) {
     for (const cmd of consecutivePrompts) {
       const consecutiveCmdRes = processRunRequest(cmd);
-      res[1] = (
+      res.response = (
         <>
-          {res[1]}
+          {res.response}
           <br />
-          {consecutiveCmdRes[1]}
+          {consecutiveCmdRes.response}
         </>
       );
     }
     return res;
   }
   try {
-    res[1] = runPrompt(userPrompt.split(` `));
+    res.response = runPrompt(userPrompt.split(` `));
   } catch (e) {
-    res[1] = (e as Error).message;
+    res.response = (e as Error).message;
   }
-  res.push([userPrompt, res] as PromptHistoryEntry);
   return res;
 };

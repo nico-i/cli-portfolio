@@ -1,5 +1,6 @@
 import { Command } from '@/components/Cli/Command';
 import { Cat, Clear, Echo, Help, Ls, Viu } from '@/components/Cli/cmd';
+import { Projects } from '@/components/Cli/scripts/projects/Projects';
 import { Skills } from '@/components/Cli/scripts/skills';
 import { ReactNode } from 'react';
 
@@ -19,7 +20,7 @@ export enum ScriptName {
 
 export const allScriptsByName: Record<ScriptName, ReactNode> = {
   [ScriptName.skills]: <Skills />,
-  [ScriptName.projects]: <>TODO: add mock projects</>,
+  [ScriptName.projects]: <Projects />,
 };
 
 export const allCommandsByName: Record<CommandName, Command> = {
@@ -31,7 +32,7 @@ export const allCommandsByName: Record<CommandName, Command> = {
   [CommandName.viu]: new Viu(),
 };
 
-export const runPrompt = (args: string[]) => {
+export const runPrompt = (args: string[]): ReactNode => {
   const cmd: string = args[0];
 
   if (Object.values(ScriptName).includes(cmd as ScriptName)) {

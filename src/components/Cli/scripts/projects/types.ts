@@ -1,35 +1,27 @@
-import { ReactNode } from 'react';
-
-class IconTitleUrlTuple {
-  icon: ReactNode;
-  title: string;
+export interface Image {
   url: string;
-
-  constructor(icon: ReactNode, title: string, url: string) {
-    this.icon = icon;
-    this.title = title;
-    this.url = url;
-  }
+  alt: string;
+  width: number;
+  height: number;
 }
 
-export class Project {
-  title: string;
-  iconTitleUrlTuples: IconTitleUrlTuple[];
-  additionalInfo?: string[];
-  shortSummary: string;
-  fullSummary?: ReactNode;
+export interface IconLink {
+  url: string;
+  text: string;
+  svgHtml: string;
+}
 
-  constructor(
-    title: string,
-    iconTitleUrlTuples: IconTitleUrlTuple[],
-    summary: string,
-    additionalInfo?: string[],
-    readMoreChildren?: ReactNode,
-  ) {
-    this.iconTitleUrlTuples = iconTitleUrlTuples;
-    this.additionalInfo = additionalInfo;
-    this.shortSummary = summary;
-    this.fullSummary = readMoreChildren;
-    this.title = title;
-  }
+export interface Project {
+  locale: string;
+  title: string;
+  headerImage: Image;
+  tldr: string;
+  seoTitle: string;
+  seoImage?: Image;
+  summary: string;
+  iconLinks?: IconLink[];
+}
+
+export interface ProjectsByLocale {
+  [locale: string]: Project[];
 }

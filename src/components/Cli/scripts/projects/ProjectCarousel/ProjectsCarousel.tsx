@@ -22,6 +22,7 @@ export const ProjectsCarousel = ({
     // handle ESC key
     const onKeydown = (e: KeyboardEvent) => {
       if (e.key === `Escape`) {
+        e.preventDefault();
         onClose();
       }
     };
@@ -54,7 +55,7 @@ export const ProjectsCarousel = ({
         setIsDoneAnimating(true);
         return prev;
       });
-    }, 30);
+    }, 15);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

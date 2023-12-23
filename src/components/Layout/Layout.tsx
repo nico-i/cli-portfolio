@@ -1,6 +1,6 @@
 import { TextFile } from '@/components/Cli';
 import { MacroBar } from '@/components/MacroBar';
-import { PromptHistoryProvider } from '@/context/promptHistoryContext';
+import { PromptHistoryProvider } from '@/context/PromptHistoryContext/PromptHistoryContext';
 import { RunEvent } from '@/util/types';
 import { ReactNode } from 'react';
 
@@ -10,17 +10,21 @@ interface LayoutProps {
 
 export const Layout = ({ children }: Readonly<LayoutProps>) => {
   const macros = {
-    About: () =>
+    About: () => {
       window.dispatchEvent(
         RunEvent(`clear && viu -w 256 selfie.jpg && cat ${TextFile.about}`),
-      ),
+      );
+    },
     Projects: () => window.dispatchEvent(RunEvent(`clear && projects.sh`)),
     Skills: () => {
       window.dispatchEvent(RunEvent(`clear && skills.sh`));
     },
-    Contact: () =>
-      window.dispatchEvent(RunEvent(`clear && cat ${TextFile.contact}`)),
-    Help: () => window.dispatchEvent(RunEvent(`clear && help`)),
+    Contact: () => {
+      window.dispatchEvent(RunEvent(`clear && cat ${TextFile.contact}`));
+    },
+    Help: () => {
+      window.dispatchEvent(RunEvent(`clear && help`));
+    },
   };
 
   return (

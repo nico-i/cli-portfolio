@@ -30,25 +30,30 @@ export const ProjectSlide = ({ project }: Readonly<ProjectSlideProps>) => {
         justify-between`}
       >
         <div className="w-full h-60 bg-info-400" />
-        <ul>
-          {project.iconTitleUrlTuples.map((tuple) => (
-            <li className="flex gap-0.5" key={tuple.title}>
-              {tuple.icon}
-              <Link href={tuple.url}>{tuple.title}</Link>
-            </li>
-          ))}
-        </ul>
+        {project.iconLinks && (
+          <ul>
+            {project.iconLinks?.map((iconLink) => (
+              <li className="flex gap-0.5 text-neutral-0" key={iconLink.text}>
+                <span
+                  className="w-6 h-6"
+                  dangerouslySetInnerHTML={{ __html: iconLink.svgHtml }}
+                />
+                <Link href={iconLink.url}>{iconLink.text}</Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {isExpanded ? (
         <>
           <h3 className="font-bold">Summary</h3>
-          {project.fullSummary}
+          {project.summary}
         </>
       ) : (
         <>
           <h3 className="font-bold">tldr;</h3>
-          <p className="h-full">{project.shortSummary}</p>
+          <p className="h-full">{project.tldr}</p>
         </>
       )}
       <TextButton

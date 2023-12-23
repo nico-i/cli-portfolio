@@ -1,10 +1,8 @@
-import { ReactNode } from 'react';
-
-export type PromptHistoryEntry = [string, ReactNode];
-
 export enum CustomEvents {
   run = `run`,
   clear = `clear`,
+  stopStandalone = `closeStandalone`,
+  startStandalone = `startStandalone`,
 }
 
 export const RunEvent = (prompt: string) =>
@@ -13,6 +11,12 @@ export const RunEvent = (prompt: string) =>
       prompt,
     },
   });
+
+export const StopStandaloneEvent = new CustomEvent(CustomEvents.stopStandalone);
+
+export const StartStandaloneEvent = new CustomEvent(
+  CustomEvents.startStandalone,
+);
 
 export const ClearEvent = new CustomEvent(CustomEvents.clear);
 

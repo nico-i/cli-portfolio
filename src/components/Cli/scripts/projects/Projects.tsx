@@ -25,18 +25,22 @@ const getAllProjectsQuery = graphql`
         locale
         title
         headerImage {
-          url
           alternativeText
-          width
-          height
+          localFile {
+            childImageSharp {
+              gatsbyImageData(layout: CONSTRAINED, placeholder: BLURRED)
+            }
+          }
         }
         tldr
         seoTitle
         seoImage {
-          url
           alternativeText
-          width
-          height
+          localFile {
+            childImageSharp {
+              gatsbyImageData(layout: CONSTRAINED, placeholder: BLURRED)
+            }
+          }
         }
         summary {
           data {

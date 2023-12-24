@@ -1,4 +1,8 @@
-import { ProjectsByLocale } from '@/components/Cli/scripts/projects/types';
+import {
+  Image,
+  Project,
+  ProjectsByLocale,
+} from '@/components/Cli/scripts/projects/types';
 
 export function parseProjects(data: any): ProjectsByLocale {
   const projectsByLocale: ProjectsByLocale = {};
@@ -6,26 +10,16 @@ export function parseProjects(data: any): ProjectsByLocale {
     if (!projectsByLocale[node.locale]) {
       projectsByLocale[node.locale] = [];
     }
-    const enProject = {
+    const headerImage: Image = {
+      alt: node.headerImage.alternativeText,
+      imageData: node.headerImage.localFile.childImageSharp.gatsbyImageData,
+    };
+
+    const enProject: Project = {
       locale: node.locale, // will always be en
       title: node.title,
-      headerImage: {
-        url: node.headerImage.url,
-        alt: node.headerImage.alternativeText,
-        width: node.headerImage.width,
-        height: node.headerImage.height,
-      },
+      headerImage,
       tldr: node.tldr,
-      seoTitle: node.seoTitle,
-      seoImage:
-        node.seoImage !== null
-          ? {
-              url: node.seoImage.url,
-              alt: node.seoImage.alternativeText,
-              width: node.seoImage.width,
-              height: node.seoImage.height,
-            }
-          : undefined,
       summary: node.summary.data.summary,
       iconLinks: node.icon_links
         ? node.icon_links.map((iconLink: any) => ({
@@ -39,8 +33,7 @@ export function parseProjects(data: any): ProjectsByLocale {
     projectsByLocale[node.locale].push(enProject);
 
     node.localizations.data.forEach((localization: any) => {
-      const { locale, title, tldr, seoTitle, summary } =
-        localization.attributes;
+      const { locale, title, tldr, summary } = localization.attributes;
       if (!projectsByLocale[locale]) {
         projectsByLocale[locale] = [];
       }
@@ -49,7 +42,6 @@ export function parseProjects(data: any): ProjectsByLocale {
         locale,
         title: title || enProject.title,
         tldr: tldr || enProject.tldr,
-        seoTitle: seoTitle || enProject.seoTitle,
         summary: summary || enProject.summary,
       });
     });

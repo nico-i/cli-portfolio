@@ -1,6 +1,7 @@
 import { TextButton } from '@/components/Button/TextButton/TextButton';
 import { Project } from '@/components/Cli/scripts/projects/types';
 import { Link } from '@/components/Link';
+import { GatsbyImage, getImage } from 'gatsby-plugin-image';
 import { useState } from 'react';
 
 interface ProjectSlideProps {
@@ -9,6 +10,8 @@ interface ProjectSlideProps {
 
 export const ProjectSlide = ({ project }: Readonly<ProjectSlideProps>) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const headerImage = getImage(project.headerImage.imageData);
+
   return (
     <div
       className={`
@@ -29,7 +32,9 @@ export const ProjectSlide = ({ project }: Readonly<ProjectSlideProps>) => {
         gap-2
         justify-between`}
       >
-        <div className="w-full h-60 bg-info-400" />
+        {headerImage && (
+          <GatsbyImage image={headerImage} alt={project.headerImage.alt} />
+        )}
         {project.iconLinks && (
           <ul>
             {project.iconLinks?.map((iconLink) => (

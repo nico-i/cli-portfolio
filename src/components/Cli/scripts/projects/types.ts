@@ -1,8 +1,8 @@
+import { IGatsbyImageData } from 'gatsby-plugin-image';
+
 export interface Image {
-  url: string;
   alt: string;
-  width: number;
-  height: number;
+  imageData: IGatsbyImageData;
 }
 
 export interface IconLink {
@@ -16,8 +16,6 @@ export interface Project {
   title: string;
   headerImage: Image;
   tldr: string;
-  seoTitle: string;
-  seoImage?: Image;
   summary: string;
   iconLinks?: IconLink[];
 }

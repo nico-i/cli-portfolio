@@ -1,7 +1,7 @@
 import { AsciiLine } from '@/components/AsciiLine';
 import { getCharWidth } from '@/util/helper';
 import clsx from 'clsx';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 export interface TableTextCellProps {
   children: string;
@@ -57,7 +57,7 @@ export const TableTextCell = ({
     <td ref={cellRef} className="flex flex-col w-full relative pt-6">
       <AsciiLine verticalAlign="top" withEndCap={true} capChar="v" />
       {textLines.map((line, i) => (
-        <>
+        <Fragment key={i}>
           <div
             key={i}
             className={clsx(`flex justify-between w-full`, isLastRow && `pb-6`)}
@@ -68,7 +68,7 @@ export const TableTextCell = ({
           {isLastRow ? (
             <AsciiLine verticalAlign="bottom" withEndCap={true} />
           ) : null}
-        </>
+        </Fragment>
       ))}
     </td>
   );

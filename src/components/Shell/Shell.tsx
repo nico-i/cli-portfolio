@@ -28,9 +28,10 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
 
   const [tAValueWithPrefix, setTAValueAndAddPrefix] = useReducer<
     (prevState: string, newState: string) => string
-  >((_, newState): string => {
-    if (newState === ``) return promptPrefix;
-    return [promptPrefix, newState].join(``);
+  >((_, newValue): string => {
+    if (newValue === ``) return promptPrefix;
+    const newState = [promptPrefix, newValue].join(``);
+    return newState;
   }, promptPrefix);
 
   const { history, setHistory } = useContext(PromptHistoryContext);
@@ -143,6 +144,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   const handleUserTextValueChange: ChangeEventHandler<HTMLTextAreaElement> = (
     e,
   ) => {
+    console.log(e.target.value);
     const strippedValue = e.target.value.slice(promptPrefix.length);
     setTAValueAndAddPrefix(strippedValue);
   };
@@ -218,12 +220,22 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         relative
         w-full
         h-full`}
-      onClickCapture={() => textAreaRef.current?.focus()}
+      onClickCapture={(e) => {
+        e.preventDefault();
+        if (
+          e.target instanceof HTMLDivElement &&
+          e.target.parentNode &&
+          e.target.parentNode instanceof HTMLDivElement &&
+          e.target.parentNode.id === `history`
+        ) {
+          textAreaRef.current?.focus();
+        }
+      }}
     >
       {isProgramOpen ? (
         history[history.length - 1].response
       ) : (
-        <>
+        <div id="history">
           {history.length > 0 &&
             history.map((entryTuple, i) => (
               <div key={i} className="flex flex-col">
@@ -253,13 +265,13 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
               onChange={handleUserTextValueChange}
               value={tAValueWithPrefix}
               className={`
-          w-full
-          focus:outline-none
-          resize-none
-          overflow-hidden`}
+              w-full
+              focus:outline-none
+              resize-none
+              overflow-hidden`}
             />
           </div>
-        </>
+        </div>
       )}
     </main>
   );

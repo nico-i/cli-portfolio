@@ -6,6 +6,7 @@ export interface TableCellProps {
   children: ReactNode;
   isHeader?: boolean;
   isLastChild?: boolean;
+  isFirstChild?: boolean;
   isLastRow?: boolean;
 }
 
@@ -13,6 +14,7 @@ export const TableCell = ({
   children,
   isHeader,
   isLastChild = false,
+  isFirstChild = false,
   isLastRow = false,
 }: TableCellProps) => {
   const commonClasses = `
@@ -27,7 +29,7 @@ export const TableCell = ({
 
   const content = (
     <>
-      <AsciiLine withEndCap={isLastChild} />
+      {!isFirstChild ? <AsciiLine withEndCap={isLastChild} /> : null}
       <div className={clsx(`flex w-full justify-between`, isLastRow && `pb-6`)}>
         <div className="flex w-full">
           <span>|&nbsp;</span>

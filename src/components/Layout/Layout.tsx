@@ -25,7 +25,7 @@ export const Layout = ({ children }: Readonly<LayoutProps>) => {
       window.dispatchEvent(RunEvent(`clear && cat ${TextFile.contact} && top`));
     },
     '?': () => {
-      window.dispatchEvent(RunEvent(`clear && help && top`));
+      window.dispatchEvent(RunEvent(`help`));
     },
   };
 

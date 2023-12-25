@@ -1,3 +1,4 @@
+import { ScriptName } from '@/components/Cli';
 import { Link } from '@/components/Link';
 import { StaticImage } from 'gatsby-plugin-image';
 import { ReactNode } from 'react';
@@ -110,5 +111,6 @@ export function getAllFiles(): string[] {
     ...Object.values(TextFile),
     ...Object.values(StaticFile),
     ...Object.values(ImageFile),
-  ];
+    ...Object.values(ScriptName),
+  ].sort();
 }

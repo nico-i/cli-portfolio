@@ -99,7 +99,7 @@ export const ProjectsCarousel = ({
         md:py-4
         w-full
         h-full
-        md:-mt-6`}
+        md:-translate-y-6`}
     >
       <div
         className={`

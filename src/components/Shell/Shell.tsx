@@ -9,7 +9,6 @@ import {
   KeyboardEventHandler,
   useContext,
   useEffect,
-  useReducer,
   useRef,
   useState,
 } from 'react';
@@ -20,24 +19,11 @@ interface ShellProps {
 }
 
 export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
-  const promptPrefix = `${username}@${domain}: ~$ `;
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  const [isBusy, setIsBusy] = useState<boolean>(false);
-  const [busyMem, setBusyMem] = useState<string[]>([]);
-
-  const [tAValueWithPrefix, setTAValueAndAddPrefix] = useReducer<
-    (prevState: string, newState: string) => string
-  >((_, newValue): string => {
-    if (newValue === ``) return promptPrefix;
-    const newState = [promptPrefix, newValue].join(``);
-    return newState;
-  }, promptPrefix);
-
   const { history, setHistory } = useContext(PromptHistoryContext);
-
-  const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const [currentPrompt, setCurrentPrompt] = useState<string>(``);
+  const [tmpPrompt, setTmpPrompt] = useState<string>(``); // used for arrow up/down
   const [isProgramOpen, setIsProgramOpen] = useState(false);
 
   const location = useLocation();
@@ -47,24 +33,17 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     if (event.detail.prompt === undefined) {
       throw new Error(`No prompt provided in run event!`);
     }
-    setIsBusy(true);
     const cmdResTuple = processRunRequest(event.detail.prompt);
-    setIsBusy(false);
 
     if (cmdResTuple.prompt !== CommandName.clear) {
       setHistory((history) => [...history, cmdResTuple]);
       updateCmdSearchParam(cmdResTuple.prompt);
     }
-
-    setTAValueAndAddPrefix(``);
     setCurrentPrompt(``);
-    setHistoryIndex(-1);
-
     textAreaRef.current?.focus();
   };
 
   const handleClearEvent = () => {
-    setHistoryIndex(-1);
     updateCmdSearchParam();
     setHistory([]);
   };
@@ -84,16 +63,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
 
   useEffect(() => {
     textAreaRef.current?.scrollIntoView();
-  }, [history, tAValueWithPrefix, isBusy]);
-
-  useEffect(() => {
-    if (historyIndex === -1) {
-      setTAValueAndAddPrefix(currentPrompt);
-    } else {
-      setTAValueAndAddPrefix(history.at(-1 - historyIndex)?.prompt || ``);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historyIndex]);
+  }, [currentPrompt]);
 
   useEffect(() => {
     window.addEventListener(CustomEvents.clear, handleClearEvent);
@@ -128,84 +98,62 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (isBusy) {
-      document.body.style.cursor = `wait`;
-      return;
-    }
-    document.body.style.cursor = `auto`;
-    if (busyMem.length > 0) {
-      setTAValueAndAddPrefix(busyMem.join(``));
-      setBusyMem([]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only run on isBusy change
-  }, [isBusy]);
-
   const handleUserTextValueChange: ChangeEventHandler<HTMLTextAreaElement> = (
     e,
-  ) => {
-    console.log(e.target.value);
-    const strippedValue = e.target.value.slice(promptPrefix.length);
-    setTAValueAndAddPrefix(strippedValue);
-  };
+  ) => setCurrentPrompt(e.target.value);
 
   const handleUserTextAreaKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
     event,
   ) => {
-    if (isBusy) {
-      if (event.key !== `Enter`) {
-        // check if key is a char or whitespace
-        if (event.key.length > 1) {
-          return;
-        }
-        setBusyMem((busyMem) => [...busyMem, event.key]);
-        return;
-      }
-      if (event.shiftKey) {
-        setBusyMem((busyMem) => [...busyMem, `\n`]);
-        return;
-      }
-      return;
-    }
-
-    const prompt = tAValueWithPrefix.slice(promptPrefix.length);
-
     if (event.key.length === 1) {
-      setHistoryIndex(-1);
-      setCurrentPrompt(prompt);
-    } else {
-      switch (event.key) {
-        case `Enter`: {
-          if (event.shiftKey) {
-            break;
-          }
+      setTmpPrompt(currentPrompt + event.key);
+    }
+    const currentHistoryIndex = history.findIndex(
+      (entry) => entry.prompt === currentPrompt,
+    );
+
+    switch (event.key) {
+      case `Backspace`:
+        if (currentPrompt === ``) {
           event.preventDefault();
-          window.dispatchEvent(RunEvent(prompt));
           break;
         }
-        case `Tab`:
-          event.preventDefault();
-          // TODO: Add tab completion
+        setTmpPrompt(currentPrompt.slice(0, -1));
+        break;
+      case `Enter`: {
+        if (event.shiftKey) {
           break;
-        case `ArrowDown`:
-          event.preventDefault();
-          if (historyIndex === -1) return; // -1 to account for the current prompt
-          setHistoryIndex((historyIndex) => {
-            return historyIndex - 1;
-          });
-          break;
-        case `ArrowUp`:
-          event.preventDefault();
-
-          if (historyIndex === history.length - 1) return;
-          setHistoryIndex((historyIndex) => {
-            return historyIndex + 1;
-          });
-          break;
+        }
+        event.preventDefault();
+        window.dispatchEvent(RunEvent(currentPrompt));
+        break;
       }
+      case `Tab`:
+        event.preventDefault();
+        // TODO: Add tab completion
+        break;
+      case `ArrowDown`:
+        event.preventDefault();
+        if (currentHistoryIndex === -1) break; // current prompt is not in history -> not currently navigating history
+        if (currentHistoryIndex === 0) {
+          setCurrentPrompt(tmpPrompt);
+          break;
+        }
+        setCurrentPrompt(history[currentHistoryIndex - 1].prompt);
+        break;
+      case `ArrowUp`:
+        event.preventDefault();
+        if (currentHistoryIndex === history.length - 1) break;
+        if (currentHistoryIndex === -1) {
+          setCurrentPrompt(history[history.length - 1].prompt);
+          break;
+        }
+        setCurrentPrompt(
+          history.at(-(currentHistoryIndex + 1))?.prompt ||
+            `Internal Server Error`,
+        );
+        break;
     }
-    event.currentTarget.style.height = `auto`;
-    event.currentTarget.style.height = event.currentTarget.scrollHeight + `px`;
   };
 
   return (
@@ -250,22 +198,17 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
               </div>
             ))}
           <div id="active-prompt" className="w-full flex relative">
-            <PromptPrefix
-              className="absolute"
-              username={username}
-              domain={domain}
-            />
+            <PromptPrefix username={username} domain={domain} />
             <label className="sr-only" htmlFor="prompt">
               CLI prompt
             </label>
             <textarea
               id="prompt"
               rows={1}
-              readOnly={isBusy}
               ref={textAreaRef}
               onKeyDown={handleUserTextAreaKeyDown}
               onChange={handleUserTextValueChange}
-              value={tAValueWithPrefix}
+              value={currentPrompt}
               className={`
               w-full
               focus:outline-none

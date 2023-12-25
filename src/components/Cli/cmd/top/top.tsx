@@ -5,7 +5,7 @@ export class Top extends Command {
   get usages() {
     return {
       usage: `top`,
-      description: `Scrolls to the top of the page`,
+      description: `Scrolls to the top of the terminal window`,
     };
   }
 

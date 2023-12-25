@@ -12,25 +12,27 @@ export const Layout = ({ children }: Readonly<LayoutProps>) => {
   const macros = {
     About: () => {
       window.dispatchEvent(
-        RunEvent(`clear && viu -w 256 selfie.jpg && cat ${TextFile.about}`),
+        RunEvent(
+          `clear && viu -w 256 selfie.jpg && cat ${TextFile.about} && top`,
+        ),
       );
     },
     Projects: () => window.dispatchEvent(RunEvent(`clear && projects.sh`)),
     Skills: () => {
-      window.dispatchEvent(RunEvent(`clear && skills.sh`));
+      window.dispatchEvent(RunEvent(`clear && skills.sh && top`));
     },
     Contact: () => {
-      window.dispatchEvent(RunEvent(`clear && cat ${TextFile.contact}`));
+      window.dispatchEvent(RunEvent(`clear && cat ${TextFile.contact} && top`));
     },
-    Help: () => {
-      window.dispatchEvent(RunEvent(`clear && help`));
+    '?': () => {
+      window.dispatchEvent(RunEvent(`clear && help && top`));
     },
   };
 
   return (
     <PromptHistoryProvider>
       <MacroBar macros={macros} />
-      <div className="flex-[1_0_auto]" id="content">
+      <div className="h-full" id="content">
         {children}
       </div>
     </PromptHistoryProvider>

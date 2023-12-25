@@ -3,8 +3,11 @@ import { ClearEvent } from '@/util/types';
 import { ReactNode } from 'react';
 
 export class Clear extends Command {
-  constructor() {
-    super([[`clear`, `Clears the terminal screen and command history`]]);
+  get usages() {
+    return {
+      usage: `clear`,
+      description: `Clears the terminal screen and command history`,
+    };
   }
 
   public run({ flags, values }: RunProps): ReactNode {

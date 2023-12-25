@@ -3,15 +3,23 @@ import { ImageFile, imageByFileName } from '@/components/Cli/files';
 import { CSSProperties, ReactNode } from 'react';
 
 export class Viu extends Command {
-  constructor() {
-    super(
-      [[`viu [file]`, `Displays an image in the terminal`]],
-      [
-        [[`-w [width]`, `--width [width]`], `Sets the width of the image`],
-        [[`-h [height]`, `--height [height]`], `Sets the height of the image`],
-      ],
-    );
+  get usages() {
+    return {
+      usage: `viu [file]`,
+      description: `Displays an image in the terminal`,
+    };
   }
+
+  flags = [
+    {
+      usage: `-w [width]`,
+      description: `Sets the width of the image`,
+    },
+    {
+      usage: `-h [height]`,
+      description: `Sets the height of the image`,
+    },
+  ];
 
   public run({ values, flags }: RunProps): ReactNode {
     if (values.length === 0) {

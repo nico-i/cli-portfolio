@@ -2,8 +2,11 @@ import { Command, RunProps } from '@/components/Cli/Command';
 import { ReactNode } from 'react';
 
 export class Echo extends Command {
-  constructor() {
-    super([[`echo "[string]"`, `Prints the provided string to the terminal`]]);
+  get usages() {
+    return {
+      usage: `echo "[string]"`,
+      description: `Prints the provided string to the terminal`,
+    };
   }
 
   public run({ flags, values }: RunProps): ReactNode {

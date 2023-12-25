@@ -16,10 +16,10 @@ export const Skills = () => {
   const [currentOpenedSkill, setCurrentOpenedSkill] = useState<string | null>(
     null,
   );
-  const rowClassName = `grid-cols-[10rem_auto] md:grid-cols-[10rem_minmax(10rem,1fr)]`;
+  const rowClassName = `grid-cols-[8rem_auto] md:grid-cols-[10rem_minmax(10rem,1fr)]`;
   const skillsCount = skills.length;
   return (
-    <table className="w-11/12 md:w-2/3 lg:w-2/5">
+    <table className="w-full md:w-2/3 lg:w-2/5">
       <thead>
         <TableRow isHeader={true} className={rowClassName}>
           <TableCell>Skill</TableCell>

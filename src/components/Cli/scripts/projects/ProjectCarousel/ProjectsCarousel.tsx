@@ -95,6 +95,7 @@ export const ProjectsCarousel = ({
         items-center
         px-2
         py-0
+        my-auto
         md:py-4
         w-full
         h-full

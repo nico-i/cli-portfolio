@@ -3,11 +3,17 @@ import { Command, RunProps } from '@/components/Cli/Command';
 import { Fragment, ReactNode } from 'react';
 
 export class Help extends Command {
-  constructor() {
-    super([
-      [`help`, `Prints general help`],
-      [`help [command]`, `Prints help for a specific command`],
-    ]);
+  get usages() {
+    return [
+      {
+        usage: `help`,
+        description: `Prints general help`,
+      },
+      {
+        usage: `help [command]`,
+        description: `Prints general help or help for a specific command`,
+      },
+    ];
   }
 
   public run({ flags, values }: RunProps): ReactNode {

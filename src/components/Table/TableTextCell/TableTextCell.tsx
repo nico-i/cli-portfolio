@@ -60,7 +60,10 @@ export const TableTextCell = ({
         <Fragment key={i}>
           <div
             key={i}
-            className={clsx(`flex justify-between w-full`, isLastRow && `pb-6`)}
+            className={clsx(
+              `flex justify-between w-full`,
+              isLastRow && i === textLines.length - 1 && `pb-6`,
+            )}
           >
             <span>|&nbsp;{line}</span>
             <span className="-translate-x-1.5">|</span>

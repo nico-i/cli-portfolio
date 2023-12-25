@@ -9,13 +9,11 @@ import { Link } from '@/components/Link';
 import { ReactNode } from 'react';
 
 export class Cat extends Command {
-  constructor() {
-    super([
-      [
-        `cat [file]`,
-        `Displays the contents of a file or shows a download link`,
-      ],
-    ]);
+  get usages() {
+    return {
+      usage: `cat [file]`,
+      description: `Displays the contents of a file or shows a download link`,
+    };
   }
 
   public run({ flags, values }: RunProps): ReactNode {

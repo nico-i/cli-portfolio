@@ -8,17 +8,13 @@ export const MacroBar = ({ macros }: Readonly<MacroBarProps>) => {
   return (
     <nav
       className={`
-        shrink-0
-        lg:shrink
-        lg:order-first
-        lg:z-10
-        order-last
+        z-10
         px-5
         h-min
         w-full
-        relative
-        lg:sticky
+        fixed
         lg:top-0
+        bottom-0
         invert
         flex
         justify-center

@@ -212,14 +212,17 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     <main
       id="shell"
       className={`
-        p-2.5
+        px-2.5
+        lg:pt-8
+        lg:pb-2.5
+        pt-2.5
+        pb-8
+        min-h-full
         flex
         flex-col
-        flex-[1_0_auto]
         hover:cursor-text
         relative
-        w-full
-        h-full`}
+        w-full`}
       onClickCapture={(e) => {
         e.preventDefault();
         if (
@@ -256,7 +259,6 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
               CLI prompt
             </label>
             <textarea
-              autoFocus={true}
               id="prompt"
               rows={1}
               readOnly={isBusy}

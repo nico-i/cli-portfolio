@@ -1,5 +1,5 @@
 import { Command } from '@/components/Cli/Command';
-import { Cat, Clear, Echo, Help, Ls, Viu } from '@/components/Cli/cmd';
+import { Cat, Clear, Echo, Help, Ls, Top, Viu } from '@/components/Cli/cmd';
 import { Projects } from '@/components/Cli/scripts/projects/Projects';
 import { Skills } from '@/components/Cli/scripts/skills';
 import { ReactNode } from 'react';
@@ -11,6 +11,7 @@ export enum CommandName {
   clear = `clear`,
   ls = `ls`,
   viu = `viu`,
+  top = `top`,
 }
 
 export enum ScriptName {
@@ -30,6 +31,7 @@ export const allCommandsByName: Record<CommandName, Command> = {
   [CommandName.echo]: new Echo(),
   [CommandName.ls]: new Ls(),
   [CommandName.viu]: new Viu(),
+  [CommandName.top]: new Top(),
 };
 
 export const runPrompt = (args: string[]): ReactNode => {

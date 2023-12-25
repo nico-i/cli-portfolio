@@ -3,8 +3,11 @@ import { Fragment, ReactNode } from 'react';
 import { getAllFiles } from '../../files';
 
 export class Ls extends Command {
-  constructor() {
-    super([[`ls`, `Lists accessible files`]]);
+  get usages() {
+    return {
+      usage: `ls`,
+      description: `Lists accessible files`,
+    };
   }
 
   public run = (): ReactNode =>

@@ -1,11 +1,15 @@
-import { Command, RunProps } from '@/components/Cli/Command';
-import { ImageFile, imageByFileName } from '@/components/Cli/files';
+import { CliCmd, RunProps } from '@/components/Cli/cmd/CliCmd';
+import { allImageNames, allImagesByName } from '@/components/Cli/files/images';
 import { CSSProperties, ReactNode } from 'react';
 
-export class Viu extends Command {
+export class Viu extends CliCmd {
+  get fileName(): string {
+    return `viu`;
+  }
+
   get usages() {
     return {
-      usage: `viu [file]`,
+      usage: `${this.fileName} [file]`,
       description: `Displays an image in the terminal`,
     };
   }
@@ -28,7 +32,7 @@ export class Viu extends Command {
     if (values.length > 1) {
       throw new Error(`Expected 1 input, got ${values.length}`);
     }
-    if (!Object.values(ImageFile).includes(values[0] as ImageFile)) {
+    if (!allImageNames.includes(values[0])) {
       throw new Error(`Unknown file ${values[0]}`);
     }
 
@@ -59,6 +63,6 @@ export class Viu extends Command {
       style.height = height;
     }
 
-    return <div style={style}>{imageByFileName[values[0] as ImageFile]}</div>;
+    return <div style={style}>{allImagesByName[values[0]].run()}</div>;
   }
 }

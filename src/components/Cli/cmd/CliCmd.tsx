@@ -1,3 +1,4 @@
+import { CliFile } from '@/components/Cli/files/CliFile';
 import { Fragment, ReactNode } from 'react';
 export interface RunProps {
   flags: Record<string, string>;
@@ -9,11 +10,9 @@ export interface UsageTuple {
   description: string;
 }
 
-export abstract class Command {
+export abstract class CliCmd extends CliFile<RunProps> {
   abstract get usages(): UsageTuple[] | UsageTuple;
   flags?: UsageTuple[] | UsageTuple;
-
-  public abstract run(props: RunProps): ReactNode;
 
   public quickHelpToHTML = (): ReactNode => {
     let allUsages: UsageTuple[] = [];

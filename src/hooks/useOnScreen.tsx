@@ -16,6 +16,7 @@ export default function useOnScreen(ref: RefObject<HTMLElement>) {
     if (!ref.current) return;
     observer.observe(ref.current);
     return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return isIntersecting;

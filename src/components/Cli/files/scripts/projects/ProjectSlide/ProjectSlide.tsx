@@ -1,5 +1,5 @@
 import { TextButton } from '@/components/Button/TextButton/TextButton';
-import { Project } from '@/components/Cli/scripts/projects/types';
+import { Project } from '@/components/Cli/files/scripts/projects/types';
 import { Link } from '@/components/Link';
 import { GatsbyImage, getImage } from 'gatsby-plugin-image';
 import { useState } from 'react';

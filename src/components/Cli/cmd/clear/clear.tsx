@@ -1,11 +1,15 @@
-import { Command, RunProps } from '@/components/Cli/Command';
+import { CliCmd, RunProps } from '@/components/Cli/cmd/CliCmd';
 import { ClearEvent } from '@/util/types';
 import { ReactNode } from 'react';
 
-export class Clear extends Command {
+export class Clear extends CliCmd {
+  get fileName(): string {
+    return `clear`;
+  }
+
   get usages() {
     return {
-      usage: `clear`,
+      usage: this.fileName,
       description: `Clears the terminal screen and command history`,
     };
   }

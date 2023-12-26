@@ -1,16 +1,20 @@
-import { CommandName, allCommandsByName } from '@/components/Cli';
-import { Command, RunProps } from '@/components/Cli/Command';
+import { allCommandsByName } from '@/components/Cli/cmd';
+import { CliCmd, RunProps } from '@/components/Cli/cmd/CliCmd';
 import { Fragment, ReactNode } from 'react';
 
-export class Help extends Command {
+export class Help extends CliCmd {
+  get fileName(): string {
+    return `help`;
+  }
+
   get usages() {
     return [
       {
-        usage: `help`,
+        usage: this.fileName,
         description: `Prints general help`,
       },
       {
-        usage: `help [command]`,
+        usage: `${this.fileName} [command]`,
         description: `Prints general help or help for a specific command`,
       },
     ];
@@ -26,7 +30,7 @@ export class Help extends Command {
     }
 
     if (values.length === 1) {
-      return allCommandsByName[values[0] as CommandName]?.fullHelpToHTML();
+      return allCommandsByName[values[0]]?.fullHelpToHTML();
     }
 
     return (

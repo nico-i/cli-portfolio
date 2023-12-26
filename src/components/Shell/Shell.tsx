@@ -1,4 +1,5 @@
-import { CommandName, runPrompt } from '@/components/Cli';
+import { runPrompt } from '@/components/Cli';
+import { Clear } from '@/components/Cli/cmd/clear';
 import { PromptPrefix } from '@/components/Shell/PromptPrefix';
 import { PromptHistoryContext } from '@/context/PromptHistoryContext/PromptHistoryContext';
 import { PromptHistoryEntry } from '@/context/PromptHistoryContext/types';
@@ -35,7 +36,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     }
     const cmdResTuple = processRunRequest(event.detail.prompt);
 
-    if (cmdResTuple.prompt !== CommandName.clear) {
+    if (cmdResTuple.prompt !== new Clear().fileName) {
       setHistory((history) => [...history, cmdResTuple]);
       updateCmdSearchParam(cmdResTuple.prompt);
     }

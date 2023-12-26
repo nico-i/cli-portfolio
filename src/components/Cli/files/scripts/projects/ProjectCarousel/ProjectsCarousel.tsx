@@ -1,5 +1,5 @@
-import { ProjectSlide } from '@/components/Cli/scripts/projects/ProjectSlide/ProjectSlide';
-import { Project } from '@/components/Cli/scripts/projects/types';
+import { ProjectSlide } from '@/components/Cli/files/scripts/projects/ProjectSlide/ProjectSlide';
+import { Project } from '@/components/Cli/files/scripts/projects/types';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 

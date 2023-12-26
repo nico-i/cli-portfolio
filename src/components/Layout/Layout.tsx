@@ -1,4 +1,7 @@
-import { TextFile } from '@/components/Cli';
+import { About } from '@/components/Cli/files/html/about';
+import { Contact } from '@/components/Cli/files/html/contact';
+import { Projects } from '@/components/Cli/files/scripts/projects';
+import { Skills } from '@/components/Cli/files/scripts/skills';
 import { MacroBar } from '@/components/MacroBar';
 import { PromptHistoryProvider } from '@/context/PromptHistoryContext/PromptHistoryContext';
 import { RunEvent } from '@/util/types';
@@ -13,16 +16,23 @@ export const Layout = ({ children }: Readonly<LayoutProps>) => {
     About: () => {
       window.dispatchEvent(
         RunEvent(
-          `clear && viu -w 256 selfie.jpg && cat ${TextFile.about} && top`,
+          `clear && viu -w 256 selfie.jpg && cat ${
+            new About().fileName
+          } && top`,
         ),
       );
     },
-    Projects: () => window.dispatchEvent(RunEvent(`clear && projects.sh`)),
+    Projects: () =>
+      window.dispatchEvent(RunEvent(`clear && ${new Projects().fileName}`)),
     Skills: () => {
-      window.dispatchEvent(RunEvent(`clear && skills.sh && top`));
+      window.dispatchEvent(
+        RunEvent(`clear && ${new Skills().fileName} && top`),
+      );
     },
     Contact: () => {
-      window.dispatchEvent(RunEvent(`clear && cat ${TextFile.contact} && top`));
+      window.dispatchEvent(
+        RunEvent(`clear && cat ${new Contact().fileName} && top`),
+      );
     },
     '?': () => {
       window.dispatchEvent(RunEvent(`help`));

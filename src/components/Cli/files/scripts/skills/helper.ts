@@ -1,4 +1,7 @@
-import { Skill, SkillsByLocale } from '@/components/Cli/scripts/skills/types';
+import {
+  Skill,
+  SkillsByLocale,
+} from '@/components/Cli/files/scripts/skills/types';
 
 export function parseSkills(data: any): SkillsByLocale {
   const skillsByLocale: SkillsByLocale = {};

@@ -2,7 +2,7 @@ import {
   Image,
   Project,
   ProjectsByLocale,
-} from '@/components/Cli/scripts/projects/types';
+} from '@/components/Cli/files/scripts/projects/types';
 
 export function parseProjects(data: any): ProjectsByLocale {
   const projectsByLocale: ProjectsByLocale = {};

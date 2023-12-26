@@ -1,10 +1,14 @@
-import { Command, RunProps } from '@/components/Cli/Command';
+import { CliCmd, RunProps } from '@/components/Cli/cmd/CliCmd';
 import { ReactNode } from 'react';
 
-export class Echo extends Command {
+export class Echo extends CliCmd {
+  get fileName(): string {
+    return `echo`;
+  }
+
   get usages() {
     return {
-      usage: `echo "[string]"`,
+      usage: `${this.fileName} "[string]"`,
       description: `Prints the provided string to the terminal`,
     };
   }

@@ -1,12 +1,36 @@
 import { AsciiProgressBar } from '@/components/AsciiProgressBar/AsciiProgressBar';
 import { TextButton } from '@/components/Button/TextButton/TextButton';
-import { parseSkills } from '@/components/Cli/scripts/skills/helper';
+import { CliFile } from '@/components/Cli/files/CliFile';
+import { parseSkills } from '@/components/Cli/files/scripts/skills/helper';
 import { TableCell, TableRow, TableTextCell } from '@/components/Table';
 import { graphql, useStaticQuery } from 'gatsby';
 import { Fragment, useState } from 'react';
 
-export const Skills = () => {
-  const data = useStaticQuery(getAllSkillsQuery);
+const SkillsRun = () => {
+  const data = useStaticQuery(graphql`
+    {
+      allStrapiSkill {
+        nodes {
+          locale
+          name
+          summary
+          proficiency
+          icon_link {
+            url
+          }
+          localizations {
+            data {
+              attributes {
+                locale
+                summary
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  `);
   const skillsByLocale = parseSkills(data);
   const skills = skillsByLocale.en.sort((a, b) => {
     if (a.proficiency > b.proficiency) return -1;
@@ -73,27 +97,10 @@ export const Skills = () => {
   );
 };
 
-const getAllSkillsQuery = graphql`
-  {
-    allStrapiSkill {
-      nodes {
-        locale
-        name
-        summary
-        proficiency
-        icon_link {
-          url
-        }
-        localizations {
-          data {
-            attributes {
-              locale
-              summary
-              name
-            }
-          }
-        }
-      }
-    }
+export class Skills extends CliFile {
+  get fileName(): string {
+    return `skills.sh`;
   }
-`;
+
+  public run = () => <SkillsRun />;
+}

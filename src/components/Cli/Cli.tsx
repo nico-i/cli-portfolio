@@ -1,44 +1,15 @@
-import { Command } from '@/components/Cli/Command';
-import { Cat, Clear, Echo, Help, Ls, Top, Viu } from '@/components/Cli/cmd';
-import { Projects } from '@/components/Cli/scripts/projects/Projects';
-import { Skills } from '@/components/Cli/scripts/skills';
+import { allCommandNames, allCommandsByName } from '@/components/Cli/cmd';
+import {
+  allScriptNames,
+  allScriptsByName,
+} from '@/components/Cli/files/scripts';
 import { ReactNode } from 'react';
-
-export enum CommandName {
-  cat = `cat`,
-  help = `help`,
-  echo = `echo`,
-  clear = `clear`,
-  ls = `ls`,
-  viu = `viu`,
-  top = `top`,
-}
-
-export enum ScriptName {
-  skills = `skills.sh`,
-  projects = `projects.sh`,
-}
-
-export const allScriptsByName: Record<ScriptName, ReactNode> = {
-  [ScriptName.skills]: <Skills />,
-  [ScriptName.projects]: <Projects />,
-};
-
-export const allCommandsByName: Record<CommandName, Command> = {
-  [CommandName.clear]: new Clear(),
-  [CommandName.cat]: new Cat(),
-  [CommandName.help]: new Help(),
-  [CommandName.echo]: new Echo(),
-  [CommandName.ls]: new Ls(),
-  [CommandName.viu]: new Viu(),
-  [CommandName.top]: new Top(),
-};
 
 export const runPrompt = (args: string[]): ReactNode => {
   const cmd: string = args[0];
 
-  if (Object.values(ScriptName).includes(cmd as ScriptName)) {
-    return allScriptsByName[cmd as ScriptName];
+  if (allScriptNames.includes(cmd)) {
+    return allScriptsByName[cmd].run();
   }
 
   const flags: Record<string, string> = {};
@@ -62,11 +33,9 @@ export const runPrompt = (args: string[]): ReactNode => {
         !Object.keys(flags).includes(arg),
     );
 
-  if (Object.values(CommandName).includes(cmd as CommandName) === false) {
+  if (!allCommandNames.includes(cmd)) {
     throw new Error(`Unknown command: ${cmd}`);
   }
-  return allCommandsByName[cmd as CommandName].run({
-    flags,
-    values,
-  });
+
+  return allCommandsByName[cmd].run({ flags, values });
 };

@@ -1,17 +1,21 @@
-import { Command } from '@/components/Cli/Command';
+import { CliCmd } from '@/components/Cli/cmd/CliCmd';
 import { Fragment, ReactNode } from 'react';
-import { getAllFiles } from '../../files';
+import { allFileNames } from '../../files';
 
-export class Ls extends Command {
+export class Ls extends CliCmd {
+  get fileName(): string {
+    return `ls`;
+  }
+
   get usages() {
     return {
-      usage: `ls`,
+      usage: this.fileName,
       description: `Lists accessible files`,
     };
   }
 
   public run = (): ReactNode =>
-    getAllFiles().map((fileName) => (
+    allFileNames.map((fileName) => (
       <Fragment key={fileName}>
         {fileName}
         <br />

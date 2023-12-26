@@ -1,10 +1,14 @@
-import { Command } from '@/components/Cli/Command';
+import { CliCmd } from '@/components/Cli/cmd/CliCmd';
 import { ReactNode } from 'react';
 
-export class Top extends Command {
+export class Top extends CliCmd {
+  get fileName(): string {
+    return `top`;
+  }
+
   get usages() {
     return {
-      usage: `top`,
+      usage: this.fileName,
       description: `Scrolls to the top of the terminal window`,
     };
   }

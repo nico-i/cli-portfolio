@@ -40,7 +40,6 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
       setHistory((history) => [...history, cmdResTuple]);
       updateCmdSearchParam(cmdResTuple.prompt);
     }
-    setCurrentPrompt(``);
     textAreaRef.current?.focus();
   };
 
@@ -127,6 +126,8 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         }
         event.preventDefault();
         window.dispatchEvent(RunEvent(currentPrompt));
+        setCurrentPrompt(``);
+        setTmpPrompt(``);
         break;
       }
       case `Tab`:
@@ -136,23 +137,25 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
       case `ArrowDown`:
         event.preventDefault();
         if (currentHistoryIndex === -1) break; // current prompt is not in history -> not currently navigating history
-        if (currentHistoryIndex === 0) {
+        if (currentHistoryIndex + 1 === history.length) {
           setCurrentPrompt(tmpPrompt);
           break;
         }
-        setCurrentPrompt(history[currentHistoryIndex - 1].prompt);
+        setCurrentPrompt(history[currentHistoryIndex + 1].prompt);
         break;
       case `ArrowUp`:
+        // Go back in history
+        // Example history [first, second, third]
+        console.log(currentHistoryIndex);
+        console.log(history);
         event.preventDefault();
-        if (currentHistoryIndex === history.length - 1) break;
+        if (currentHistoryIndex === 0) break;
         if (currentHistoryIndex === -1) {
           setCurrentPrompt(history[history.length - 1].prompt);
           break;
         }
-        setCurrentPrompt(
-          history.at(-(currentHistoryIndex + 1))?.prompt ||
-            `Internal Server Error`,
-        );
+        console.log(`setting tmp prompt`);
+        setCurrentPrompt(history[currentHistoryIndex - 1].prompt);
         break;
     }
   };

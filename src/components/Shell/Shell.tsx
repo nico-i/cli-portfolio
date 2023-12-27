@@ -176,20 +176,14 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         relative
         w-full`}
       onClickCapture={(e) => {
-        if (
-          e.target instanceof HTMLDivElement &&
-          e.target.parentNode &&
-          e.target.parentNode instanceof HTMLDivElement &&
-          e.target.parentNode.id === `history`
-        ) {
-          textAreaRef.current?.focus();
-        }
+        console.log(e.target);
+        textAreaRef.current?.focus();
       }}
     >
       {isProgramOpen ? (
         history[history.length - 1].response
       ) : (
-        <div id="history">
+        <>
           {history.length > 0 &&
             history.map((entryTuple, i) => (
               <div key={i} className="flex flex-col">
@@ -208,6 +202,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
             <textarea
               id="prompt"
               rows={1}
+              autoFocus
               ref={textAreaRef}
               onKeyDown={handleUserTextAreaKeyDown}
               onChange={handleUserTextValueChange}
@@ -219,7 +214,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
               overflow-hidden`}
             />
           </div>
-        </div>
+        </>
       )}
     </main>
   );
@@ -251,7 +246,9 @@ const processRunRequest = (userPrompt: string): PromptHistoryEntry => {
       res.response = (
         <>
           {res.response}
-          <div>{consecutiveCmdRes.response}</div>
+          {consecutiveCmdRes.response ? (
+            <div>{consecutiveCmdRes.response}</div>
+          ) : null}
         </>
       );
     }

@@ -173,8 +173,12 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         relative
         w-full`}
       onClickCapture={(e) => {
-        console.log(e.target);
-        textAreaRef.current?.focus();
+        if (
+          e.target instanceof HTMLDivElement &&
+          e.target.nodeName === `MAIN`
+        ) {
+          textAreaRef.current?.focus();
+        }
       }}
     >
       {isProgramOpen ? (

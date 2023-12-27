@@ -1,11 +1,11 @@
 import clsx from 'clsx';
 import { ReactNode } from 'react';
 
-type ButtonProps = {
+export interface ButtonProps {
   onClick: () => void;
   className?: string;
   children: ReactNode;
-};
+}
 
 export const Button = ({
   onClick,

@@ -1,10 +1,11 @@
-import { Button } from '@/components/Button';
+import { MacroProps } from '@/components/MacroBar/Macro/Macro';
+import { ReactElement } from 'react';
 
 type MacroBarProps = {
-  macros: Record<string, () => void>;
+  children: ReactElement<MacroProps>[];
 };
 
-export const MacroBar = ({ macros }: Readonly<MacroBarProps>) => {
+export const MacroBar = ({ children }: Readonly<MacroBarProps>) => {
   return (
     <nav
       className={`
@@ -20,11 +21,7 @@ export const MacroBar = ({ macros }: Readonly<MacroBarProps>) => {
         justify-center
         lg:justify-start`}
     >
-      {Object.entries(macros).map(([name, onClick]) => (
-        <Button key={name} onClick={onClick}>
-          {name}
-        </Button>
-      ))}
+      {children}
     </nav>
   );
 };

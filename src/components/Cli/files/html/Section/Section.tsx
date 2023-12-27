@@ -1,4 +1,4 @@
-import { parseSections } from '@/components/Cli/files/html/useSection/helper';
+import { parseSections } from '@/components/Cli/files/html/Section/helper';
 import { Link } from '@/components/Link';
 import { graphql, useStaticQuery } from 'gatsby';
 import ReactMarkdown from 'react-markdown';

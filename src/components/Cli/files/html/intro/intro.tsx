@@ -1,5 +1,5 @@
 import { CliFile } from '@/components/Cli/files/CliFile';
-import { Section } from '@/components/Cli/files/html/useSection/Section';
+import { Section } from '@/components/Cli/files/html/Section/Section';
 
 const name = `intro`;
 

@@ -16,6 +16,8 @@ export const Button = ({
     <button
       className={clsx(
         `text-current
+        lg:px-2.5
+        px-1.5
         relative
         after:content-['']
         after:absolute

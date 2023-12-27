@@ -3,7 +3,12 @@ import { Clear } from '@/components/Cli/cmd/clear';
 import { PromptPrefix } from '@/components/Shell/PromptPrefix';
 import { PromptHistoryContext } from '@/context/PromptHistoryContext/PromptHistoryContext';
 import { PromptHistoryEntry } from '@/context/PromptHistoryContext/types';
-import { CustomEvents, RunEvent, SearchParams } from '@/util/types';
+import {
+  CustomEvents,
+  RunEvent,
+  SearchParams,
+  StopStandaloneEvent,
+} from '@/util/types';
 import { useLocation } from '@reach/router';
 import {
   ChangeEventHandler,
@@ -30,7 +35,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   const location = useLocation();
 
   const handleRunEvent = (event: any) => {
-    setIsProgramOpen(false);
+    window.dispatchEvent(StopStandaloneEvent);
     if (event.detail.prompt === undefined) {
       throw new Error(`No prompt provided in run event!`);
     }

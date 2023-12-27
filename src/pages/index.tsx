@@ -4,7 +4,10 @@ import { useEffect } from 'react';
 
 export default function Index() {
   useEffect(() => {
-    window.dispatchEvent(RunEvent(`clear && cat intro.html && top`));
+    const cmdParam = new URLSearchParams(window.location.search).get(`cmd`);
+    if (!cmdParam) {
+      window.dispatchEvent(RunEvent(`clear && cat intro.html && top`));
+    }
   }, []);
   return <Shell username="guest" domain="localhost" />;
 }

@@ -13,6 +13,7 @@ import { useLocation } from '@reach/router';
 import {
   ChangeEventHandler,
   KeyboardEventHandler,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -34,37 +35,46 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
 
   const location = useLocation();
 
-  const handleRunEvent = (event: any) => {
-    window.dispatchEvent(StopStandaloneEvent);
-    if (event.detail.prompt === undefined) {
-      throw new Error(`No prompt provided in run event!`);
-    }
-    const cmdResTuple = processRunRequest(event.detail.prompt);
+  const handleRunEvent = useCallback(
+    (event: any) => {
+      if (isProgramOpen) {
+        window.dispatchEvent(StopStandaloneEvent);
+      }
+      if (event.detail.prompt === undefined) {
+        throw new Error(`No prompt provided in run event!`);
+      }
+      const cmdResTuple = processRunRequest(event.detail.prompt);
 
-    if (cmdResTuple.prompt !== new Clear().fileName) {
-      setHistory((history) => [...history, cmdResTuple]);
-      updateCmdSearchParam(cmdResTuple.prompt);
-    }
-    textAreaRef.current?.focus();
-  };
+      if (cmdResTuple.prompt !== new Clear().fileName) {
+        setHistory((history) => [...history, cmdResTuple]);
+        updateCmdSearchParam(cmdResTuple.prompt);
+      }
+      textAreaRef.current?.focus();
+    },
+    [isProgramOpen, setHistory],
+  );
 
-  const handleClearEvent = () => {
+  const handleClearEvent = useCallback(() => {
     updateCmdSearchParam();
     setHistory([]);
-  };
+  }, [setHistory]);
 
-  const handleStartStandaloneEvent = () => {
+  const handleStartStandaloneEvent = useCallback(() => {
     setIsProgramOpen(true);
-  };
+  }, []);
 
-  const handleStopStandaloneEvent = () => {
+  useEffect(() => {
+    console.log(`isProgramOpen`, isProgramOpen);
+  }, [isProgramOpen]);
+
+  const handleStopStandaloneEvent = useCallback(() => {
     setIsProgramOpen(false);
     setHistory((history) => {
       const newHistory = [...history];
       newHistory[newHistory.length - 1].response = null;
       return newHistory;
     });
-  };
+  }, [setHistory]);
 
   useEffect(() => {
     textAreaRef.current?.scrollIntoView();
@@ -100,8 +110,13 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         handleStopStandaloneEvent,
       );
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    handleClearEvent,
+    handleRunEvent,
+    handleStartStandaloneEvent,
+    handleStopStandaloneEvent,
+    location.search,
+  ]);
 
   const handleUserTextValueChange: ChangeEventHandler<HTMLTextAreaElement> = (
     e,

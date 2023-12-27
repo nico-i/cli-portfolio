@@ -17,6 +17,8 @@ export const MacroBar = ({ children }: Readonly<MacroBarProps>) => {
         lg:top-0
         bottom-0
         invert
+        lg:gap-5
+        gap-3
         flex
         justify-center
         lg:justify-start`}

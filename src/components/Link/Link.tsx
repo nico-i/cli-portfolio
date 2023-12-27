@@ -2,17 +2,17 @@ import clsx from 'clsx';
 import { ReactNode } from 'react';
 import { FaExternalLinkAlt, FaFileDownload } from 'react-icons/fa';
 
-interface LinkButtonProps {
-  href: string;
+interface LinkProps {
+  href?: string;
   download?: boolean;
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 export const Link = ({
   href,
   children,
   download = false,
-}: Readonly<LinkButtonProps>) => {
+}: Readonly<LinkProps>) => {
   const commonIconClasses = `
   ml-1
   w-2.5

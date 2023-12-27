@@ -15,8 +15,7 @@ export const Button = ({
   return (
     <button
       className={clsx(
-        `px-2.5
-        text-current
+        `text-current
         relative
         after:content-['']
         after:absolute

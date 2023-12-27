@@ -17,6 +17,10 @@ export const Layout = ({ children }: Readonly<LayoutProps>) => {
     <PromptHistoryProvider>
       <MacroBar>
         <Macro
+          name="Home"
+          command={`clear && cat ${new Intro().fileName} && top`}
+        />
+        <Macro
           name="About"
           command={`clear && viu -w 256 selfie.jpg && cat ${
             new About().fileName
@@ -33,11 +37,6 @@ export const Layout = ({ children }: Readonly<LayoutProps>) => {
         <Macro
           name="Contact"
           command={`clear && cat ${new Contact().fileName} && top`}
-        />
-        <Macro
-          name="Intro"
-          desktopOnly
-          command={`clear && cat ${new Intro().fileName} && top`}
         />
         <Macro name="?" command={`help`} />
       </MacroBar>

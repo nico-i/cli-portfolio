@@ -8,7 +8,7 @@ const path = require(`path`);
 const strapiConfig = {
   apiURL: process.env.STRAPI_URL,
   accessToken: process.env.STRAPI_TOKEN,
-  collectionTypes: [`project`, `contact-link`, `skill`, `timeline-item`],
+  collectionTypes: [`project`, `contact-link`, `skill`, `section`],
   singleTypes: [],
   i18n: {
     locale: `all`,

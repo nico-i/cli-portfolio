@@ -121,9 +121,6 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         setTmpPrompt(currentPrompt.slice(0, -1));
         break;
       case `Enter`: {
-        if (event.shiftKey) {
-          break;
-        }
         event.preventDefault();
         window.dispatchEvent(RunEvent(currentPrompt));
         setCurrentPrompt(``);
@@ -246,9 +243,7 @@ const processRunRequest = (userPrompt: string): PromptHistoryEntry => {
       res.response = (
         <>
           {res.response}
-          {consecutiveCmdRes.response ? (
-            <div>{consecutiveCmdRes.response}</div>
-          ) : null}
+          {consecutiveCmdRes.response}
         </>
       );
     }

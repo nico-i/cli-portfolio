@@ -23,7 +23,7 @@ export const Link = ({
     <a
       href={href}
       target="_blank"
-      rel="noopener noreferrer"
+      rel="noreferrer"
       className={`
         inline-flex
         group

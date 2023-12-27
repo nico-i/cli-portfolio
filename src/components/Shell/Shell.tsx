@@ -176,7 +176,6 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         relative
         w-full`}
       onClickCapture={(e) => {
-        e.preventDefault();
         if (
           e.target instanceof HTMLDivElement &&
           e.target.parentNode &&

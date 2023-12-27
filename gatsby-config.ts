@@ -8,7 +8,32 @@ const path = require(`path`);
 const strapiConfig = {
   apiURL: process.env.STRAPI_URL,
   accessToken: process.env.STRAPI_TOKEN,
-  collectionTypes: [`project`, `contact-link`, `skill`, `section`],
+  collectionTypes: [
+    {
+      singularName: `project`,
+      queryParams: {
+        locale: `all`,
+      },
+    },
+    {
+      singularName: `contact-link`,
+      queryParams: {
+        locale: `all`,
+      },
+    },
+    {
+      singularName: `skill`,
+      queryParams: {
+        locale: `all`,
+      },
+    },
+    {
+      singularName: `section`,
+      queryParams: {
+        locale: `all`,
+      },
+    },
+  ],
   singleTypes: [],
   i18n: {
     locale: `all`,
@@ -39,6 +64,12 @@ const config: GatsbyConfig = {
     {
       resolve: `gatsby-source-strapi`,
       options: strapiConfig,
+    },
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [],
+      },
     },
   ],
   jsxRuntime: `automatic`,

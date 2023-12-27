@@ -78,6 +78,9 @@ jobs:
       - name: Build with Gatsby
         env:
           PREFIX_PATHS: 'true'
+          STRAPI_TOKEN: ${{ secrets.STRAPI_TOKEN }}
+          STRAPI_URL: ${{ secrets.STRAPI_URL }}
+          APP_URL: ${{ vars.APP_URL }}
         run: ${{ steps.detect-package-manager.outputs.manager }} run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

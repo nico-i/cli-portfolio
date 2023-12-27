@@ -252,8 +252,7 @@ const processRunRequest = (userPrompt: string): PromptHistoryEntry => {
       res.response = (
         <>
           {res.response}
-          <br />
-          {consecutiveCmdRes.response}
+          <div>{consecutiveCmdRes.response}</div>
         </>
       );
     }

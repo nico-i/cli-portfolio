@@ -1,11 +1,10 @@
-export interface Skill {
-  locale: string;
+import { StrapiCollection } from '@/util/types';
+
+export interface Skill extends StrapiCollection {
   name: string;
   proficiency: number;
-  description: string;
+  summary: string;
   url: string;
 }
 
-export interface SkillsByLocale {
-  [locale: string]: Skill[];
-}
+export const SkillCollectionName = `Skill`;

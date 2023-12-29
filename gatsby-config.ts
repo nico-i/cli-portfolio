@@ -18,7 +18,7 @@ const strapiConfig = {
     {
       singularName: `contact-link`,
       queryParams: {
-        locale: `all`,
+        locale: `en`,
       },
     },
     {

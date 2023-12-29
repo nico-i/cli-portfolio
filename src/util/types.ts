@@ -24,3 +24,8 @@ export enum SearchParams {
   cmd = `cmd`,
   clear = `clear`,
 }
+
+export interface StrapiCollection {
+  id: string;
+  locale: string;
+}

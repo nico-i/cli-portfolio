@@ -1,8 +1,12 @@
 import { AsciiProgressBar } from '@/components/AsciiProgressBar/AsciiProgressBar';
 import { TextButton } from '@/components/Button/TextButton/TextButton';
 import { CliFile } from '@/components/Cli/files/CliFile';
-import { parseSkills } from '@/components/Cli/files/scripts/skills/helper';
+import {
+  Skill,
+  SkillCollectionName,
+} from '@/components/Cli/files/scripts/skills/types';
 import { TableCell, TableRow, TableTextCell } from '@/components/Table';
+import { parseStapiCollectionToCollectionByLocale } from '@/util/helper';
 import { graphql, useStaticQuery } from 'gatsby';
 import { Fragment, useState } from 'react';
 
@@ -11,6 +15,7 @@ const SkillsRun = () => {
     {
       allStrapiSkill {
         nodes {
+          id
           locale
           name
           summary
@@ -18,21 +23,24 @@ const SkillsRun = () => {
           icon_link {
             url
           }
-          localizations {
-            data {
-              attributes {
-                locale
-                summary
-                name
-              }
-            }
-          }
         }
       }
     }
   `);
-  const skillsByLocale = parseSkills(data);
-  const skills = skillsByLocale.en.sort((a, b) => {
+  const skillsByLocale = parseStapiCollectionToCollectionByLocale<Skill>(
+    data,
+    SkillCollectionName,
+    (node: any) => ({
+      id: node.id,
+      locale: node.locale,
+      name: node.name,
+      summary: node.summary,
+      proficiency: node.proficiency,
+      url: node?.icon_link?.url,
+    }),
+  );
+
+  const skills = skillsByLocale.en.toSorted((a, b) => {
     if (a.proficiency > b.proficiency) return -1;
     if (a.proficiency < b.proficiency) return 1;
     return 0;
@@ -53,7 +61,7 @@ const SkillsRun = () => {
       <tbody>
         {skills.map((skill, index) => {
           return (
-            <Fragment key={skill.name}>
+            <Fragment key={skill.id}>
               <TableRow
                 className={rowClassName}
                 isLast={
@@ -86,7 +94,7 @@ const SkillsRun = () => {
                     currentOpenedSkill === skill.name
                   }
                 >
-                  <TableTextCell>{skill.description}</TableTextCell>
+                  <TableTextCell>{skill.summary}</TableTextCell>
                 </TableRow>
               ) : null}
             </Fragment>

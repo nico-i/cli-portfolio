@@ -1,18 +1,20 @@
 import { CliFile } from '@/components/Cli/files/CliFile';
 import { ProjectsCarousel } from '@/components/Cli/files/scripts/projects/ProjectCarousel';
-import { parseProjects } from '@/components/Cli/files/scripts/projects/helper';
+import {
+  Image,
+  Project,
+  ProjectCollectionName,
+} from '@/components/Cli/files/scripts/projects/types';
+import { parseStapiCollectionToCollectionByLocale } from '@/util/helper';
 import { StartStandaloneEvent, StopStandaloneEvent } from '@/util/types';
 import { graphql, useStaticQuery } from 'gatsby';
-import { useEffect } from 'react';
 
 const ProjectsRun = () => {
-  useEffect(() => {
-    window.dispatchEvent(StartStandaloneEvent);
-  }, []);
   const data = useStaticQuery(graphql`
     {
       allStrapiProject {
         nodes {
+          id
           locale
           title
           headerImage {
@@ -24,15 +26,6 @@ const ProjectsRun = () => {
             }
           }
           tldr
-          seoTitle
-          seoImage {
-            alternativeText
-            localFile {
-              childImageSharp {
-                gatsbyImageData(layout: CONSTRAINED, placeholder: BLURRED)
-              }
-            }
-          }
           summary {
             data {
               summary
@@ -43,22 +36,32 @@ const ProjectsRun = () => {
             url
             svgHtml
           }
-          localizations {
-            data {
-              attributes {
-                locale
-                title
-                tldr
-                seoTitle
-                summary
-              }
-            }
-          }
         }
       }
     }
   `);
-  const projectsByLocale = parseProjects(data);
+  const projectsByLocale = parseStapiCollectionToCollectionByLocale<Project>(
+    data,
+    ProjectCollectionName,
+    (node: any) => {
+      const { alternativeText, localFile } = node.headerImage;
+      const { summary } = node.summary.data;
+      const headerImage: Image = {
+        alt: alternativeText,
+        imageData: localFile.childImageSharp.gatsbyImageData,
+      };
+      return {
+        id: node.id,
+        locale: node.locale,
+        title: node.title,
+        headerImage,
+        tldr: node.tldr,
+        summary,
+        iconLinks: node.icon_links,
+      };
+    },
+  );
+
   return (
     <ProjectsCarousel
       onClose={() => window.dispatchEvent(StopStandaloneEvent)}
@@ -73,6 +76,9 @@ export class Projects extends CliFile {
   }
 
   public run() {
+    if (typeof window !== `undefined`) {
+      window.dispatchEvent(StartStandaloneEvent);
+    }
     return <ProjectsRun />;
   }
 }

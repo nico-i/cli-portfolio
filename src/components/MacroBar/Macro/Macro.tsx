@@ -1,5 +1,5 @@
 import { Button } from '@/components/Button';
-import { RunEvent } from '@/util/types';
+import { RunEvent, StopStandaloneEvent } from '@/util/types';
 import clsx from 'clsx';
 import { ReactNode } from 'react';
 
@@ -18,6 +18,7 @@ export const Macro = ({
     <Button
       className={clsx(desktopOnly && `hidden lg:block`)}
       onClick={() => {
+        window.dispatchEvent(StopStandaloneEvent);
         window.dispatchEvent(RunEvent(command));
       }}
     >

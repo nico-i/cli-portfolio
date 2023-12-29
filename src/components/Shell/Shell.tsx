@@ -3,12 +3,7 @@ import { Clear } from '@/components/Cli/cmd/clear';
 import { PromptPrefix } from '@/components/Shell/PromptPrefix';
 import { PromptHistoryContext } from '@/context/PromptHistoryContext/PromptHistoryContext';
 import { PromptHistoryEntry } from '@/context/PromptHistoryContext/types';
-import {
-  CustomEvents,
-  RunEvent,
-  SearchParams,
-  StopStandaloneEvent,
-} from '@/util/types';
+import { CustomEvents, RunEvent, SearchParams } from '@/util/types';
 import { useLocation } from '@reach/router';
 import {
   ChangeEventHandler,
@@ -31,15 +26,12 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   const { history, setHistory } = useContext(PromptHistoryContext);
   const [currentPrompt, setCurrentPrompt] = useState<string>(``);
   const [tmpPrompt, setTmpPrompt] = useState<string>(``); // used for arrow up/down
-  const [isProgramOpen, setIsProgramOpen] = useState(false);
+  const [isStandaloneOpen, setIsStandaloneOpen] = useState(false);
 
   const location = useLocation();
 
   const handleRunEvent = useCallback(
     (event: any) => {
-      if (isProgramOpen) {
-        window.dispatchEvent(StopStandaloneEvent);
-      }
       if (event.detail.prompt === undefined) {
         throw new Error(`No prompt provided in run event!`);
       }
@@ -51,7 +43,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
       }
       textAreaRef.current?.focus();
     },
-    [isProgramOpen, setHistory],
+    [setHistory],
   );
 
   const handleClearEvent = useCallback(() => {
@@ -60,21 +52,17 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   }, [setHistory]);
 
   const handleStartStandaloneEvent = useCallback(() => {
-    setIsProgramOpen(true);
-  }, []);
-
-  useEffect(() => {
-    console.log(`isProgramOpen`, isProgramOpen);
-  }, [isProgramOpen]);
+    setIsStandaloneOpen(true);
+  }, [setIsStandaloneOpen]);
 
   const handleStopStandaloneEvent = useCallback(() => {
-    setIsProgramOpen(false);
+    setIsStandaloneOpen(false);
     setHistory((history) => {
       const newHistory = [...history];
       newHistory[newHistory.length - 1].response = null;
       return newHistory;
     });
-  }, [setHistory]);
+  }, [setHistory, setIsStandaloneOpen]);
 
   useEffect(() => {
     textAreaRef.current?.scrollIntoView();
@@ -163,15 +151,12 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
       case `ArrowUp`:
         // Go back in history
         // Example history [first, second, third]
-        console.log(currentHistoryIndex);
-        console.log(history);
         event.preventDefault();
         if (currentHistoryIndex === 0) break;
         if (currentHistoryIndex === -1) {
           setCurrentPrompt(history[history.length - 1].prompt);
           break;
         }
-        console.log(`setting tmp prompt`);
         setCurrentPrompt(history[currentHistoryIndex - 1].prompt);
         break;
     }
@@ -201,7 +186,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         }
       }}
     >
-      {isProgramOpen ? (
+      {isStandaloneOpen ? (
         history[history.length - 1].response
       ) : (
         <>

@@ -1,4 +1,5 @@
 import { CliFile } from '@/components/Cli/files/CliFile';
+import { ContactLink } from '@/components/Cli/files/html/contact/types';
 import { Link } from '@/components/Link';
 import { graphql, useStaticQuery } from 'gatsby';
 
@@ -8,6 +9,7 @@ const ContactRun = () => {
       allStrapiContactLink {
         nodes {
           icon_link {
+            id
             text
             url
             svgHtml
@@ -23,10 +25,15 @@ const ContactRun = () => {
     w-5
     h-5
     `;
+
+  const iconLinks: ContactLink[] = data.allStrapiContactLink.nodes.map(
+    (node: any) => node.icon_link,
+  );
+
   return (
     <div className="flex flex-col justify-start gap-1">
-      {data.allStrapiContactLink.nodes.map((node: any, i: number) => {
-        const { svgHtml, text, url } = node.icon_link;
+      {iconLinks.map((iconLink, i: number) => {
+        const { svgHtml, text, url } = iconLink;
         return (
           <div key={`${text}-${i}`} className="flex items-center">
             <span

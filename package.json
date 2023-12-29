@@ -6,7 +6,7 @@
   "author": "Nico Ismaili",
   "license": "MIT",
   "scripts": {
-    "start": "gatsby develop",
+    "start": "npm run clean && gatsby develop",
     "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",

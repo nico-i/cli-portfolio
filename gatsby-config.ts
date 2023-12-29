@@ -46,6 +46,10 @@ const strapiConfig = {
 };
 
 const config: GatsbyConfig = {
+  flags: {
+    DEV_SSR: process.env.NODE_ENV === `development`,
+    FAST_DEV: process.env.NODE_ENV === `development`,
+  },
   siteMetadata: {
     title: `Nico Ismaili`,
   },

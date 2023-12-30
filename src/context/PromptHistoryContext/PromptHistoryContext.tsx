@@ -4,6 +4,7 @@ import {
   Dispatch,
   ReactNode,
   SetStateAction,
+  useEffect,
   useState,
 } from 'react';
 
@@ -15,12 +16,23 @@ export const PromptHistoryContext = createContext<{
   setHistory: () => [],
 });
 
+interface PromptHistoryProviderProps {
+  children: ReactNode;
+  historyDepth?: number;
+}
+
 export const PromptHistoryProvider = ({
   children,
-}: {
-  children: ReactNode;
-}) => {
+  historyDepth = 25,
+}: Readonly<PromptHistoryProviderProps>) => {
   const [history, setHistory] = useState<PromptHistoryEntry[]>([]);
+
+  useEffect(() => {
+    if (history.length > historyDepth) {
+      setHistory((history) => history.slice(1));
+    }
+  }, [history, historyDepth]);
+
   return (
     <PromptHistoryContext.Provider value={{ history, setHistory }}>
       {children}

@@ -3,7 +3,6 @@ import { Clear } from '@/components/Cli/cmd/clear';
 import { PromptPrefix } from '@/components/Shell/PromptPrefix';
 import { PromptHistoryContext } from '@/context/PromptHistoryContext/PromptHistoryContext';
 import { PromptHistoryEntry } from '@/context/PromptHistoryContext/types';
-import { useTouchDetect } from '@/hooks';
 import { CustomEvents, RunEvent, SearchParams } from '@/util/types';
 import { useLocation } from '@reach/router';
 import {
@@ -28,32 +27,43 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   const [currentPrompt, setCurrentPrompt] = useState<string>(``);
   const [tmpPrompt, setTmpPrompt] = useState<string>(``); // used for arrow up/down
   const [isStandaloneOpen, setIsStandaloneOpen] = useState(false);
-  const isTouch = useTouchDetect();
+  const [currentDescHistoryIndex, setCurrentDescHistoryIndex] = useState(-1); // -1 means current prompt is not in history
 
   const location = useLocation();
+
+  const ascHistory = [...history].sort((a, b) => a.timestamp - b.timestamp);
+  const descHistory = [...history].sort((a, b) => b.timestamp - a.timestamp);
 
   const handleRunEvent = useCallback(
     (event: any) => {
       if (event.detail.prompt === undefined) {
         throw new Error(`No prompt provided in run event!`);
       }
-      const cmdResTuple = processRunRequest(event.detail.prompt);
+      const cmdResTuple: PromptHistoryEntry = processRunRequest(
+        event.detail.prompt,
+      );
       setIsStandaloneOpen(cmdResTuple.isStandalone);
 
       if (cmdResTuple.prompt !== new Clear().fileName) {
         setHistory((history) => [...history, cmdResTuple]);
         updateCmdSearchParam(cmdResTuple.prompt);
       }
-      if (!isTouch) {
+      if (!(`ontouchstart` in window)) {
         textAreaRef.current?.focus();
       }
     },
-    [isTouch, setHistory],
+    [setHistory],
   );
 
   const handleClearEvent = useCallback(() => {
     updateCmdSearchParam();
-    setHistory([]);
+    setHistory((history) => {
+      const newHistory: PromptHistoryEntry[] = history.map((entry) => ({
+        ...entry,
+        show: false,
+      }));
+      return newHistory;
+    });
   }, [setHistory]);
 
   const handleStopStandaloneEvent = useCallback(() => {
@@ -107,11 +117,33 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     event,
   ) => {
     if (event.key.length === 1) {
+      setCurrentDescHistoryIndex(-1); // only reset history index if user is typing
       setTmpPrompt(currentPrompt + event.key);
     }
-    const currentHistoryIndex = history.findIndex(
-      (entry) => entry.prompt === currentPrompt,
-    );
+
+    if (event.key === `ArrowDown` || event.key === `ArrowUp`) {
+      event.preventDefault();
+      if (event.key === `ArrowUp`) {
+        // Go back in history
+        if (currentDescHistoryIndex === descHistory.length - 1) return;
+        setCurrentDescHistoryIndex((currentDescHistoryIndex) => {
+          const newIndex = currentDescHistoryIndex + 1;
+          setCurrentPrompt(descHistory[newIndex].prompt);
+          return newIndex;
+        });
+      } else {
+        // Go forward in history
+        if (currentDescHistoryIndex === -1) return;
+        setCurrentDescHistoryIndex((currentDescHistoryIndex) => {
+          const newIndex = currentDescHistoryIndex - 1;
+          setCurrentPrompt(
+            newIndex === -1 ? tmpPrompt : descHistory[newIndex].prompt,
+          );
+          return newIndex;
+        });
+      }
+      return;
+    }
 
     switch (event.key) {
       case `Backspace`:
@@ -131,26 +163,6 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
       case `Tab`:
         event.preventDefault();
         // TODO: Add tab completion
-        break;
-      case `ArrowDown`:
-        event.preventDefault();
-        if (currentHistoryIndex === -1) break; // current prompt is not in history -> not currently navigating history
-        if (currentHistoryIndex + 1 === history.length) {
-          setCurrentPrompt(tmpPrompt);
-          break;
-        }
-        setCurrentPrompt(history[currentHistoryIndex + 1].prompt);
-        break;
-      case `ArrowUp`:
-        // Go back in history
-        // Example history [first, second, third]
-        event.preventDefault();
-        if (currentHistoryIndex === 0) break;
-        if (currentHistoryIndex === -1) {
-          setCurrentPrompt(history[history.length - 1].prompt);
-          break;
-        }
-        setCurrentPrompt(history[currentHistoryIndex - 1].prompt);
         break;
     }
   };
@@ -174,7 +186,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         if (
           e.target instanceof HTMLDivElement &&
           e.target.nodeName === `MAIN` &&
-          !isTouch
+          !(`ontouchstart` in window)
         ) {
           textAreaRef.current?.focus();
         }
@@ -185,15 +197,22 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
       ) : (
         <>
           {history.length > 0 &&
-            history.map((entryTuple, i) => (
-              <div key={i} className="flex flex-col">
-                <span>
-                  <PromptPrefix username={username} domain={domain} />
-                  {entryTuple.prompt}
-                </span>
-                {entryTuple.response !== `` ? entryTuple.response : <>&nbsp;</>}
-              </div>
-            ))}
+            ascHistory.map((entryTuple, i) => {
+              if (!entryTuple.show) return null;
+              return (
+                <div key={i} className="flex flex-col">
+                  <span>
+                    <PromptPrefix username={username} domain={domain} />
+                    {entryTuple.prompt}
+                  </span>
+                  {entryTuple.response !== `` ? (
+                    entryTuple.response
+                  ) : (
+                    <>&nbsp;</>
+                  )}
+                </div>
+              );
+            })}
           <div id="active-prompt" className="w-full flex relative">
             <PromptPrefix username={username} domain={domain} />
             <label className="sr-only" htmlFor="prompt">
@@ -202,7 +221,6 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
             <textarea
               id="prompt"
               rows={1}
-              autoFocus={!isTouch}
               ref={textAreaRef}
               onKeyDown={handleUserTextAreaKeyDown}
               onChange={handleUserTextValueChange}
@@ -235,9 +253,11 @@ const updateCmdSearchParam = (cmd?: string) => {
 
 const processRunRequest = (userPrompt: string): PromptHistoryEntry => {
   const res: PromptHistoryEntry = {
+    timestamp: new Date().getTime(),
     prompt: userPrompt,
     response: null,
     isStandalone: false,
+    show: true,
   };
   const consecutivePrompts = userPrompt.split(`&&`).map((cmd) => cmd.trim());
   // recursively process commands

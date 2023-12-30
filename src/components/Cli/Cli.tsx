@@ -5,11 +5,17 @@ import {
 } from '@/components/Cli/files/scripts';
 import { ReactNode } from 'react';
 
-export const runPrompt = (args: string[]): ReactNode => {
+export const runPrompt = (
+  args: string[],
+): { result: ReactNode; isStandalone: boolean } => {
   const cmd: string = args[0];
 
   if (allScriptNames.includes(cmd)) {
-    return allScriptsByName[cmd].run();
+    const script = allScriptsByName[cmd];
+    return {
+      result: script.run(),
+      isStandalone: script.isStandalone,
+    };
   }
 
   const flags: Record<string, string> = {};
@@ -37,5 +43,9 @@ export const runPrompt = (args: string[]): ReactNode => {
     throw new Error(`Unknown command: ${cmd}`);
   }
 
-  return allCommandsByName[cmd].run({ flags, values });
+  const command = allCommandsByName[cmd];
+  return {
+    result: command.run({ flags, values }),
+    isStandalone: command.isStandalone,
+  };
 };

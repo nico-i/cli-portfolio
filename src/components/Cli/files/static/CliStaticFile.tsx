@@ -7,7 +7,5 @@ interface CliStaticFileResultProps {
 export const CliStaticFileResult = ({
   fileName,
 }: Readonly<CliStaticFileResultProps>) => (
-  <Link href={`/${fileName}`} download>
-    {fileName}
-  </Link>
+  <Link href={`/${fileName}`}>{fileName}</Link>
 );

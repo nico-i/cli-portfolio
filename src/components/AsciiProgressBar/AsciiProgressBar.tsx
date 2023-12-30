@@ -40,7 +40,7 @@ export const AsciiProgressBar = ({
         const charWidth = getCharWidth();
         const widthInChars =
           Math.floor(width / charWidth) -
-          2 - // account for left and right end caps
+          3 - // account for left and right end caps (+1 for percentage padding on the right)
           (showPercentage ? 4 : 0); // account for percentage
         setWidthInChars(widthInChars);
         const newProgressCharTargetCount = Math.floor(

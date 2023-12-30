@@ -3,7 +3,7 @@ import {
   SectionCollectionName,
 } from '@/components/Cli/files/html/Section/types';
 import { Link } from '@/components/Link';
-import { parseStapiCollectionToCollectionByLocale } from '@/util/helper';
+import { parseStrapiCollectionToCollectionByLocale } from '@/util/helper';
 import { graphql, useStaticQuery } from 'gatsby';
 import { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -30,7 +30,7 @@ export const Section = ({ name, locale }: Readonly<SectionProps>) => {
     }
   `);
 
-  const sectionsByLocale = parseStapiCollectionToCollectionByLocale<ISection>(
+  const sectionsByLocale = parseStrapiCollectionToCollectionByLocale<ISection>(
     data,
     SectionCollectionName,
     (node: any) => ({

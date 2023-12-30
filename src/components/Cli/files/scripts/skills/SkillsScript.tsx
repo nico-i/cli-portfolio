@@ -5,8 +5,13 @@ import {
   Skill,
   SkillCollectionName,
 } from '@/components/Cli/files/scripts/skills/types';
-import { TableCell, TableRow, TableTextCell } from '@/components/Table';
-import { parseStapiCollectionToCollectionByLocale } from '@/util/helper';
+import {
+  TableCell,
+  TableRow,
+  TableTextCell,
+  TableTextRow,
+} from '@/components/Table';
+import { parseStrapiCollectionToCollectionByLocale } from '@/util/helper';
 import { graphql, useStaticQuery } from 'gatsby';
 import { Fragment, useState } from 'react';
 
@@ -27,7 +32,7 @@ const SkillsRun = () => {
       }
     }
   `);
-  const skillsByLocale = parseStapiCollectionToCollectionByLocale<Skill>(
+  const skillsByLocale = parseStrapiCollectionToCollectionByLocale<Skill>(
     data,
     SkillCollectionName,
     (node: any) => ({
@@ -53,22 +58,21 @@ const SkillsRun = () => {
   return (
     <table className="w-full md:w-2/3 lg:w-2/5">
       <thead>
-        <TableRow isHeader={true} className={rowClassName}>
-          <TableCell>Skill</TableCell>
-          <TableCell>Proficiency</TableCell>
+        <TableRow className={rowClassName}>
+          <TableCell isHeader>Skill</TableCell>
+          <TableCell isHeader isLastChild>
+            Proficiency
+          </TableCell>
         </TableRow>
       </thead>
       <tbody>
         {skills.map((skill, index) => {
+          const isLastRow =
+            index === skillsCount - 1 && currentOpenedSkill !== skill.name;
           return (
             <Fragment key={skill.id}>
-              <TableRow
-                className={rowClassName}
-                isLast={
-                  index === skillsCount - 1 && currentOpenedSkill !== skill.name
-                }
-              >
-                <TableCell>
+              <TableRow className={rowClassName}>
+                <TableCell isLastRow={isLastRow}>
                   <TextButton
                     onClick={() =>
                       setCurrentOpenedSkill((prev) =>
@@ -79,7 +83,7 @@ const SkillsRun = () => {
                     {skill.name}
                   </TextButton>
                 </TableCell>
-                <TableCell>
+                <TableCell isLastRow={isLastRow} isLastChild>
                   <AsciiProgressBar
                     percentage={skill.proficiency}
                     duration={200}
@@ -87,15 +91,16 @@ const SkillsRun = () => {
                 </TableCell>
               </TableRow>
               {currentOpenedSkill && currentOpenedSkill === skill.name ? (
-                <TableRow
-                  className={rowClassName}
-                  isLast={
-                    index === skillsCount - 1 &&
-                    currentOpenedSkill === skill.name
-                  }
-                >
-                  <TableTextCell>{skill.summary}</TableTextCell>
-                </TableRow>
+                <TableTextRow className={rowClassName}>
+                  <TableTextCell
+                    isLastRow={
+                      index === skillsCount - 1 &&
+                      currentOpenedSkill === skill.name
+                    }
+                  >
+                    {skill.summary}
+                  </TableTextCell>
+                </TableTextRow>
               ) : null}
             </Fragment>
           );

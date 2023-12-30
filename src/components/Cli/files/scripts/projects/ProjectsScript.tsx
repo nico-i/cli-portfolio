@@ -5,7 +5,7 @@ import {
   Project,
   ProjectCollectionName,
 } from '@/components/Cli/files/scripts/projects/types';
-import { parseStapiCollectionToCollectionByLocale } from '@/util/helper';
+import { parseStrapiCollectionToCollectionByLocale } from '@/util/helper';
 import { StartStandaloneEvent, StopStandaloneEvent } from '@/util/types';
 import { graphql, useStaticQuery } from 'gatsby';
 
@@ -40,7 +40,7 @@ const ProjectsRun = () => {
       }
     }
   `);
-  const projectsByLocale = parseStapiCollectionToCollectionByLocale<Project>(
+  const projectsByLocale = parseStrapiCollectionToCollectionByLocale<Project>(
     data,
     ProjectCollectionName,
     (node: any) => {

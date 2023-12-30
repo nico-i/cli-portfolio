@@ -1,4 +1,4 @@
-import { useCharWidth } from '@/hooks/useCharWidth';
+import { useCharWidth } from '@/hooks';
 import clsx from 'clsx';
 
 export interface AsciiLineProps {

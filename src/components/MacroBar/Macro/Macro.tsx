@@ -18,6 +18,13 @@ export const Macro = ({
     <Button
       className={clsx(desktopOnly && `hidden lg:block`)}
       onClick={() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const cmd = searchParams.get(`cmd`);
+        const decodedCmdParam = decodeURIComponent(cmd || ``);
+        if (decodedCmdParam === command) {
+          return;
+        }
+
         window.dispatchEvent(StopStandaloneEvent);
         window.dispatchEvent(RunEvent(command));
       }}

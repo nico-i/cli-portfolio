@@ -1,4 +1,5 @@
 import { Button } from '@/components/Button';
+import { Clear } from '@/components/Cli/cmd/clear';
 import { RunEvent, StopStandaloneEvent } from '@/util/types';
 import clsx from 'clsx';
 import { ReactNode } from 'react';
@@ -21,7 +22,10 @@ export const Macro = ({
         const searchParams = new URLSearchParams(window.location.search);
         const cmd = searchParams.get(`cmd`);
         const decodedCmdParam = decodeURIComponent(cmd || ``);
-        if (decodedCmdParam === command) {
+        if (
+          decodedCmdParam === command &&
+          command.includes(new Clear().fileName)
+        ) {
           return;
         }
 

@@ -1,5 +1,5 @@
 import { allCommandsByName } from '@/components/Cli/cmd';
-import { CliCmd, RunProps } from '@/components/Cli/cmd/CliCmd';
+import { CliCmd, RunProps, UsageTuple } from '@/components/Cli/cmd/CliCmd';
 import { Fragment, ReactNode } from 'react';
 
 export class Help extends CliCmd {
@@ -7,15 +7,15 @@ export class Help extends CliCmd {
     return `help`;
   }
 
-  get usages() {
+  get usages(): UsageTuple[] {
     return [
       {
         usage: this.fileName,
-        description: `Prints general help`,
+        i18nKey: `cmd.help`,
       },
       {
         usage: `${this.fileName} [command]`,
-        description: `Prints general help or help for a specific command`,
+        i18nKey: `cmd.help-command`,
       },
     ];
   }

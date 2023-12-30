@@ -1,4 +1,4 @@
-import { CliCmd, RunProps } from '@/components/Cli/cmd/CliCmd';
+import { CliCmd, RunProps, UsageTuple } from '@/components/Cli/cmd/CliCmd';
 import { ReactNode } from 'react';
 
 export class Echo extends CliCmd {
@@ -6,10 +6,10 @@ export class Echo extends CliCmd {
     return `echo`;
   }
 
-  get usages() {
+  get usages(): UsageTuple {
     return {
       usage: `${this.fileName} "[string]"`,
-      description: `Prints the provided string to the terminal`,
+      i18nKey: `cmd.echo`,
     };
   }
 

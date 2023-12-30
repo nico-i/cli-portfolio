@@ -1,4 +1,4 @@
-import { CliCmd, RunProps } from '@/components/Cli/cmd/CliCmd';
+import { CliCmd, RunProps, UsageTuple } from '@/components/Cli/cmd/CliCmd';
 import { allImageNames, allImagesByName } from '@/components/Cli/files/images';
 import { CSSProperties, ReactNode } from 'react';
 
@@ -7,21 +7,21 @@ export class Viu extends CliCmd {
     return `viu`;
   }
 
-  get usages() {
+  get usages(): UsageTuple {
     return {
       usage: `${this.fileName} [file]`,
-      description: `Displays an image in the terminal`,
+      i18nKey: `cmd.viu`,
     };
   }
 
-  flags = [
+  flags: UsageTuple[] = [
     {
       usage: `-w [width]`,
-      description: `Sets the width of the image`,
+      i18nKey: `cmd.viu-flags-width`,
     },
     {
       usage: `-h [height]`,
-      description: `Sets the height of the image`,
+      i18nKey: `cmd.viu-flags-height`,
     },
   ];
 

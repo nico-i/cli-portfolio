@@ -1,4 +1,4 @@
-import { CliCmd } from '@/components/Cli/cmd/CliCmd';
+import { CliCmd, UsageTuple } from '@/components/Cli/cmd/CliCmd';
 import { Fragment, ReactNode } from 'react';
 import { allFileNames } from '../../files';
 
@@ -7,10 +7,10 @@ export class Ls extends CliCmd {
     return `ls`;
   }
 
-  get usages() {
+  get usages(): UsageTuple {
     return {
       usage: this.fileName,
-      description: `Lists accessible files`,
+      i18nKey: `cmd.ls`,
     };
   }
 

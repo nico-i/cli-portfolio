@@ -9,5 +9,17 @@
     "projects": "Projects",
     "skills": "Skills",
     "contact": "Contact"
+  },
+  "cmd": {
+    "help": "Prints general help",
+    "help-command": "Prints help for a specific command",
+    "cat": "Displays the contents of a file or shows a download link",
+    "clear": "Clears the terminal",
+    "echo": "Prints provided string to the terminal",
+    "ls": "Lists accessible files",
+    "top": "Scrolls to the top of the terminal window",
+    "viu": "Displays an image in the terminal",
+    "viu-flags-width": "Sets the width of the image",
+    "viu-flags-height": "Sets the height of the image"
   }
 }

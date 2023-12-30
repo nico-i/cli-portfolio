@@ -9,5 +9,17 @@
     "projects": "Projekte",
     "skills": "Skills",
     "contact": "Kontakt"
+  },
+  "cmd": {
+    "help": "Druckt allgemeine Hilfe",
+    "help-command": "Druckt Hilfe für einen bestimmten Befehl",
+    "cat": "Zeigt den Inhalt einer Datei an oder zeigt einen Download-Link an",
+    "clear": "Leert das Terminal",
+    "echo": "Druckt den angegebenen String",
+    "ls": "Listet zugängliche Dateien auf",
+    "top": "Scrollt zum Anfang des Terminalfensters",
+    "viu": "Zeigt ein Bild im Terminal an",
+    "viu-flags-width": "Legt die Breite des Bildes fest",
+    "viu-flags-height": "Legt die Höhe des Bildes fest"
   }
 }

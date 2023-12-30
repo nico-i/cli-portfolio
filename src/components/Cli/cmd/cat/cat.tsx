@@ -1,4 +1,4 @@
-import { CliCmd, RunProps } from '@/components/Cli/cmd/CliCmd';
+import { CliCmd, RunProps, UsageTuple } from '@/components/Cli/cmd/CliCmd';
 import { allFileNames, allFilesByName } from '@/components/Cli/files';
 import { ReactNode } from 'react';
 
@@ -7,10 +7,10 @@ export class Cat extends CliCmd {
     return `cat`;
   }
 
-  get usages() {
+  get usages(): UsageTuple {
     return {
       usage: `${this.fileName} [file]`,
-      description: `Displays the contents of a file or shows a download link`,
+      i18nKey: `cmd.cat`,
     };
   }
 

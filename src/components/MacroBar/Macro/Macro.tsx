@@ -28,7 +28,6 @@ export const Macro = ({
         ) {
           return;
         }
-
         window.dispatchEvent(StopStandaloneEvent);
         window.dispatchEvent(RunEvent(command));
       }}

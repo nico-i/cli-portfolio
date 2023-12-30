@@ -36,6 +36,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
 
   const handleRunEvent = useCallback(
     (event: any) => {
+      console.log(event.detail.prompt);
       if (event.detail.prompt === undefined) {
         throw new Error(`No prompt provided in run event!`);
       }
@@ -87,12 +88,6 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
       CustomEvents.stopStandalone,
       handleStopStandaloneEvent,
     );
-    // run cmd if in search string
-    const searchParams = new URLSearchParams(location.search);
-    const cmdParam = searchParams.get(SearchParams.cmd);
-    if (cmdParam) {
-      window.dispatchEvent(RunEvent(decodeURIComponent(cmdParam)));
-    }
 
     return () => {
       window.removeEventListener(CustomEvents.clear, handleClearEvent);
@@ -102,12 +97,16 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         handleStopStandaloneEvent,
       );
     };
-  }, [
-    handleClearEvent,
-    handleRunEvent,
-    handleStopStandaloneEvent,
-    location.search,
-  ]);
+  }, [handleClearEvent, handleRunEvent, handleStopStandaloneEvent]);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const cmdParam = searchParams.get(SearchParams.cmd);
+    if (cmdParam) {
+      const decodedCmdParam = decodeURIComponent(cmdParam);
+      window.dispatchEvent(RunEvent(decodedCmdParam));
+    }
+  }, [location.search]);
 
   const handleUserTextValueChange: ChangeEventHandler<HTMLTextAreaElement> = (
     e,

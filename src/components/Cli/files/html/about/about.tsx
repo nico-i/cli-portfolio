@@ -3,7 +3,7 @@ import { Section } from '@/components/Cli/files/html/Section/Section';
 
 const name = `about`;
 
-const AboutRun = () => <Section name={name} locale={`en`} />;
+const AboutRun = () => <Section name={name} />;
 
 export class About extends CliFile {
   get fileName(): string {

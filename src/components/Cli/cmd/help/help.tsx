@@ -35,8 +35,10 @@ export class Help extends CliCmd {
 
     return (
       <div className="w-full flex flex-col">
-        {Object.values(allCommandsByName).map((command, i) => (
-          <Fragment key={i}>{command.quickHelpToHTML()}</Fragment>
+        {Object.values(allCommandsByName).map((command) => (
+          <Fragment key={command.fileName}>
+            {command.quickHelpToHTML()}
+          </Fragment>
         ))}
       </div>
     );

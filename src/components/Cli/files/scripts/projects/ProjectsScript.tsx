@@ -8,6 +8,7 @@ import {
 import { parseStrapiCollectionToCollectionByLocale } from '@/util/helper';
 import { StopStandaloneEvent } from '@/util/types';
 import { graphql, useStaticQuery } from 'gatsby';
+import { useI18next } from 'gatsby-plugin-react-i18next';
 
 const ProjectsRun = () => {
   const data = useStaticQuery(graphql`
@@ -40,6 +41,9 @@ const ProjectsRun = () => {
       }
     }
   `);
+
+  const { i18n } = useI18next();
+
   const projectsByLocale = parseStrapiCollectionToCollectionByLocale<Project>(
     data,
     ProjectCollectionName,
@@ -65,7 +69,7 @@ const ProjectsRun = () => {
   return (
     <ProjectsCarousel
       onClose={() => window.dispatchEvent(StopStandaloneEvent)}
-      projects={projectsByLocale.en}
+      projects={projectsByLocale[i18n.language]}
     />
   );
 };

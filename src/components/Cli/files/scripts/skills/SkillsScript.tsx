@@ -13,9 +13,11 @@ import {
 } from '@/components/Table';
 import { parseStrapiCollectionToCollectionByLocale } from '@/util/helper';
 import { graphql, useStaticQuery } from 'gatsby';
+import { useI18next } from 'gatsby-plugin-react-i18next';
 import { Fragment, useState } from 'react';
 
 const SkillsRun = () => {
+  const { i18n } = useI18next();
   const data = useStaticQuery(graphql`
     {
       allStrapiSkill {
@@ -45,7 +47,7 @@ const SkillsRun = () => {
     }),
   );
 
-  const skills = skillsByLocale.en.toSorted((a, b) => {
+  const skills = skillsByLocale[i18n.language].toSorted((a, b) => {
     if (a.proficiency > b.proficiency) return -1;
     if (a.proficiency < b.proficiency) return 1;
     return 0;

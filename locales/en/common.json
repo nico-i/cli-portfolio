@@ -1,0 +1,13 @@
+{
+  "seo": {
+    "title": "Nico's Portfolio",
+    "description": "Nico's Portfolio"
+  },
+  "macros": {
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "skills": "Skills",
+    "contact": "Contact"
+  }
+}

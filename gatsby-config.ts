@@ -1,10 +1,25 @@
 import type { GatsbyConfig } from 'gatsby';
+const path = require(`path`);
+const { join } = require(`path`);
+const { readdirSync, lstatSync } = require(`fs`);
 
 require(`dotenv`).config({
   path: `.env.${process.env.NODE_ENV}`,
 });
 
-const path = require(`path`);
+const defaultLanguage = `en`;
+
+const localesDirPath = join(__dirname, `locales`);
+
+// based on the directories get the language codes
+const languages = readdirSync(localesDirPath).filter((fileName: string) => {
+  const joinedPath = join(localesDirPath, fileName);
+  const isDirectory = lstatSync(joinedPath).isDirectory();
+  return isDirectory;
+});
+// defaultLanguage as first
+languages.splice(languages.indexOf(defaultLanguage), 1);
+languages.unshift(defaultLanguage);
 
 const strapiConfig = {
   apiURL: process.env.STRAPI_URL,
@@ -19,7 +34,7 @@ const strapiConfig = {
     {
       singularName: `contact-link`,
       queryParams: {
-        locale: `en`,
+        locale: defaultLanguage,
       },
     },
     {
@@ -51,9 +66,6 @@ const config: GatsbyConfig = {
     DEV_SSR: process.env.NODE_ENV === `development`,
     FAST_DEV: process.env.NODE_ENV === `development`,
   },
-  siteMetadata: {
-    title: `Nico Ismaili`,
-  },
   plugins: [
     `gatsby-plugin-postcss`,
     `gatsby-plugin-image`,
@@ -64,6 +76,31 @@ const config: GatsbyConfig = {
       options: {
         name: `src`,
         path: path.join(__dirname, `/src/`),
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `locale`,
+        path: path.join(__dirname, `/locales/`),
+      },
+    },
+    {
+      resolve: `gatsby-plugin-react-i18next`,
+      options: {
+        languages,
+        defaultLanguage,
+        siteUrl: process.env.APP_URL,
+        i18nextOptions: {
+          debug: true,
+          fallbackLng: defaultLanguage,
+          supportedLngs: languages,
+          keySeparator: `.`, // necessary for nested translations
+          defaultNS: `common`,
+          interpolation: {
+            escapeValue: false, // not needed for react as it escapes by default
+          },
+        },
       },
     },
     {

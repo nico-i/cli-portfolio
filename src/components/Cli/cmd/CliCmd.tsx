@@ -15,9 +15,11 @@ export abstract class CliCmd extends CliFile<RunProps> {
   flags?: UsageTuple[] | UsageTuple;
 
   public quickHelpToHTML = (): ReactNode => {
-    let allUsages: UsageTuple[] = [];
+    let allUsages: UsageTuple[];
     if (!Array.isArray(this.usages)) {
       allUsages = [this.usages];
+    } else {
+      allUsages = this.usages;
     }
     return (
       <>

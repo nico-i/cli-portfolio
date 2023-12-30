@@ -1,5 +1,7 @@
+import { Layout } from '@/components/Layout';
 import { Shell } from '@/components/Shell';
 import { RunEvent } from '@/util/types';
+import { graphql } from 'gatsby';
 import { useEffect, useState } from 'react';
 
 export default function Index() {
@@ -15,5 +17,26 @@ export default function Index() {
       window.dispatchEvent(RunEvent(`clear && cat intro.html && top`));
     }
   }, []);
-  return <Shell username="guest" domain={domain} />;
+
+  return (
+    <Layout>
+      <Shell username="guest" domain={domain} />
+    </Layout>
+  );
 }
+
+export const query = graphql`
+  query ($language: String!) {
+    locales: allLocale(
+      filter: { ns: { in: ["common"] }, language: { eq: $language } }
+    ) {
+      edges {
+        node {
+          ns
+          data
+          language
+        }
+      }
+    }
+  }
+`;

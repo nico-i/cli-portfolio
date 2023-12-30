@@ -92,7 +92,7 @@ const config: GatsbyConfig = {
         defaultLanguage,
         siteUrl: process.env.APP_URL,
         i18nextOptions: {
-          debug: true,
+          // debug: true,
           fallbackLng: defaultLanguage,
           supportedLngs: languages,
           keySeparator: `.`, // necessary for nested translations

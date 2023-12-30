@@ -1,4 +1,18 @@
 {
+  "components": {
+    "skills": {
+      "skill": "Skill",
+      "proficiency": "Kompetenzgrad"
+    },
+    "projects": {
+      "help": "nutze ESC oder den X-Button zum Beenden",
+      "help-mobile": "nutze den X-Button zum Beenden",
+      "summary": "Zusammenfassung",
+      "tldr": "Kurzbeschreibung",
+      "read-more": "Mehr lesen",
+      "show-less": "Weniger anzeigen"
+    }
+  },
   "seo": {
     "title": "Nico's Portfolio",
     "description": "Nico's Portfolio"

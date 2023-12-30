@@ -1,4 +1,18 @@
 {
+  "components": {
+    "skills": {
+      "skill": "Skill",
+      "proficiency": "Proficiency"
+    },
+    "projects": {
+      "help": "- use ESC or the X button to exit -",
+      "help-mobile": "- use X button to exit -",
+      "summary": "Summary",
+      "tldr": "TL;DR",
+      "read-more": "Read more",
+      "show-less": "Show less"
+    }
+  },
   "seo": {
     "title": "Nico's Portfolio",
     "description": "Nico's Portfolio"

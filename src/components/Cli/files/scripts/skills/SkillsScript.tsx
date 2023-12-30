@@ -17,7 +17,7 @@ import { useI18next } from 'gatsby-plugin-react-i18next';
 import { Fragment, useState } from 'react';
 
 const SkillsRun = () => {
-  const { i18n } = useI18next();
+  const { i18n, t } = useI18next();
   const data = useStaticQuery(graphql`
     {
       allStrapiSkill {
@@ -61,9 +61,9 @@ const SkillsRun = () => {
     <table className="w-full md:w-2/3 lg:w-2/5">
       <thead>
         <TableRow className={rowClassName}>
-          <TableCell isHeader>Skill</TableCell>
+          <TableCell isHeader> {t(`components.skills.skill`)}</TableCell>
           <TableCell isHeader isLastChild>
-            Proficiency
+            {t(`components.skills.proficiency`)}
           </TableCell>
         </TableRow>
       </thead>

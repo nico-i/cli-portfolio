@@ -1,6 +1,7 @@
 import { ProjectSlide } from '@/components/Cli/files/scripts/projects/ProjectSlide/ProjectSlide';
 import { Project } from '@/components/Cli/files/scripts/projects/types';
 import clsx from 'clsx';
+import { useTranslation } from 'gatsby-plugin-react-i18next';
 import { useEffect, useState } from 'react';
 
 interface ProjectsCarouselProps {
@@ -17,6 +18,8 @@ export const ProjectsCarousel = ({
   const [isDoneAnimating, setIsDoneAnimating] = useState(false);
   const [height, setHeight] = useState<string>(`0%`);
   const [width, setWidth] = useState<string>(`0%`);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     // handle ESC key
@@ -141,9 +144,11 @@ export const ProjectsCarousel = ({
         {isDoneAnimating && (
           <>
             <span className="text-sm absolute -top-8">
-              <span className="xl:hidden">- use X button to exit -</span>
+              <span className="xl:hidden">{`- ${t(
+                `components.projects.help-mobil`,
+              )} -`}</span>
               <span className="hidden xl:inline">
-                - use ESC or the X button to exit -
+                {`- ${t(`components.projects.help`)} -`}
               </span>
             </span>
             <div

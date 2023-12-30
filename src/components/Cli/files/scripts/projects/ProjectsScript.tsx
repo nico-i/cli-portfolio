@@ -6,7 +6,7 @@ import {
   ProjectCollectionName,
 } from '@/components/Cli/files/scripts/projects/types';
 import { parseStrapiCollectionToCollectionByLocale } from '@/util/helper';
-import { StartStandaloneEvent, StopStandaloneEvent } from '@/util/types';
+import { StopStandaloneEvent } from '@/util/types';
 import { graphql, useStaticQuery } from 'gatsby';
 
 const ProjectsRun = () => {
@@ -75,10 +75,9 @@ export class Projects extends CliFile {
     return `projects.sh`;
   }
 
+  public isStandalone: boolean = true;
+
   public run() {
-    if (typeof window !== `undefined`) {
-      window.dispatchEvent(StartStandaloneEvent);
-    }
     return <ProjectsRun />;
   }
 }

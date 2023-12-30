@@ -38,6 +38,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         throw new Error(`No prompt provided in run event!`);
       }
       const cmdResTuple = processRunRequest(event.detail.prompt);
+      setIsStandaloneOpen(cmdResTuple.isStandalone);
 
       if (cmdResTuple.prompt !== new Clear().fileName) {
         setHistory((history) => [...history, cmdResTuple]);
@@ -55,18 +56,15 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     setHistory([]);
   }, [setHistory]);
 
-  const handleStartStandaloneEvent = useCallback(() => {
-    setIsStandaloneOpen(true);
-  }, [setIsStandaloneOpen]);
-
   const handleStopStandaloneEvent = useCallback(() => {
+    if (!isStandaloneOpen) return;
     setIsStandaloneOpen(false);
     setHistory((history) => {
       const newHistory = [...history];
       newHistory[newHistory.length - 1].response = null;
       return newHistory;
     });
-  }, [setHistory, setIsStandaloneOpen]);
+  }, [isStandaloneOpen, setHistory]);
 
   useEffect(() => {
     textAreaRef.current?.scrollIntoView();
@@ -75,10 +73,6 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   useEffect(() => {
     window.addEventListener(CustomEvents.clear, handleClearEvent);
     window.addEventListener(CustomEvents.run, handleRunEvent);
-    window.addEventListener(
-      CustomEvents.startStandalone,
-      handleStartStandaloneEvent,
-    );
     window.addEventListener(
       CustomEvents.stopStandalone,
       handleStopStandaloneEvent,
@@ -94,10 +88,6 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
       window.removeEventListener(CustomEvents.clear, handleClearEvent);
       window.removeEventListener(CustomEvents.run, handleRunEvent);
       window.removeEventListener(
-        CustomEvents.startStandalone,
-        handleStartStandaloneEvent,
-      );
-      window.removeEventListener(
         CustomEvents.stopStandalone,
         handleStopStandaloneEvent,
       );
@@ -105,7 +95,6 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   }, [
     handleClearEvent,
     handleRunEvent,
-    handleStartStandaloneEvent,
     handleStopStandaloneEvent,
     location.search,
   ]);
@@ -248,6 +237,7 @@ const processRunRequest = (userPrompt: string): PromptHistoryEntry => {
   const res: PromptHistoryEntry = {
     prompt: userPrompt,
     response: null,
+    isStandalone: false,
   };
   const consecutivePrompts = userPrompt.split(`&&`).map((cmd) => cmd.trim());
   // recursively process commands
@@ -260,11 +250,14 @@ const processRunRequest = (userPrompt: string): PromptHistoryEntry => {
           {consecutiveCmdRes.response}
         </>
       );
+      res.isStandalone = consecutiveCmdRes.isStandalone || res.isStandalone;
     }
     return res;
   }
   try {
-    res.response = runPrompt(userPrompt.split(` `));
+    const { result, isStandalone } = runPrompt(userPrompt.split(` `));
+    res.response = result;
+    res.isStandalone = isStandalone;
   } catch (e) {
     res.response = (e as Error).message;
   }

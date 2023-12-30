@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
-export const useMobileDetect = () => {
-  const [isMobile, setIsMobile] = useState(false);
+export const useTouchDetect = () => {
+  const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // 768px is a common breakpoint for mobile devices
+      setIsMobile(`ontouchstart` in window);
     };
 
     window.addEventListener(`resize`, handleResize);

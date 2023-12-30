@@ -3,7 +3,7 @@ import { Clear } from '@/components/Cli/cmd/clear';
 import { PromptPrefix } from '@/components/Shell/PromptPrefix';
 import { PromptHistoryContext } from '@/context/PromptHistoryContext/PromptHistoryContext';
 import { PromptHistoryEntry } from '@/context/PromptHistoryContext/types';
-import { useMobileDetect } from '@/hooks';
+import { useTouchDetect } from '@/hooks';
 import { CustomEvents, RunEvent, SearchParams } from '@/util/types';
 import { useLocation } from '@reach/router';
 import {
@@ -28,7 +28,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   const [currentPrompt, setCurrentPrompt] = useState<string>(``);
   const [tmpPrompt, setTmpPrompt] = useState<string>(``); // used for arrow up/down
   const [isStandaloneOpen, setIsStandaloneOpen] = useState(false);
-  const isMobile = useMobileDetect();
+  const isTouch = useTouchDetect();
 
   const location = useLocation();
 
@@ -43,11 +43,11 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         setHistory((history) => [...history, cmdResTuple]);
         updateCmdSearchParam(cmdResTuple.prompt);
       }
-      if (!isMobile) {
+      if (!isTouch) {
         textAreaRef.current?.focus();
       }
     },
-    [setHistory],
+    [isTouch, setHistory],
   );
 
   const handleClearEvent = useCallback(() => {
@@ -185,7 +185,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         if (
           e.target instanceof HTMLDivElement &&
           e.target.nodeName === `MAIN` &&
-          !isMobile
+          !isTouch
         ) {
           textAreaRef.current?.focus();
         }
@@ -213,7 +213,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
             <textarea
               id="prompt"
               rows={1}
-              autoFocus={!isMobile}
+              autoFocus={!isTouch}
               ref={textAreaRef}
               onKeyDown={handleUserTextAreaKeyDown}
               onChange={handleUserTextValueChange}

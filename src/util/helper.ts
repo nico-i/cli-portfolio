@@ -30,7 +30,7 @@ export function escapeMarkdown(toEscape: string, replacer: string = `\\$1`) {
  * @param parseNode - function to parse a single node
  * @returns a collection by locale
  */
-export function parseStapiCollectionToCollectionByLocale<
+export function parseStrapiCollectionToCollectionByLocale<
   T extends StrapiCollection,
 >(
   rawStaticQueryRes: any,

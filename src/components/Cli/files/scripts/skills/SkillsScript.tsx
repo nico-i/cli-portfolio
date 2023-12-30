@@ -11,7 +11,7 @@ import {
   TableTextCell,
   TableTextRow,
 } from '@/components/Table';
-import { parseStapiCollectionToCollectionByLocale } from '@/util/helper';
+import { parseStrapiCollectionToCollectionByLocale } from '@/util/helper';
 import { graphql, useStaticQuery } from 'gatsby';
 import { Fragment, useState } from 'react';
 
@@ -32,7 +32,7 @@ const SkillsRun = () => {
       }
     }
   `);
-  const skillsByLocale = parseStapiCollectionToCollectionByLocale<Skill>(
+  const skillsByLocale = parseStrapiCollectionToCollectionByLocale<Skill>(
     data,
     SkillCollectionName,
     (node: any) => ({

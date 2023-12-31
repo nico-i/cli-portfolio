@@ -1,8 +1,10 @@
-import { runPrompt } from '@/components/Cli';
+import { getSuggestions, runPrompt } from '@/components/Cli';
 import { Clear } from '@/components/Cli/cmd/clear';
 import {
   ArgCountError,
+  NotExecutableError,
   UnknownCommandError,
+  UnknownFileError,
   UnknownFlagsError,
   ValueError,
 } from '@/components/Cli/cmd/types';
@@ -35,6 +37,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   const [tmpPrompt, setTmpPrompt] = useState<string>(``); // used for arrow up/down
   const [isStandaloneOpen, setIsStandaloneOpen] = useState(false);
   const [currentDescHistoryIndex, setCurrentDescHistoryIndex] = useState(-1); // -1 means current prompt is not in history
+  const [tabSuggestions, setTabSuggestions] = useState<string[]>([]);
 
   const location = useLocation();
   const { t } = useTranslation();
@@ -89,8 +92,18 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         res.response = t((e as UnknownCommandError).message, {
           command: (e as UnknownCommandError).command,
         });
+      } else if (e instanceof UnknownFileError) {
+        res.response = t((e as UnknownFileError).message, {
+          file: (e as UnknownFileError).file,
+        });
+      } else if (e as NotExecutableError) {
+        res.response = t((e as NotExecutableError).message, {
+          file: (e as NotExecutableError).file,
+        });
       } else {
-        res.response = (e as Error).message;
+        res.response = t(`cli.errors.server`, {
+          error: (e as Error).message,
+        });
       }
     }
 
@@ -177,6 +190,8 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   const handleUserTextAreaKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
     event,
   ) => {
+    setTabSuggestions([]);
+
     if (event.key.length === 1) {
       setCurrentDescHistoryIndex(-1); // only reset history index if user is typing
       setTmpPrompt(currentPrompt + event.key);
@@ -206,6 +221,27 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
       return;
     }
 
+    if (event.key === `Tab`) {
+      event.preventDefault();
+      const args = currentPrompt.split(` `);
+      if (args.length === 0) return;
+
+      const suggestions = getSuggestions(args);
+      if (suggestions.length === 0) return;
+
+      if (suggestions.length === 1) {
+        // only one suggestion, so auto-complete
+        if (args.length === 1) {
+          setCurrentPrompt(suggestions[0]);
+        } else {
+          setCurrentPrompt(args.slice(0, -1).join(` `) + ` ` + suggestions[0]);
+        }
+        return;
+      }
+      setTabSuggestions(suggestions);
+      return;
+    }
+
     switch (event.key) {
       case `Backspace`:
         if (currentPrompt === ``) {
@@ -221,10 +257,6 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         setTmpPrompt(``);
         break;
       }
-      case `Tab`:
-        event.preventDefault();
-        // TODO: Add tab completion
-        break;
     }
   };
 
@@ -274,24 +306,35 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
                 </div>
               );
             })}
-          <div id="active-prompt" className="w-full flex relative">
-            <PromptPrefix username={username} domain={domain} />
-            <label className="sr-only" htmlFor="prompt">
-              CLI prompt
-            </label>
-            <textarea
-              id="prompt"
-              rows={1}
-              ref={textAreaRef}
-              onKeyDown={handleUserTextAreaKeyDown}
-              onChange={handleUserTextValueChange}
-              value={currentPrompt}
-              className={`
+          <div className="flex flex-col">
+            <div id="active-prompt" className="w-full flex relative">
+              <PromptPrefix username={username} domain={domain} />
+              <label className="sr-only" htmlFor="prompt">
+                CLI prompt
+              </label>
+              <textarea
+                id="prompt"
+                rows={1}
+                ref={textAreaRef}
+                onKeyDown={handleUserTextAreaKeyDown}
+                onChange={handleUserTextValueChange}
+                value={currentPrompt}
+                className={`
               w-full
               focus:outline-none
               resize-none
               overflow-hidden`}
-            />
+              />
+            </div>
+            {tabSuggestions.length > 0 && (
+              <div className="flex flex-col">
+                {tabSuggestions
+                  .toSorted((a, b) => a.localeCompare(b))
+                  .map((suggestion, i) => (
+                    <span key={i}>{suggestion}</span>
+                  ))}
+              </div>
+            )}
           </div>
         </>
       )}

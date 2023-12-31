@@ -1,6 +1,7 @@
 import { allCommandNames, allCommandsByName } from '@/components/Cli/cmd';
 import {
   ArgCountError,
+  NotExecutableError,
   UnknownCommandError,
   UnknownFileError,
   UnknownFlagsError,
@@ -16,7 +17,8 @@ import { ReactNode } from 'react';
 export const runPrompt = (
   args: string[],
 ): { result: ReactNode; isStandalone: boolean } => {
-  const strippedArgs = args.map((arg) => {
+  let isScript = false;
+  const strippedArgs = args.map((arg, i) => {
     if (!arg.includes(`/`)) return arg;
     // is a file or path
     const strippedArg = arg.split(`/`).slice(1);
@@ -26,6 +28,9 @@ export const runPrompt = (
     const fileName = strippedArg[0];
     if (!allFileNames.includes(fileName)) {
       throw new UnknownFileError(arg);
+    }
+    if (i === 0 && args.length === 1) {
+      isScript = true;
     }
     return fileName;
   });
@@ -39,6 +44,8 @@ export const runPrompt = (
       result: script.run(),
       isStandalone: script.isStandalone,
     };
+  } else if (isScript) {
+    throw new NotExecutableError(cmd);
   }
 
   const flagValuePair: Record<string, string> = {};
@@ -97,3 +104,34 @@ export const runPrompt = (
     isStandalone: command.isStandalone,
   };
 };
+
+export function getSuggestions(args: string[]): string[] {
+  let lastArg = args.at(-1) ?? ``;
+  let lastArgPrefix = ``;
+
+  if (lastArg === ``) return [];
+
+  if (lastArg.startsWith(`./`) || lastArg.startsWith(`/`)) {
+    const lastArgSplit = lastArg.split(`/`);
+    if (lastArgSplit.length !== 2) return [];
+    lastArgPrefix = lastArgSplit[0];
+    lastArg = lastArgSplit[1];
+  } else if (args.length === 1) {
+    const cmdSuggestions = allCommandNames.filter((cmd) =>
+      cmd.startsWith(lastArg),
+    );
+    if (cmdSuggestions.length > 0) return cmdSuggestions;
+  }
+
+  const fileSuggestions = allFileNames.filter((file) =>
+    file.startsWith(lastArg),
+  );
+
+  if (fileSuggestions.length > 0 || lastArgPrefix !== ``) {
+    return fileSuggestions.map((file) =>
+      lastArgPrefix !== `` ? [lastArgPrefix, file].join(`/`) : file,
+    );
+  }
+
+  return [];
+}

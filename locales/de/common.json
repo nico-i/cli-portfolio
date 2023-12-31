@@ -42,7 +42,8 @@
       "value": "Ungültiger Wert. Erwartet: {{expectedType}}, erhalten: {{value}}",
       "404-flag": "Ungültige Flag(s): {{flags}}",
       "404-command": "Kein solcher Befehl: {{command}}",
-      "404-file": "Keine solche Datei oder Verzeichnis: {{file}}"
+      "404-file": "Keine solche Datei oder Verzeichnis: {{file}}",
+      "not-executable": "Keine ausführbare Datei: {{file}}"
     }
   }
 }

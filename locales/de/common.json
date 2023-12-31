@@ -35,6 +35,7 @@
     "viu": "Zeigt ein Bild im Terminal an",
     "viu-flags-width": "Legt die Breite des Bildes fest",
     "viu-flags-height": "Legt die Höhe des Bildes fest",
+    "sl": "Wechselt die Sprache",
     "errors": {
       "arg-count": "Ungültige Anzahl an Argumenten. Erwartet: {{start}} <= Anzahl <= {{end}}, erhalten: {{actual}}",
       "value": "Ungültiger Wert. Erwartet: {{expectedType}}, erhalten: {{value}}",

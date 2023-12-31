@@ -3,11 +3,12 @@ import { Clear } from '@/components/Cli/cmd/clear';
 import { Echo } from '@/components/Cli/cmd/echo';
 import { Help } from '@/components/Cli/cmd/help';
 import { Ls } from '@/components/Cli/cmd/ls';
+import { Sl } from '@/components/Cli/cmd/sl';
 import { Top } from '@/components/Cli/cmd/top';
 import { CliCmd } from '@/components/Cli/cmd/types/CliCmd';
 import { Viu } from '@/components/Cli/cmd/viu';
 
-const allCommands: CliCmd[] = [Cat, Clear, Echo, Help, Ls, Top, Viu].map(
+const allCommands: CliCmd[] = [Cat, Clear, Echo, Help, Ls, Top, Viu, Sl].map(
   (Cmd) => new Cmd(),
 );
 const allCommandNames: string[] = allCommands.map(

@@ -35,6 +35,7 @@
     "viu": "Displays an image in the terminal",
     "viu-flags-width": "Sets the width of the image",
     "viu-flags-height": "Sets the height of the image",
+    "sl": "Switches the language",
     "errors": {
       "arg-count": "Invalid number of arguments. Expected: {{start}} <= count <= {{end}}, got: {{actual}}",
       "value": "Invalid value. Expected: {{expectedType}}, got: {{value}}",

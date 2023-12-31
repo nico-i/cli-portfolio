@@ -145,7 +145,7 @@ export const ProjectsCarousel = ({
           <>
             <span className="text-sm absolute -top-8">
               <span className="xl:hidden">{`- ${t(
-                `components.projects.help-mobil`,
+                `components.projects.help-mobile`,
               )} -`}</span>
               <span className="hidden xl:inline">
                 {`- ${t(`components.projects.help`)} -`}

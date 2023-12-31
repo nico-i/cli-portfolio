@@ -3,6 +3,7 @@ import { Clear } from '@/components/Cli/cmd/clear';
 import {
   ArgCountError,
   UnknownCommandError,
+  UnknownFileError,
   UnknownFlagsError,
   ValueError,
 } from '@/components/Cli/cmd/types';
@@ -89,8 +90,14 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         res.response = t((e as UnknownCommandError).message, {
           command: (e as UnknownCommandError).command,
         });
+      } else if (e instanceof UnknownFileError) {
+        res.response = t((e as UnknownFileError).message, {
+          file: (e as UnknownFileError).file,
+        });
       } else {
-        res.response = (e as Error).message;
+        res.response = t(`cli.errors.server`, {
+          error: (e as Error).message,
+        });
       }
     }
 

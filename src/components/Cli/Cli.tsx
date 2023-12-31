@@ -2,9 +2,11 @@ import { allCommandNames, allCommandsByName } from '@/components/Cli/cmd';
 import {
   ArgCountError,
   UnknownCommandError,
+  UnknownFileError,
   UnknownFlagsError,
   UsageTuple,
 } from '@/components/Cli/cmd/types';
+import { allFileNames } from '@/components/Cli/files';
 import {
   allScriptNames,
   allScriptsByName,
@@ -14,10 +16,25 @@ import { ReactNode } from 'react';
 export const runPrompt = (
   args: string[],
 ): { result: ReactNode; isStandalone: boolean } => {
-  const cmd: string = args[0];
+  const strippedArgs = args.map((arg) => {
+    if (!arg.includes(`/`)) return arg;
+    // is a file or path
+    const strippedArg = arg.split(`/`).slice(1);
+    if (strippedArg.length > 1) {
+      throw new UnknownFileError(arg);
+    }
+    const fileName = strippedArg[0];
+    if (!allFileNames.includes(fileName)) {
+      throw new UnknownFileError(arg);
+    }
+    return fileName;
+  });
+
+  const cmd: string = strippedArgs[0];
 
   if (allScriptNames.includes(cmd)) {
     const script = allScriptsByName[cmd];
+    // scripts do not support flags or vakues
     return {
       result: script.run(),
       isStandalone: script.isStandalone,
@@ -25,19 +42,19 @@ export const runPrompt = (
   }
 
   const flagValuePair: Record<string, string> = {};
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
+  for (let i = 0; i < strippedArgs.length; i++) {
+    const arg = strippedArgs[i];
     if (!arg.startsWith(`-`) || !/^--?/.test(arg)) {
       continue;
     }
     flagValuePair[arg] = ``;
-    if (i + 1 >= args.length) {
+    if (i + 1 >= strippedArgs.length) {
       break;
     }
-    flagValuePair[arg] = args[i + 1];
+    flagValuePair[arg] = strippedArgs[i + 1];
     i++;
   }
-  const values = args
+  const values = strippedArgs
     .slice(1)
     .filter(
       (arg) =>

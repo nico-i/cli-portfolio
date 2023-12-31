@@ -37,10 +37,12 @@
     "viu-flags-height": "Sets the height of the image",
     "sl": "Switches the language",
     "errors": {
+      "server": "Server error: {{error}}",
       "arg-count": "Invalid number of arguments. Expected: {{start}} <= count <= {{end}}, got: {{actual}}",
       "value": "Invalid value. Expected: {{expectedType}}, got: {{value}}",
       "404-flag": "Invalid flag(s): {{flags}}",
-      "404-command": "Unknown command: {{command}}"
+      "404-command": "No such command: {{command}}",
+      "404-file": "No such file or directory: {{file}}"
     }
   }
 }

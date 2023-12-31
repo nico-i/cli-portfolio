@@ -42,3 +42,12 @@ export class UnknownCommandError extends Error {
     this.command = command;
   }
 }
+
+export class UnknownFileError extends Error {
+  public file: string;
+
+  constructor(file: string) {
+    super(`cmd.errors.404-file`);
+    this.file = file;
+  }
+}

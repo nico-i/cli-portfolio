@@ -1,5 +1,5 @@
 import { allCommandsByName } from '@/components/Cli/cmd';
-import { ArgCountError, UnknownFlagsError } from '@/components/Cli/cmd/types';
+import { UnknownFlagsError } from '@/components/Cli/cmd/types';
 import {
   CliCmd,
   RunProps,
@@ -25,11 +25,9 @@ export class Help extends CliCmd {
     ];
   }
 
-  public run({ flags, values }: RunProps): ReactNode {
-    if (values.length > 1) {
-      throw new ArgCountError(1, values.length);
-    }
+  expectedArgCountInterval = [0, 1] as [number, number];
 
+  public run({ flags, values }: RunProps): ReactNode {
     if (Object.keys(flags).length > 0) {
       throw new UnknownFlagsError(Object.keys(flags)[0]);
     }

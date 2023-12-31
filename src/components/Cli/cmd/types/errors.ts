@@ -1,12 +1,12 @@
 // error that takes the max number of arguments and the actual number of arguments
 
 export class ArgCountError extends Error {
-  public expected: number;
+  public expectedInterval: [number, number];
   public actual: number;
 
-  constructor(expected: number, actual: number) {
+  constructor(expectedInterval: [number, number], actual: number) {
     super(`cmd.errors.arg-count`);
-    this.expected = expected;
+    this.expectedInterval = expectedInterval;
     this.actual = actual;
   }
 }

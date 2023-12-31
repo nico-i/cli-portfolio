@@ -88,6 +88,7 @@ const FullHelp = ({
 export abstract class CliCmd extends CliFile<RunProps> {
   abstract get usages(): UsageTuple[] | UsageTuple;
   flags?: UsageTuple[] | UsageTuple;
+  expectedArgCountInterval: [number, number] = [0, 0];
 
   public quickHelpToHTML = (): ReactNode => <QuickHelp usages={this.usages} />;
 

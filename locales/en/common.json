@@ -36,9 +36,9 @@
     "viu-flags-width": "Sets the width of the image",
     "viu-flags-height": "Sets the height of the image",
     "errors": {
-      "arg-count": "Invalid number of arguments. Expected: {{expected}}, got: {{actual}}",
+      "arg-count": "Invalid number of arguments. Expected: {{start}} <= count <= {{end}}, got: {{actual}}",
       "value": "Invalid value. Expected: {{expectedType}}, got: {{value}}",
-      "404-flag": "Unknown flag(s): {{flags}}",
+      "404-flag": "Invalid flag(s): {{flags}}",
       "404-command": "Unknown command: {{command}}"
     }
   }

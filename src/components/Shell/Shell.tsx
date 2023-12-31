@@ -72,7 +72,8 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     } catch (e) {
       if (e instanceof ArgCountError) {
         res.response = t((e as ArgCountError).message, {
-          expected: (e as ArgCountError).expected,
+          start: (e as ArgCountError).expectedInterval[0],
+          end: (e as ArgCountError).expectedInterval[1],
           actual: (e as ArgCountError).actual,
         });
       } else if (e instanceof ValueError) {
@@ -89,7 +90,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
           command: (e as UnknownCommandError).command,
         });
       } else {
-        res.response = `(e as Error).message`;
+        res.response = (e as Error).message;
       }
     }
 

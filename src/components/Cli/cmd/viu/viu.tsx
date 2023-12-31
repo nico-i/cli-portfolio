@@ -1,8 +1,4 @@
-import {
-  ArgCountError,
-  UnknownFlagsError,
-  ValueError,
-} from '@/components/Cli/cmd/types';
+import { UnknownFlagsError, ValueError } from '@/components/Cli/cmd/types';
 import {
   CliCmd,
   RunProps,
@@ -34,10 +30,9 @@ export class Viu extends CliCmd {
     },
   ];
 
+  expectedArgCountInterval = [1, 1] as [number, number];
+
   public run({ values, flags }: RunProps): ReactNode {
-    if (values.length === 0 || values.length > 1) {
-      throw new ArgCountError(1, values.length);
-    }
     if (!allImageNames.includes(values[0])) {
       throw new ValueError(`.jpg`, values[0]);
     }

@@ -36,9 +36,9 @@
     "viu-flags-width": "Legt die Breite des Bildes fest",
     "viu-flags-height": "Legt die Höhe des Bildes fest",
     "errors": {
-      "arg-count": "Ungültige Anzahl an Argumenten. Erwartet: {{expected}}, erhalten: {{actual}}",
+      "arg-count": "Ungültige Anzahl an Argumenten. Erwartet: {{start}} <= Anzahl <= {{end}}, erhalten: {{actual}}",
       "value": "Ungültiger Wert. Erwartet: {{expectedType}}, erhalten: {{value}}",
-      "404-flag": "Unbekannte Flag(s): {{flags}}",
+      "404-flag": "Ungültige Flag(s): {{flags}}",
       "404-command": "Unbekannter Befehl: {{command}}"
     }
   }

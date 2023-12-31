@@ -1,4 +1,9 @@
-import { CliCmd, RunProps } from '@/components/Cli/cmd/CliCmd';
+import { ValueError } from '@/components/Cli/cmd/types';
+import {
+  CliCmd,
+  RunProps,
+  UsageTuple,
+} from '@/components/Cli/cmd/types/CliCmd';
 import { ReactNode } from 'react';
 
 export class Echo extends CliCmd {
@@ -6,20 +11,16 @@ export class Echo extends CliCmd {
     return `echo`;
   }
 
-  get usages() {
+  get usages(): UsageTuple {
     return {
       usage: `${this.fileName} "[string]"`,
-      description: `Prints the provided string to the terminal`,
+      i18nKey: `cmd.echo`,
     };
   }
 
-  public run({ flags, values }: RunProps): ReactNode {
-    if (Object.keys(flags).length > 0) {
-      throw new Error(`Unknown flag(s): ${Object.keys(flags).join(`, `)}`);
-    }
-    if (values.length !== 1) {
-      throw new Error(`Expected 1 argument, got ${values.length}`);
-    }
+  expectedArgCountInterval = [1, Infinity] as [number, number];
+
+  public run({ values }: RunProps): ReactNode {
     if (
       (values.length === 1 &&
         (!values[0].startsWith(`"`) ||
@@ -29,7 +30,7 @@ export class Echo extends CliCmd {
         (!values[0].startsWith(`"`) ||
           !values[values.length - 1].endsWith(`"`)))
     ) {
-      throw new Error(`Invalid input, expected "string"`);
+      throw new ValueError(`string`, values.join(` `));
     }
 
     return <div>{values.join(` `).replace(/"/g, ``) || <>&nbsp;</>}</div>;

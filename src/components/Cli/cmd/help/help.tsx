@@ -1,5 +1,10 @@
 import { allCommandsByName } from '@/components/Cli/cmd';
-import { CliCmd, RunProps } from '@/components/Cli/cmd/CliCmd';
+import { UnknownFlagsError } from '@/components/Cli/cmd/types';
+import {
+  CliCmd,
+  RunProps,
+  UsageTuple,
+} from '@/components/Cli/cmd/types/CliCmd';
 import { Fragment, ReactNode } from 'react';
 
 export class Help extends CliCmd {
@@ -7,26 +12,24 @@ export class Help extends CliCmd {
     return `help`;
   }
 
-  get usages() {
+  get usages(): UsageTuple[] {
     return [
       {
         usage: this.fileName,
-        description: `Prints general help`,
+        i18nKey: `cmd.help`,
       },
       {
         usage: `${this.fileName} [command]`,
-        description: `Prints general help or help for a specific command`,
+        i18nKey: `cmd.help-command`,
       },
     ];
   }
 
-  public run({ flags, values }: RunProps): ReactNode {
-    if (values.length > 1) {
-      throw new Error(`Expected a maximum of 1 argument, got ${values.length}`);
-    }
+  expectedArgCountInterval = [0, 1] as [number, number];
 
+  public run({ flags, values }: RunProps): ReactNode {
     if (Object.keys(flags).length > 0) {
-      throw new Error(`Unknown flag(s): ${Object.keys(flags).join(`, `)}`);
+      throw new UnknownFlagsError(Object.keys(flags)[0]);
     }
 
     if (values.length === 1) {
@@ -35,8 +38,10 @@ export class Help extends CliCmd {
 
     return (
       <div className="w-full flex flex-col">
-        {Object.values(allCommandsByName).map((command, i) => (
-          <Fragment key={i}>{command.quickHelpToHTML()}</Fragment>
+        {Object.values(allCommandsByName).map((command) => (
+          <Fragment key={command.fileName}>
+            {command.quickHelpToHTML()}
+          </Fragment>
         ))}
       </div>
     );

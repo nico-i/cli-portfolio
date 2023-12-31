@@ -1,9 +1,9 @@
-import { CliFile } from '@/components/Cli/files/CliFile';
 import { Section } from '@/components/Cli/files/html/Section/Section';
+import { CliFile } from '@/components/Cli/files/types/CliFile';
 
 const name = `about`;
 
-const AboutRun = () => <Section name={name} locale={`en`} />;
+const AboutRun = () => <Section name={name} />;
 
 export class About extends CliFile {
   get fileName(): string {

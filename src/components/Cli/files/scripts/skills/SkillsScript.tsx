@@ -1,10 +1,10 @@
 import { AsciiProgressBar } from '@/components/AsciiProgressBar/AsciiProgressBar';
 import { TextButton } from '@/components/Button/TextButton/TextButton';
-import { CliFile } from '@/components/Cli/files/CliFile';
 import {
   Skill,
   SkillCollectionName,
 } from '@/components/Cli/files/scripts/skills/types';
+import { CliFile } from '@/components/Cli/files/types/CliFile';
 import {
   TableCell,
   TableRow,
@@ -13,9 +13,11 @@ import {
 } from '@/components/Table';
 import { parseStrapiCollectionToCollectionByLocale } from '@/util/helper';
 import { graphql, useStaticQuery } from 'gatsby';
+import { useI18next } from 'gatsby-plugin-react-i18next';
 import { Fragment, useState } from 'react';
 
 const SkillsRun = () => {
+  const { i18n, t } = useI18next();
   const data = useStaticQuery(graphql`
     {
       allStrapiSkill {
@@ -45,7 +47,7 @@ const SkillsRun = () => {
     }),
   );
 
-  const skills = skillsByLocale.en.toSorted((a, b) => {
+  const skills = skillsByLocale[i18n.language].toSorted((a, b) => {
     if (a.proficiency > b.proficiency) return -1;
     if (a.proficiency < b.proficiency) return 1;
     return 0;
@@ -59,9 +61,9 @@ const SkillsRun = () => {
     <table className="w-full md:w-2/3 lg:w-2/5">
       <thead>
         <TableRow className={rowClassName}>
-          <TableCell isHeader>Skill</TableCell>
+          <TableCell isHeader> {t(`components.skills.skill`)}</TableCell>
           <TableCell isHeader isLastChild>
-            Proficiency
+            {t(`components.skills.proficiency`)}
           </TableCell>
         </TableRow>
       </thead>

@@ -5,15 +5,16 @@ import {
 import { Link } from '@/components/Link';
 import { parseStrapiCollectionToCollectionByLocale } from '@/util/helper';
 import { graphql, useStaticQuery } from 'gatsby';
+import { useI18next } from 'gatsby-plugin-react-i18next';
 import { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 interface SectionProps {
   name: string;
-  locale: string;
 }
 
-export const Section = ({ name, locale }: Readonly<SectionProps>) => {
+export const Section = ({ name }: Readonly<SectionProps>) => {
+  const { i18n } = useI18next();
   const data = useStaticQuery(graphql`
     {
       allStrapiSection {
@@ -41,7 +42,7 @@ export const Section = ({ name, locale }: Readonly<SectionProps>) => {
     }),
   );
 
-  const section = sectionsByLocale[locale].find(
+  const section = sectionsByLocale[i18n.language].find(
     (section) => section.name === name,
   );
 

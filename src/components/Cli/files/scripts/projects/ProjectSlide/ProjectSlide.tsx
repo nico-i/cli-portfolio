@@ -2,6 +2,7 @@ import { TextButton } from '@/components/Button/TextButton/TextButton';
 import { Project } from '@/components/Cli/files/scripts/projects/types';
 import { Link } from '@/components/Link';
 import { GatsbyImage, getImage } from 'gatsby-plugin-image';
+import { useTranslation } from 'gatsby-plugin-react-i18next';
 import { useState } from 'react';
 
 interface ProjectSlideProps {
@@ -9,6 +10,8 @@ interface ProjectSlideProps {
 }
 
 export const ProjectSlide = ({ project }: Readonly<ProjectSlideProps>) => {
+  const { t } = useTranslation();
+
   const [isExpanded, setIsExpanded] = useState(false);
   const headerImage = getImage(project.headerImage.imageData);
 
@@ -52,12 +55,12 @@ export const ProjectSlide = ({ project }: Readonly<ProjectSlideProps>) => {
 
       {isExpanded ? (
         <>
-          <h3 className="font-bold">Summary</h3>
+          <h3 className="font-bold">{t(`components.projects.summary`)}</h3>
           {project.summary}
         </>
       ) : (
         <>
-          <h3 className="font-bold">tldr;</h3>
+          <h3 className="font-bold">{t(`components.projects.tldr`)}</h3>
           <p className="h-full">{project.tldr}</p>
         </>
       )}
@@ -65,7 +68,9 @@ export const ProjectSlide = ({ project }: Readonly<ProjectSlideProps>) => {
         className="self-end"
         onClick={() => setIsExpanded((prev) => !prev)}
       >
-        {isExpanded ? `Show less` : `Read more`}
+        {isExpanded
+          ? t(`components.projects.show-less`)
+          : t(`components.projects.read-more`)}
       </TextButton>
     </div>
   );

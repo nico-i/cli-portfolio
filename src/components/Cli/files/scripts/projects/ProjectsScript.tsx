@@ -1,13 +1,14 @@
-import { CliFile } from '@/components/Cli/files/CliFile';
 import { ProjectsCarousel } from '@/components/Cli/files/scripts/projects/ProjectCarousel';
 import {
   Image,
   Project,
   ProjectCollectionName,
 } from '@/components/Cli/files/scripts/projects/types';
+import { CliFile } from '@/components/Cli/files/types/CliFile';
 import { parseStrapiCollectionToCollectionByLocale } from '@/util/helper';
 import { StopStandaloneEvent } from '@/util/types';
 import { graphql, useStaticQuery } from 'gatsby';
+import { useI18next } from 'gatsby-plugin-react-i18next';
 
 const ProjectsRun = () => {
   const data = useStaticQuery(graphql`
@@ -40,6 +41,9 @@ const ProjectsRun = () => {
       }
     }
   `);
+
+  const { i18n } = useI18next();
+
   const projectsByLocale = parseStrapiCollectionToCollectionByLocale<Project>(
     data,
     ProjectCollectionName,
@@ -65,7 +69,7 @@ const ProjectsRun = () => {
   return (
     <ProjectsCarousel
       onClose={() => window.dispatchEvent(StopStandaloneEvent)}
-      projects={projectsByLocale.en}
+      projects={projectsByLocale[i18n.language]}
     />
   );
 };

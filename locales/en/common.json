@@ -1,0 +1,46 @@
+{
+  "components": {
+    "skills": {
+      "skill": "Skill",
+      "proficiency": "Proficiency"
+    },
+    "projects": {
+      "help": "- use ESC or the X button to exit -",
+      "help-mobile": "- use X button to exit -",
+      "summary": "Summary",
+      "tldr": "TL;DR",
+      "read-more": "Read more",
+      "show-less": "Show less"
+    }
+  },
+  "seo": {
+    "title": "Nico's Portfolio",
+    "description": "Nico's Portfolio"
+  },
+  "macros": {
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "skills": "Skills",
+    "contact": "Contact"
+  },
+  "cmd": {
+    "help": "Prints general help",
+    "help-command": "Prints help for a specific command",
+    "cat": "Displays the contents of a file or shows a download link",
+    "clear": "Clears the terminal",
+    "echo": "Prints provided string to the terminal",
+    "ls": "Lists accessible files",
+    "top": "Scrolls to the top of the terminal window",
+    "viu": "Displays an image in the terminal",
+    "viu-flags-width": "Sets the width of the image",
+    "viu-flags-height": "Sets the height of the image",
+    "sl": "Switches the language",
+    "errors": {
+      "arg-count": "Invalid number of arguments. Expected: {{start}} <= count <= {{end}}, got: {{actual}}",
+      "value": "Invalid value. Expected: {{expectedType}}, got: {{value}}",
+      "404-flag": "Invalid flag(s): {{flags}}",
+      "404-command": "Unknown command: {{command}}"
+    }
+  }
+}

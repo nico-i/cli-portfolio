@@ -1,5 +1,10 @@
 import { allCommandNames, allCommandsByName } from '@/components/Cli/cmd';
 import {
+  ArgCountError,
+  UnknownCommandError,
+  UnknownFlagsError,
+} from '@/components/Cli/cmd/types';
+import {
   allScriptNames,
   allScriptsByName,
 } from '@/components/Cli/files/scripts';
@@ -40,10 +45,34 @@ export const runPrompt = (
     );
 
   if (!allCommandNames.includes(cmd)) {
-    throw new Error(`Unknown command: ${cmd}`);
+    throw new UnknownCommandError(cmd);
   }
 
   const command = allCommandsByName[cmd];
+
+  if (
+    Object.keys(flags).length > 0 &&
+    Object.keys(flags).some((flag) => {
+      if (command.flags === undefined) return true;
+      let flagArr;
+      if (Array.isArray(command.flags)) {
+        flagArr = command.flags;
+      } else {
+        flagArr = [command.flags];
+      }
+      return !flagArr.map((f) => f.usage).includes(flag);
+    })
+  ) {
+    throw new UnknownFlagsError(Object.keys(flags)[0]);
+  }
+
+  if (
+    values.length < command.expectedArgCountInterval[0] ||
+    values.length > command.expectedArgCountInterval[1]
+  ) {
+    throw new ArgCountError(command.expectedArgCountInterval, values.length);
+  }
+
   return {
     result: command.run({ flags, values }),
     isStandalone: command.isStandalone,

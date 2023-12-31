@@ -1,4 +1,4 @@
-import { CliCmd } from '@/components/Cli/cmd/CliCmd';
+import { CliCmd, UsageTuple } from '@/components/Cli/cmd/types/CliCmd';
 import { ReactNode } from 'react';
 
 export class Top extends CliCmd {
@@ -6,10 +6,10 @@ export class Top extends CliCmd {
     return `top`;
   }
 
-  get usages() {
+  get usages(): UsageTuple {
     return {
       usage: this.fileName,
-      description: `Scrolls to the top of the terminal window`,
+      i18nKey: `cmd.top`,
     };
   }
 

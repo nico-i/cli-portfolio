@@ -1,4 +1,4 @@
-import { CliFile } from '@/components/Cli/files/CliFile';
+import { CliFile } from '@/components/Cli/files/types/CliFile';
 
 export const getAllFileContentsByFileName = (
   files: CliFile[],

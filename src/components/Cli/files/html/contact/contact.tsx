@@ -1,5 +1,5 @@
-import { CliFile } from '@/components/Cli/files/CliFile';
 import { ContactLink } from '@/components/Cli/files/html/contact/types';
+import { CliFile } from '@/components/Cli/files/types/CliFile';
 import { Link } from '@/components/Link';
 import { graphql, useStaticQuery } from 'gatsby';
 

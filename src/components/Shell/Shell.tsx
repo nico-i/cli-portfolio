@@ -1,10 +1,17 @@
 import { runPrompt } from '@/components/Cli';
 import { Clear } from '@/components/Cli/cmd/clear';
+import {
+  ArgCountError,
+  UnknownCommandError,
+  UnknownFlagsError,
+  ValueError,
+} from '@/components/Cli/cmd/types';
 import { PromptPrefix } from '@/components/Shell/PromptPrefix';
 import { PromptHistoryContext } from '@/context/PromptHistoryContext/PromptHistoryContext';
 import { PromptHistoryEntry } from '@/context/PromptHistoryContext/types';
 import { CustomEvents, RunEvent, SearchParams } from '@/util/types';
 import { useLocation } from '@reach/router';
+import { useTranslation } from 'gatsby-plugin-react-i18next';
 import {
   ChangeEventHandler,
   KeyboardEventHandler,
@@ -30,13 +37,67 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
   const [currentDescHistoryIndex, setCurrentDescHistoryIndex] = useState(-1); // -1 means current prompt is not in history
 
   const location = useLocation();
+  const { t } = useTranslation();
 
   const ascHistory = [...history].sort((a, b) => a.timestamp - b.timestamp);
   const descHistory = [...history].sort((a, b) => b.timestamp - a.timestamp);
 
+  const processRunRequest = (userPrompt: string): PromptHistoryEntry => {
+    const res: PromptHistoryEntry = {
+      timestamp: new Date().getTime(),
+      prompt: userPrompt,
+      response: null,
+      isStandalone: false,
+      show: true,
+    };
+    const consecutivePrompts = userPrompt.split(`&&`).map((cmd) => cmd.trim());
+    // recursively process commands
+    if (consecutivePrompts.length > 1) {
+      for (const cmd of consecutivePrompts) {
+        const consecutiveCmdRes = processRunRequest(cmd);
+        res.response = (
+          <>
+            {res.response}
+            {consecutiveCmdRes.response}
+          </>
+        );
+        res.isStandalone = consecutiveCmdRes.isStandalone || res.isStandalone;
+      }
+      return res;
+    }
+    try {
+      const { result, isStandalone } = runPrompt(userPrompt.split(` `));
+      res.response = result;
+      res.isStandalone = isStandalone;
+    } catch (e) {
+      if (e instanceof ArgCountError) {
+        res.response = t((e as ArgCountError).message, {
+          expected: (e as ArgCountError).expected,
+          actual: (e as ArgCountError).actual,
+        });
+      } else if (e instanceof ValueError) {
+        res.response = t((e as ValueError).message, {
+          expectedType: (e as ValueError).expectedType,
+          value: (e as ValueError).value,
+        });
+      } else if (e instanceof UnknownFlagsError) {
+        res.response = t((e as UnknownFlagsError).message, {
+          flags: (e as UnknownFlagsError).flags,
+        });
+      } else if (e instanceof UnknownCommandError) {
+        res.response = t((e as UnknownCommandError).message, {
+          command: (e as UnknownCommandError).command,
+        });
+      } else {
+        res.response = `(e as Error).message`;
+      }
+    }
+
+    return res;
+  };
+
   const handleRunEvent = useCallback(
     (event: any) => {
-      console.log(event.detail.prompt);
       if (event.detail.prompt === undefined) {
         throw new Error(`No prompt provided in run event!`);
       }
@@ -248,37 +309,4 @@ const updateCmdSearchParam = (cmd?: string) => {
   const currentUrl = new URL(window.location.href);
   currentUrl.search = newSearchParams?.toString() || ``;
   window.history.replaceState({}, ``, currentUrl);
-};
-
-const processRunRequest = (userPrompt: string): PromptHistoryEntry => {
-  const res: PromptHistoryEntry = {
-    timestamp: new Date().getTime(),
-    prompt: userPrompt,
-    response: null,
-    isStandalone: false,
-    show: true,
-  };
-  const consecutivePrompts = userPrompt.split(`&&`).map((cmd) => cmd.trim());
-  // recursively process commands
-  if (consecutivePrompts.length > 1) {
-    for (const cmd of consecutivePrompts) {
-      const consecutiveCmdRes = processRunRequest(cmd);
-      res.response = (
-        <>
-          {res.response}
-          {consecutiveCmdRes.response}
-        </>
-      );
-      res.isStandalone = consecutiveCmdRes.isStandalone || res.isStandalone;
-    }
-    return res;
-  }
-  try {
-    const { result, isStandalone } = runPrompt(userPrompt.split(` `));
-    res.response = result;
-    res.isStandalone = isStandalone;
-  } catch (e) {
-    res.response = (e as Error).message;
-  }
-  return res;
 };

@@ -1,4 +1,3 @@
-import { CliFile } from '@/components/Cli/files/CliFile';
 import {
   allHtmlFileNames,
   allHtmlFilesByName,
@@ -12,6 +11,7 @@ import {
   allStaticFileNames,
   allStaticFilesByName,
 } from '@/components/Cli/files/static';
+import { CliFile } from '@/components/Cli/files/types/CliFile';
 
 const allFileNames: string[] = [
   ...allHtmlFileNames,

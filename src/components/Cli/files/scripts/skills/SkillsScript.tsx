@@ -1,10 +1,10 @@
 import { AsciiProgressBar } from '@/components/AsciiProgressBar/AsciiProgressBar';
 import { TextButton } from '@/components/Button/TextButton/TextButton';
-import { CliFile } from '@/components/Cli/files/CliFile';
 import {
   Skill,
   SkillCollectionName,
 } from '@/components/Cli/files/scripts/skills/types';
+import { CliFile } from '@/components/Cli/files/types/CliFile';
 import {
   TableCell,
   TableRow,

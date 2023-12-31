@@ -1,4 +1,4 @@
-import { CliFile } from '@/components/Cli/files/CliFile';
+import { CliFile } from '@/components/Cli/files/types/CliFile';
 import { useTranslation } from 'gatsby-plugin-react-i18next';
 import { Fragment, ReactNode } from 'react';
 export interface RunProps {

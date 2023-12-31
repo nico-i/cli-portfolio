@@ -34,6 +34,12 @@
     "top": "Scrolls to the top of the terminal window",
     "viu": "Displays an image in the terminal",
     "viu-flags-width": "Sets the width of the image",
-    "viu-flags-height": "Sets the height of the image"
+    "viu-flags-height": "Sets the height of the image",
+    "errors": {
+      "arg-count": "Invalid number of arguments. Expected: {{expected}}, got: {{actual}}",
+      "value": "Invalid value. Expected: {{expectedType}}, got: {{value}}",
+      "404-flag": "Unknown flag(s): {{flags}}",
+      "404-command": "Unknown command: {{command}}"
+    }
   }
 }

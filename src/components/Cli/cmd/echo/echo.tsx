@@ -1,4 +1,13 @@
-import { CliCmd, RunProps, UsageTuple } from '@/components/Cli/cmd/CliCmd';
+import {
+  ArgCountError,
+  UnknownFlagsError,
+  ValueError,
+} from '@/components/Cli/cmd/types';
+import {
+  CliCmd,
+  RunProps,
+  UsageTuple,
+} from '@/components/Cli/cmd/types/CliCmd';
 import { ReactNode } from 'react';
 
 export class Echo extends CliCmd {
@@ -15,10 +24,10 @@ export class Echo extends CliCmd {
 
   public run({ flags, values }: RunProps): ReactNode {
     if (Object.keys(flags).length > 0) {
-      throw new Error(`Unknown flag(s): ${Object.keys(flags).join(`, `)}`);
+      throw new UnknownFlagsError(Object.keys(flags)[0]);
     }
     if (values.length !== 1) {
-      throw new Error(`Expected 1 argument, got ${values.length}`);
+      throw new ArgCountError(1, values.length);
     }
     if (
       (values.length === 1 &&
@@ -29,7 +38,7 @@ export class Echo extends CliCmd {
         (!values[0].startsWith(`"`) ||
           !values[values.length - 1].endsWith(`"`)))
     ) {
-      throw new Error(`Invalid input, expected "string"`);
+      throw new ValueError(`string`, values.join(` `));
     }
 
     return <div>{values.join(` `).replace(/"/g, ``) || <>&nbsp;</>}</div>;

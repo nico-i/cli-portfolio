@@ -1,10 +1,10 @@
-import { CliFile } from '@/components/Cli/files/CliFile';
 import { ProjectsCarousel } from '@/components/Cli/files/scripts/projects/ProjectCarousel';
 import {
   Image,
   Project,
   ProjectCollectionName,
 } from '@/components/Cli/files/scripts/projects/types';
+import { CliFile } from '@/components/Cli/files/types/CliFile';
 import { parseStrapiCollectionToCollectionByLocale } from '@/util/helper';
 import { StopStandaloneEvent } from '@/util/types';
 import { graphql, useStaticQuery } from 'gatsby';

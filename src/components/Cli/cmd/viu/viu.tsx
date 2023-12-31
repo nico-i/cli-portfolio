@@ -1,4 +1,13 @@
-import { CliCmd, RunProps, UsageTuple } from '@/components/Cli/cmd/CliCmd';
+import {
+  ArgCountError,
+  UnknownFlagsError,
+  ValueError,
+} from '@/components/Cli/cmd/types';
+import {
+  CliCmd,
+  RunProps,
+  UsageTuple,
+} from '@/components/Cli/cmd/types/CliCmd';
 import { allImageNames, allImagesByName } from '@/components/Cli/files/images';
 import { CSSProperties, ReactNode } from 'react';
 
@@ -26,14 +35,11 @@ export class Viu extends CliCmd {
   ];
 
   public run({ values, flags }: RunProps): ReactNode {
-    if (values.length === 0) {
-      throw new Error(`No file specified`);
-    }
-    if (values.length > 1) {
-      throw new Error(`Expected 1 input, got ${values.length}`);
+    if (values.length === 0 || values.length > 1) {
+      throw new ArgCountError(1, values.length);
     }
     if (!allImageNames.includes(values[0])) {
-      throw new Error(`Unknown file ${values[0]}`);
+      throw new ValueError(`.jpg`, values[0]);
     }
 
     let width: undefined | number;
@@ -44,13 +50,13 @@ export class Viu extends CliCmd {
         if (flag === `-w` || flag === `--width`) {
           width = Number(value);
           if (Number.isNaN(width))
-            throw new Error(`Invalid width. Expected number got ${value}`);
+            throw new ValueError(`width as number`, value);
         } else if (flag === `-h` || flag === `--height`) {
           height = Number(value);
           if (Number.isNaN(height))
-            throw new Error(`Invalid height. Expected number got  ${value}`);
+            throw new ValueError(`height as number`, value);
         } else {
-          throw new Error(`Unknown flag ${flag}`);
+          throw new UnknownFlagsError(flag);
         }
       });
     }

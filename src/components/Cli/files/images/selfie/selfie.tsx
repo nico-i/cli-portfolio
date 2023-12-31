@@ -1,4 +1,4 @@
-import { CliFile } from '@/components/Cli/files/CliFile';
+import { CliFile } from '@/components/Cli/files/types/CliFile';
 import { StaticImage } from 'gatsby-plugin-image';
 
 export class Selfie extends CliFile {

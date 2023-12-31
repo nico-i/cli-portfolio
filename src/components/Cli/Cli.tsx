@@ -1,4 +1,5 @@
 import { allCommandNames, allCommandsByName } from '@/components/Cli/cmd';
+import { UnknownCommandError } from '@/components/Cli/cmd/types';
 import {
   allScriptNames,
   allScriptsByName,
@@ -40,7 +41,7 @@ export const runPrompt = (
     );
 
   if (!allCommandNames.includes(cmd)) {
-    throw new Error(`Unknown command: ${cmd}`);
+    throw new UnknownCommandError(cmd);
   }
 
   const command = allCommandsByName[cmd];

@@ -1,4 +1,4 @@
-import { CliCmd, UsageTuple } from '@/components/Cli/cmd/CliCmd';
+import { CliCmd, UsageTuple } from '@/components/Cli/cmd/types/CliCmd';
 import { ReactNode } from 'react';
 
 export class Top extends CliCmd {

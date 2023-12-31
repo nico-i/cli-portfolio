@@ -1,4 +1,9 @@
-import { CliCmd, RunProps, UsageTuple } from '@/components/Cli/cmd/CliCmd';
+import { ArgCountError, UnknownFlagsError } from '@/components/Cli/cmd/types';
+import {
+  CliCmd,
+  RunProps,
+  UsageTuple,
+} from '@/components/Cli/cmd/types/CliCmd';
 import { ClearEvent } from '@/util/types';
 import { ReactNode } from 'react';
 
@@ -16,11 +21,11 @@ export class Clear extends CliCmd {
 
   public run({ flags, values }: RunProps): ReactNode {
     if (values.length > 0) {
-      throw new Error(`Expected 0 arguments, got ${values.length}`);
+      throw new ArgCountError(0, values.length);
     }
 
     if (Object.keys(flags).length > 0) {
-      throw new Error(`Unknown flag(s): ${Object.keys(flags).join(`, `)}`);
+      throw new UnknownFlagsError(Object.keys(flags)[0]);
     }
 
     window.dispatchEvent(ClearEvent);

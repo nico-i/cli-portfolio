@@ -4,6 +4,7 @@ import { Link } from '@/components/Link';
 import { GatsbyImage, getImage } from 'gatsby-plugin-image';
 import { useTranslation } from 'gatsby-plugin-react-i18next';
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 interface ProjectSlideProps {
   project: Project;
@@ -56,7 +57,7 @@ export const ProjectSlide = ({ project }: Readonly<ProjectSlideProps>) => {
       {isExpanded ? (
         <>
           <h3 className="font-bold">{t(`components.projects.summary`)}</h3>
-          {project.summary}
+          <ReactMarkdown>{project.summary}</ReactMarkdown>
         </>
       ) : (
         <>

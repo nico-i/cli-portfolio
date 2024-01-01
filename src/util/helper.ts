@@ -1,6 +1,6 @@
 import { StrapiCollection } from '@/util/types';
 
-export function getCharWidth(): number {
+export function getCharDimensions(): { width: number; height: number } {
   const span = document.createElement(`span`);
 
   // Set the font and content
@@ -11,11 +11,12 @@ export function getCharWidth(): number {
   // Append it to the body and measure
   document.body.appendChild(span);
   const width = span.offsetWidth; // Get the width of the character
+  const height = span.offsetHeight; // Get the height of the character
 
   // Clean up
   document.body.removeChild(span);
 
-  return width;
+  return { width, height };
 }
 
 export function escapeMarkdown(toEscape: string, replacer: string = `\\$1`) {

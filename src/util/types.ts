@@ -1,6 +1,5 @@
 export enum CustomEvents {
   run = `run`,
-  clear = `clear`,
   stopStandalone = `closeStandalone`,
 }
 
@@ -13,11 +12,8 @@ export const RunEvent = (prompt: string) =>
 
 export const StopStandaloneEvent = new CustomEvent(CustomEvents.stopStandalone);
 
-export const ClearEvent = new CustomEvent(CustomEvents.clear);
-
 export enum SearchParams {
   cmd = `cmd`,
-  clear = `clear`,
 }
 
 export interface StrapiCollection {

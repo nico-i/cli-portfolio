@@ -1,13 +1,15 @@
-import { getCharWidth } from '@/util/helper';
+import { getCharDimensions } from '@/util/helper';
 import { useEffect, useState } from 'react';
 
-export const useCharWidth = () => {
+export const useCharDimensions = () => {
   const [charWidth, setCharWidth] = useState<number>(0);
+  const [charHeight, setCharHeight] = useState<number>(0);
   useEffect(() => {
-    if (charWidth > 0) return;
     if (typeof window === `undefined`) return;
-    setCharWidth(getCharWidth());
-  }, [charWidth]);
+    const { width, height } = getCharDimensions();
+    setCharWidth(width);
+    setCharHeight(height);
+  }, []);
 
-  return { charWidth };
+  return { width: charWidth, height: charHeight };
 };

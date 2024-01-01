@@ -1,6 +1,17 @@
 import { CliCmd, UsageTuple } from '@/components/Cli/cmd/types/CliCmd';
-import { ClearEvent } from '@/util/types';
-import { ReactNode } from 'react';
+import {
+  PromptHistoryAction,
+  PromptHistoryContext,
+} from '@/context/PromptHistoryContext';
+import { ReactNode, useContext, useEffect } from 'react';
+
+const RunClear = (): ReactNode => {
+  const { dispatch } = useContext(PromptHistoryContext);
+  useEffect(() => {
+    dispatch({ type: PromptHistoryAction.CLEAR });
+  }, [dispatch]);
+  return null;
+};
 
 export class Clear extends CliCmd {
   get fileName(): string {
@@ -14,8 +25,5 @@ export class Clear extends CliCmd {
     };
   }
 
-  public run(): ReactNode {
-    window.dispatchEvent(ClearEvent);
-    return null;
-  }
+  public run = (): ReactNode => <RunClear />;
 }

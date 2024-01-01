@@ -1,5 +1,4 @@
 import { getSuggestions, runPrompt } from '@/components/Cli';
-import { Clear } from '@/components/Cli/cmd/clear';
 import {
   ArgCountError,
   NotExecutableError,
@@ -9,14 +8,25 @@ import {
   ValueError,
 } from '@/components/Cli/cmd/types';
 import { PromptPrefix } from '@/components/Shell/PromptPrefix';
-import { PromptHistoryContext } from '@/context/PromptHistoryContext/PromptHistoryContext';
-import { PromptHistoryEntry } from '@/context/PromptHistoryContext/types';
+import {
+  PromptHistoryAction,
+  PromptHistoryContext,
+} from '@/context/PromptHistoryContext/PromptHistoryContext';
+import { promptResponseSortFn } from '@/context/PromptHistoryContext/helper';
+import {
+  PromptHistoryEntry,
+  PromptResult,
+} from '@/context/PromptHistoryContext/types';
+import { useCharDimensions } from '@/hooks';
 import { CustomEvents, RunEvent, SearchParams } from '@/util/types';
 import { useLocation } from '@reach/router';
+import clsx from 'clsx';
 import { useTranslation } from 'gatsby-plugin-react-i18next';
 import {
   ChangeEventHandler,
+  Fragment,
   KeyboardEventHandler,
+  ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -27,137 +37,136 @@ import {
 interface ShellProps {
   username: string;
   domain: URL['hostname'];
+  initialPrompt?: string;
 }
 
-export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
+export const Shell = ({
+  username,
+  domain,
+  initialPrompt,
+}: Readonly<ShellProps>) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const textAreaCopyRef = useRef<HTMLTextAreaElement>(null);
 
-  const { history, setHistory } = useContext(PromptHistoryContext);
+  const { promptHistory, dispatch } = useContext(PromptHistoryContext);
   const [currentPrompt, setCurrentPrompt] = useState<string>(``);
   const [tmpPrompt, setTmpPrompt] = useState<string>(``); // used for arrow up/down
-  const [isStandaloneOpen, setIsStandaloneOpen] = useState(false);
+  const [standalone, setStandalone] = useState<ReactNode | null>(null);
   const [currentDescHistoryIndex, setCurrentDescHistoryIndex] = useState(-1); // -1 means current prompt is not in history
   const [tabSuggestions, setTabSuggestions] = useState<string[]>([]);
+  const [isMainFlexCol, setIsMainFlexCol] = useState<boolean>(false);
 
+  const { height: charHeight } = useCharDimensions();
   const location = useLocation();
   const { t } = useTranslation();
 
-  const ascHistory = [...history].sort((a, b) => a.timestamp - b.timestamp);
-  const descHistory = [...history].sort((a, b) => b.timestamp - a.timestamp);
-
-  const processRunRequest = (userPrompt: string): PromptHistoryEntry => {
-    const res: PromptHistoryEntry = {
-      timestamp: new Date().getTime(),
-      prompt: userPrompt,
-      response: null,
-      isStandalone: false,
-      show: true,
-    };
-    const consecutivePrompts = userPrompt.split(`&&`).map((cmd) => cmd.trim());
-    // recursively process commands
-    if (consecutivePrompts.length > 1) {
+  const run = useCallback(
+    (fullUserPrompt: string): PromptHistoryEntry => {
+      const responses: PromptResult[] = [];
+      const consecutivePrompts = fullUserPrompt
+        .split(`&&`)
+        .map((cmd) => cmd.trim());
       for (const cmd of consecutivePrompts) {
-        const consecutiveCmdRes = processRunRequest(cmd);
-        res.response = (
-          <>
-            {res.response}
-            {consecutiveCmdRes.response}
-          </>
-        );
-        res.isStandalone = consecutiveCmdRes.isStandalone || res.isStandalone;
+        const currentResponse: PromptResult = {
+          prompt: cmd,
+          timestamp: Date.now(),
+          result: ``,
+          isStandalone: false,
+        };
+        try {
+          const { isStandalone, result } = runPrompt(cmd.split(` `));
+          currentResponse.isStandalone = isStandalone;
+          currentResponse.result = result;
+        } catch (e) {
+          if (e instanceof ArgCountError) {
+            currentResponse.result = t((e as ArgCountError).message, {
+              start: (e as ArgCountError).expectedInterval[0],
+              end: (e as ArgCountError).expectedInterval[1],
+              actual: (e as ArgCountError).actual,
+            });
+          } else if (e instanceof ValueError) {
+            currentResponse.result = t((e as ValueError).message, {
+              expectedType: (e as ValueError).expectedType,
+              value: (e as ValueError).value,
+            });
+          } else if (e instanceof UnknownFlagsError) {
+            currentResponse.result = t((e as UnknownFlagsError).message, {
+              flags: (e as UnknownFlagsError).flags,
+            });
+          } else if (e instanceof UnknownCommandError) {
+            currentResponse.result = t((e as UnknownCommandError).message, {
+              command: (e as UnknownCommandError).command,
+            });
+          } else if (e instanceof UnknownFileError) {
+            currentResponse.result = t((e as UnknownFileError).message, {
+              file: (e as UnknownFileError).file,
+            });
+          } else if (e as NotExecutableError) {
+            currentResponse.result = t((e as NotExecutableError).message, {
+              file: (e as NotExecutableError).file,
+            });
+          } else {
+            currentResponse.result = t(`cli.errors.server`, {
+              error: (e as Error).message,
+            });
+          }
+        }
+        responses.push(currentResponse);
       }
-      return res;
-    }
-    try {
-      const { result, isStandalone } = runPrompt(userPrompt.split(` `));
-      res.response = result;
-      res.isStandalone = isStandalone;
-    } catch (e) {
-      if (e instanceof ArgCountError) {
-        res.response = t((e as ArgCountError).message, {
-          start: (e as ArgCountError).expectedInterval[0],
-          end: (e as ArgCountError).expectedInterval[1],
-          actual: (e as ArgCountError).actual,
-        });
-      } else if (e instanceof ValueError) {
-        res.response = t((e as ValueError).message, {
-          expectedType: (e as ValueError).expectedType,
-          value: (e as ValueError).value,
-        });
-      } else if (e instanceof UnknownFlagsError) {
-        res.response = t((e as UnknownFlagsError).message, {
-          flags: (e as UnknownFlagsError).flags,
-        });
-      } else if (e instanceof UnknownCommandError) {
-        res.response = t((e as UnknownCommandError).message, {
-          command: (e as UnknownCommandError).command,
-        });
-      } else if (e instanceof UnknownFileError) {
-        res.response = t((e as UnknownFileError).message, {
-          file: (e as UnknownFileError).file,
-        });
-      } else if (e as NotExecutableError) {
-        res.response = t((e as NotExecutableError).message, {
-          file: (e as NotExecutableError).file,
-        });
-      } else {
-        res.response = t(`cli.errors.server`, {
-          error: (e as Error).message,
-        });
-      }
-    }
-
-    return res;
-  };
+      return { fullPrompt: fullUserPrompt, results: responses };
+    },
+    [t],
+  );
 
   const handleRunEvent = useCallback(
     (event: any) => {
       if (event.detail.prompt === undefined) {
         throw new Error(`No prompt provided in run event!`);
       }
-      const cmdResTuple: PromptHistoryEntry = processRunRequest(
+      const { fullPrompt: prompt, results: responses } = run(
         event.detail.prompt,
       );
-      setIsStandaloneOpen(cmdResTuple.isStandalone);
+      setStandalone(
+        responses[responses.length - 1].isStandalone
+          ? responses[responses.length - 1].result
+          : null,
+      );
 
-      if (cmdResTuple.prompt !== new Clear().fileName) {
-        setHistory((history) => [...history, cmdResTuple]);
-        updateCmdSearchParam(cmdResTuple.prompt);
-      }
+      dispatch({
+        type: PromptHistoryAction.INSERT,
+        payload: {
+          fullPrompt: prompt,
+          results: responses,
+        },
+      });
+
       if (!(`ontouchstart` in window)) {
+        console.log(`focusing textarea`);
         textAreaRef.current?.focus();
       }
     },
-    [setHistory],
+    [dispatch, run],
   );
 
-  const handleClearEvent = useCallback(() => {
-    updateCmdSearchParam();
-    setHistory((history) => {
-      const newHistory: PromptHistoryEntry[] = history.map((entry) => ({
-        ...entry,
-        show: false,
-      }));
-      return newHistory;
-    });
-  }, [setHistory]);
-
   const handleStopStandaloneEvent = useCallback(() => {
-    if (!isStandaloneOpen) return;
-    setIsStandaloneOpen(false);
-    setHistory((history) => {
-      const newHistory = [...history];
-      newHistory[newHistory.length - 1].response = null;
-      return newHistory;
+    if (!standalone) return;
+    setStandalone(false);
+    const lastEntryIndex = promptHistory.length - 1;
+    const lastEntry = promptHistory[lastEntryIndex];
+    const newValue = lastEntry.results.map((response) => {
+      if (!response.isStandalone) return response;
+      return { ...response, show: false };
     });
-  }, [isStandaloneOpen, setHistory]);
+    dispatch({
+      type: PromptHistoryAction.UPDATE,
+      payload: {
+        fullPrompt: lastEntry.fullPrompt,
+        results: newValue,
+      },
+    });
+  }, [dispatch, promptHistory, standalone]);
 
   useEffect(() => {
-    textAreaRef.current?.scrollIntoView();
-  }, [currentPrompt]);
-
-  useEffect(() => {
-    window.addEventListener(CustomEvents.clear, handleClearEvent);
     window.addEventListener(CustomEvents.run, handleRunEvent);
     window.addEventListener(
       CustomEvents.stopStandalone,
@@ -165,33 +174,43 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
     );
 
     return () => {
-      window.removeEventListener(CustomEvents.clear, handleClearEvent);
       window.removeEventListener(CustomEvents.run, handleRunEvent);
       window.removeEventListener(
         CustomEvents.stopStandalone,
         handleStopStandaloneEvent,
       );
     };
-  }, [handleClearEvent, handleRunEvent, handleStopStandaloneEvent]);
+  }, [handleRunEvent, handleStopStandaloneEvent]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const cmdParam = searchParams.get(SearchParams.cmd);
     if (cmdParam) {
       const decodedCmdParam = decodeURIComponent(cmdParam);
-      window.dispatchEvent(RunEvent(decodedCmdParam));
+      handleRunEvent(RunEvent(decodedCmdParam));
+    } else if (initialPrompt) {
+      handleRunEvent(RunEvent(initialPrompt));
     }
-  }, [location.search]);
+  }, [handleRunEvent, initialPrompt, location.search]);
 
   const handleUserTextValueChange: ChangeEventHandler<HTMLTextAreaElement> = (
     e,
-  ) => setCurrentPrompt(e.target.value);
+  ) => {
+    setCurrentPrompt(e.target.value);
+    if (!textAreaRef.current || !textAreaCopyRef.current) return;
+    textAreaRef.current.style.height = `auto`; // reset height
+    textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`; // auto grow the textarea to fit the text
+    setIsMainFlexCol(
+      textAreaCopyRef.current.scrollHeight > charHeight &&
+        e.target.value !== ``,
+    );
+  };
 
   const handleUserTextAreaKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
     event,
   ) => {
     setTabSuggestions([]);
-
+    textAreaRef.current?.scrollIntoView();
     if (event.key.length === 1) {
       setCurrentDescHistoryIndex(-1); // only reset history index if user is typing
       setTmpPrompt(currentPrompt + event.key);
@@ -199,12 +218,15 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
 
     if (event.key === `ArrowDown` || event.key === `ArrowUp`) {
       event.preventDefault();
+      const descPromptHistory = promptHistory.toSorted((a, b) =>
+        promptResponseSortFn(`DESC`, a, b),
+      );
       if (event.key === `ArrowUp`) {
         // Go back in history
-        if (currentDescHistoryIndex === descHistory.length - 1) return;
+        if (currentDescHistoryIndex === descPromptHistory.length - 1) return;
         setCurrentDescHistoryIndex((currentDescHistoryIndex) => {
           const newIndex = currentDescHistoryIndex + 1;
-          setCurrentPrompt(descHistory[newIndex].prompt);
+          setCurrentPrompt(descPromptHistory[newIndex].fullPrompt);
           return newIndex;
         });
       } else {
@@ -213,7 +235,9 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         setCurrentDescHistoryIndex((currentDescHistoryIndex) => {
           const newIndex = currentDescHistoryIndex - 1;
           setCurrentPrompt(
-            newIndex === -1 ? tmpPrompt : descHistory[newIndex].prompt,
+            newIndex === -1
+              ? tmpPrompt
+              : descPromptHistory[newIndex].fullPrompt,
           );
           return newIndex;
         });
@@ -274,6 +298,7 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         flex-col
         hover:cursor-text
         relative
+        break-words
         w-full`}
       onClickCapture={(e) => {
         if (
@@ -285,72 +310,101 @@ export const Shell = ({ username, domain }: Readonly<ShellProps>) => {
         }
       }}
     >
-      {isStandaloneOpen ? (
-        history[history.length - 1].response
-      ) : (
+      {standalone || (
         <>
-          {history.length > 0 &&
-            ascHistory.map((entryTuple, i) => {
-              if (!entryTuple.show) return null;
+          {promptHistory.length > 0 &&
+            promptHistory.map((entryTuple, i) => {
+              const { results: responses, fullPrompt, hideEntry } = entryTuple;
+              if (hideEntry) return null;
               return (
-                <div key={i} className="flex flex-col">
+                <Fragment key={i}>
                   <span>
                     <PromptPrefix username={username} domain={domain} />
-                    {entryTuple.prompt}
+                    {fullPrompt}
                   </span>
-                  {entryTuple.response !== `` ? (
-                    entryTuple.response
-                  ) : (
-                    <>&nbsp;</>
-                  )}
-                </div>
+                  {responses.map((response, j) => (
+                    <Fragment key={j}>
+                      {response.result !== `` ? (
+                        <>{response.result}</>
+                      ) : (
+                        <>&nbsp;</>
+                      )}
+                    </Fragment>
+                  ))}
+                </Fragment>
               );
             })}
-          <div className="flex flex-col">
-            <div id="active-prompt" className="w-full flex relative">
-              <PromptPrefix username={username} domain={domain} />
-              <label className="sr-only" htmlFor="prompt">
-                CLI prompt
-              </label>
-              <textarea
-                id="prompt"
-                rows={1}
-                ref={textAreaRef}
-                onKeyDown={handleUserTextAreaKeyDown}
-                onChange={handleUserTextValueChange}
-                value={currentPrompt}
-                className={`
+          <div
+            id="active-prompt"
+            className={clsx(
+              `
               w-full
-              focus:outline-none
-              resize-none
-              overflow-hidden`}
-              />
-            </div>
-            {tabSuggestions.length > 0 && (
-              <div className="flex flex-col">
-                {tabSuggestions
-                  .toSorted((a, b) => a.localeCompare(b))
-                  .map((suggestion, i) => (
-                    <span key={i}>{suggestion}</span>
-                  ))}
-              </div>
+              flex
+              relative`,
+              isMainFlexCol && `flex-col`,
             )}
+          >
+            <label className="sr-only" htmlFor="prompt">
+              CLI prompt
+            </label>
+            <PromptPrefix username={username} domain={domain} />
+            <textarea
+              id="prompt"
+              rows={1}
+              tabIndex={0}
+              ref={textAreaRef}
+              onKeyDown={handleUserTextAreaKeyDown}
+              onChange={handleUserTextValueChange}
+              value={currentPrompt}
+              className={
+                `
+                w-full
+                focus:outline-none
+                overflow-hidden
+                resize-none 
+                `
+                // overflow-hidden and resize-none are necessary for the auto grow textarea
+              }
+            />
           </div>
+          {tabSuggestions.length > 0 && (
+            <div className="flex flex-col">
+              {tabSuggestions
+                .toSorted((a, b) => a.localeCompare(b))
+                .map((suggestion, i) => (
+                  <span key={i}>{suggestion}</span>
+                ))}
+            </div>
+          )}
         </>
       )}
+      {/* Hidden prompt copy for width measurement */}
+      <div
+        className="
+        invisible 
+        -z-10
+        -mt-6
+        flex
+        w-full"
+      >
+        <PromptPrefix
+          username={username}
+          domain={domain}
+          className="pointer-events-none"
+        />
+        <textarea
+          rows={1}
+          tabIndex={-1}
+          readOnly
+          disabled
+          ref={textAreaCopyRef}
+          value={currentPrompt}
+          className={`
+            w-full
+            pointer-events-none
+            `}
+        />
+      </div>
     </main>
   );
-};
-
-const updateCmdSearchParam = (cmd?: string) => {
-  const newSearchParams = new URLSearchParams(window.location.search);
-  if (cmd) {
-    newSearchParams.set(`cmd`, encodeURIComponent(cmd));
-  } else {
-    newSearchParams.delete(SearchParams.cmd);
-    newSearchParams.delete(SearchParams.clear);
-  }
-  const currentUrl = new URL(window.location.href);
-  currentUrl.search = newSearchParams?.toString() || ``;
-  window.history.replaceState({}, ``, currentUrl);
 };

@@ -1,6 +1,5 @@
 import { Layout } from '@/components/Layout';
 import { Shell } from '@/components/Shell';
-import { RunEvent } from '@/util/types';
 import { useLocation } from '@reach/router';
 import { graphql } from 'gatsby';
 import { Link, useI18next } from 'gatsby-plugin-react-i18next';
@@ -16,13 +15,6 @@ export default function Index() {
     setDomain(location.hostname);
   }, [location]);
 
-  useEffect(() => {
-    const cmdParam = new URLSearchParams(window.location.search).get(`cmd`);
-    if (!cmdParam) {
-      window.dispatchEvent(RunEvent(`clear && cat intro.html && top`));
-    }
-  }, []);
-
   return (
     <Layout>
       {languages.map((lng) => (
@@ -36,7 +28,11 @@ export default function Index() {
           {lng}
         </Link>
       ))}
-      <Shell username="guest" domain={domain} />
+      <Shell
+        username="guest"
+        domain={domain}
+        initialPrompt={`clear && cat intro.html && top`}
+      />
     </Layout>
   );
 }

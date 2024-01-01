@@ -1,4 +1,4 @@
-import { getCharWidth } from '@/util/helper';
+import { getCharDimensions } from '@/util/helper';
 import { useEffect, useRef, useState } from 'react';
 
 export interface AsciiProgressBarProps {
@@ -29,6 +29,7 @@ export const AsciiProgressBar = ({
   const [currentInterval, setCurrentInterval] = useState<NodeJS.Timeout | null>(
     null,
   );
+
   useEffect(() => {
     const currentRef = wrapperRef.current;
     // find target width in chars
@@ -37,7 +38,8 @@ export const AsciiProgressBar = ({
         setProgressCharCount(0);
         const { width } = entries[0].contentRect;
         setWidthInChars(0);
-        const charWidth = getCharWidth();
+        // purposely not using the hook here since we don't want to trigger a re-render
+        const { width: charWidth } = getCharDimensions();
         const widthInChars =
           Math.floor(width / charWidth) -
           3 - // account for left and right end caps (+1 for percentage padding on the right)

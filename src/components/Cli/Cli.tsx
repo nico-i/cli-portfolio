@@ -16,8 +16,12 @@ import { ReactNode } from 'react';
 
 export const runPrompt = (
   args: string[],
-): { result: ReactNode; isStandalone: boolean } => {
+): {
+  result: ReactNode;
+  isStandalone: boolean;
+} => {
   let isScript = false;
+  // convert paths to file names since there only is the root directory
   const strippedArgs = args.map((arg, i) => {
     if (!arg.includes(`/`)) return arg;
     // is a file or path
@@ -106,7 +110,7 @@ export const runPrompt = (
 };
 
 export function getSuggestions(args: string[]): string[] {
-  let lastArg = args.at(-1) ?? ``;
+  let lastArg = args[args.length - 1];
   let lastArgPrefix = ``;
 
   if (lastArg === ``) return [];

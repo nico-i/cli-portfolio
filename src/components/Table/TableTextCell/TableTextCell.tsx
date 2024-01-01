@@ -1,5 +1,5 @@
 import { AsciiLine } from '@/components/AsciiLine';
-import { getCharWidth } from '@/util/helper';
+import { useCharDimensions } from '@/hooks';
 import clsx from 'clsx';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
@@ -14,10 +14,10 @@ export const TableTextCell = ({
 }: TableTextCellProps) => {
   const [textLines, setTextLines] = useState<string[]>([]);
   const cellRef = useRef<HTMLTableCellElement>(null);
+  const { width: charWidth } = useCharDimensions();
 
   const handleResize = useCallback(() => {
     if (!cellRef?.current) return;
-    const charWidth = getCharWidth();
     const cellWidth = cellRef?.current?.offsetWidth || 0;
     const words = children.split(` `);
     let line = ``;
@@ -37,21 +37,16 @@ export const TableTextCell = ({
       line += `${words[i]} `;
     }
     setTextLines(lines);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [children]);
-
-  useEffect(() => {
-    handleResize();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [charWidth, children]);
 
   useEffect(() => {
     if (!cellRef?.current) return;
 
     window.addEventListener(`resize`, handleResize);
+    handleResize();
+
     return () => window.removeEventListener(`resize`, handleResize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [handleResize]);
 
   return (
     <td ref={cellRef} className="flex flex-col w-full relative pt-6">

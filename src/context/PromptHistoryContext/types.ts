@@ -1,9 +1,17 @@
 import { ReactNode } from 'react';
 
-export interface PromptHistoryEntry {
-  timestamp: number;
+export interface PromptResult {
   prompt: string;
-  response: ReactNode;
-  show: boolean;
+  timestamp: number;
+  result: ReactNode;
   isStandalone: boolean;
+  hideResult?: boolean;
 }
+
+export interface PromptHistoryEntry {
+  fullPrompt: string;
+  results: PromptResult[];
+  hideEntry?: boolean;
+}
+
+export type PromptHistory = PromptHistoryEntry[];

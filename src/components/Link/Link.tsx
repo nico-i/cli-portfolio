@@ -14,15 +14,18 @@ export const Link = ({ href, children }: Readonly<LinkProps>) => {
   fill-log-500
   group-hover:fill-log-400`;
 
-  const hrefUrl = new URL(href || ``);
-  const fileExtLength = hrefUrl.pathname.split(`.`).pop()?.length;
+  if (!href) {
+    return <span>{children}</span>;
+  }
+
+  const fileExtLength = href.split(`.`).pop()?.length;
   const isFile = fileExtLength && fileExtLength >= 3 && fileExtLength <= 4;
 
   return (
     <a
       href={href}
-      target={!isFile ? `_blank` : undefined}
-      rel={!isFile ? `noreferrer` : undefined}
+      target={`_blank`}
+      rel={`noreferrer`}
       className={`
         inline-flex
         group

@@ -355,7 +355,9 @@ export const Shell = ({
               id="prompt"
               rows={1}
               tabIndex={0}
-              autoFocus={!(`ontouchstart` in window)}
+              autoFocus={
+                typeof window !== `undefined` && !(`ontouchstart` in window)
+              }
               ref={textAreaRef}
               onKeyDown={handleUserTextAreaKeyDown}
               onChange={handleUserTextValueChange}

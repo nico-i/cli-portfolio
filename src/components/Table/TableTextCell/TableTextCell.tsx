@@ -2,15 +2,18 @@ import { AsciiLine } from '@/components/AsciiLine';
 import { useCharDimensions } from '@/hooks';
 import clsx from 'clsx';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 
 export interface TableTextCellProps {
   children: string;
   isLastRow?: boolean;
+  readMoreHref?: string;
 }
 
 export const TableTextCell = ({
   children,
   isLastRow = false,
+  readMoreHref,
 }: TableTextCellProps) => {
   const [textLines, setTextLines] = useState<string[]>([]);
   const cellRef = useRef<HTMLTableCellElement>(null);
@@ -68,6 +71,21 @@ export const TableTextCell = ({
           ) : null}
         </Fragment>
       ))}
+      {readMoreHref && (
+        <a
+          href={readMoreHref}
+          target="_blank"
+          rel="noreferrer"
+          className="
+          absolute
+          bottom-0
+          right-5
+          opacity-60
+          hover:opacity-100"
+        >
+          <FaExternalLinkAlt className={``} />
+        </a>
+      )}
     </td>
   );
 };

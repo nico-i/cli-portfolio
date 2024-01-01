@@ -1,4 +1,4 @@
-import { useCharWidth } from '@/hooks';
+import { useCharDimensions } from '@/hooks';
 import clsx from 'clsx';
 
 export interface AsciiLineProps {
@@ -12,7 +12,7 @@ export const AsciiLine = ({
   withEndCap,
   capChar = `+`,
 }: Readonly<AsciiLineProps>) => {
-  const { charWidth } = useCharWidth();
+  const { width: charWidth } = useCharDimensions();
 
   return (
     <span

@@ -17,8 +17,10 @@ import {
   PromptHistoryEntry,
   PromptResult,
 } from '@/context/PromptHistoryContext/types';
+import { useCharDimensions } from '@/hooks';
 import { CustomEvents, RunEvent, SearchParams } from '@/util/types';
 import { useLocation } from '@reach/router';
+import clsx from 'clsx';
 import { useTranslation } from 'gatsby-plugin-react-i18next';
 import {
   ChangeEventHandler,
@@ -44,6 +46,7 @@ export const Shell = ({
   initialPrompt,
 }: Readonly<ShellProps>) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const textAreaCopyRef = useRef<HTMLTextAreaElement>(null);
 
   const { promptHistory, dispatch } = useContext(PromptHistoryContext);
   const [currentPrompt, setCurrentPrompt] = useState<string>(``);
@@ -51,7 +54,9 @@ export const Shell = ({
   const [standalone, setStandalone] = useState<ReactNode | null>(null);
   const [currentDescHistoryIndex, setCurrentDescHistoryIndex] = useState(-1); // -1 means current prompt is not in history
   const [tabSuggestions, setTabSuggestions] = useState<string[]>([]);
+  const [isMainFlexCol, setIsMainFlexCol] = useState<boolean>(false);
 
+  const { height: charHeight } = useCharDimensions();
   const location = useLocation();
   const { t } = useTranslation();
 
@@ -136,6 +141,7 @@ export const Shell = ({
       });
 
       if (!(`ontouchstart` in window)) {
+        console.log(`focusing textarea`);
         textAreaRef.current?.focus();
       }
     },
@@ -159,10 +165,6 @@ export const Shell = ({
       },
     });
   }, [dispatch, promptHistory, standalone]);
-
-  useEffect(() => {
-    textAreaRef.current?.scrollIntoView();
-  }, [currentPrompt]);
 
   useEffect(() => {
     window.addEventListener(CustomEvents.run, handleRunEvent);
@@ -195,16 +197,20 @@ export const Shell = ({
     e,
   ) => {
     setCurrentPrompt(e.target.value);
-    if (!textAreaRef.current) return;
+    if (!textAreaRef.current || !textAreaCopyRef.current) return;
     textAreaRef.current.style.height = `auto`; // reset height
     textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`; // auto grow the textarea to fit the text
+    setIsMainFlexCol(
+      textAreaCopyRef.current.scrollHeight > charHeight &&
+        e.target.value !== ``,
+    );
   };
 
   const handleUserTextAreaKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
     event,
   ) => {
     setTabSuggestions([]);
-
+    textAreaRef.current?.scrollIntoView();
     if (event.key.length === 1) {
       setCurrentDescHistoryIndex(-1); // only reset history index if user is typing
       setTmpPrompt(currentPrompt + event.key);
@@ -292,6 +298,7 @@ export const Shell = ({
         flex-col
         hover:cursor-text
         relative
+        break-words
         w-full`}
       onClickCapture={(e) => {
         if (
@@ -311,10 +318,10 @@ export const Shell = ({
               if (hideEntry) return null;
               return (
                 <Fragment key={i}>
-                  <p className="w-full">
+                  <span>
                     <PromptPrefix username={username} domain={domain} />
                     {fullPrompt}
-                  </p>
+                  </span>
                   {responses.map((response, j) => (
                     <Fragment key={j}>
                       {response.result !== `` ? (
@@ -327,29 +334,39 @@ export const Shell = ({
                 </Fragment>
               );
             })}
-          <pre id="active-prompt" className="w-full flex relative">
-            <PromptPrefix username={username} domain={domain} />
+          <div
+            id="active-prompt"
+            className={clsx(
+              `
+              w-full
+              flex
+              relative`,
+              isMainFlexCol && `flex-col`,
+            )}
+          >
             <label className="sr-only" htmlFor="prompt">
               CLI prompt
             </label>
+            <PromptPrefix username={username} domain={domain} />
             <textarea
               id="prompt"
               rows={1}
+              tabIndex={0}
               ref={textAreaRef}
               onKeyDown={handleUserTextAreaKeyDown}
               onChange={handleUserTextValueChange}
               value={currentPrompt}
               className={
                 `
-              w-full
-              focus:outline-none
-              overflow-hidden
-              resize-none 
-              `
+                w-full
+                focus:outline-none
+                overflow-hidden
+                resize-none 
+                `
                 // overflow-hidden and resize-none are necessary for the auto grow textarea
               }
             />
-          </pre>
+          </div>
           {tabSuggestions.length > 0 && (
             <div className="flex flex-col">
               {tabSuggestions
@@ -361,6 +378,33 @@ export const Shell = ({
           )}
         </>
       )}
+      {/* Hidden prompt copy for width measurement */}
+      <div
+        className="
+        invisible 
+        -z-10
+        -mt-6
+        flex
+        w-full"
+      >
+        <PromptPrefix
+          username={username}
+          domain={domain}
+          className="pointer-events-none"
+        />
+        <textarea
+          rows={1}
+          tabIndex={-1}
+          readOnly
+          disabled
+          ref={textAreaCopyRef}
+          value={currentPrompt}
+          className={`
+            w-full
+            pointer-events-none
+            `}
+        />
+      </div>
     </main>
   );
 };

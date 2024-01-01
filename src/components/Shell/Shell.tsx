@@ -141,7 +141,6 @@ export const Shell = ({
       });
 
       if (!(`ontouchstart` in window)) {
-        console.log(`focusing textarea`);
         textAreaRef.current?.focus();
       }
     },
@@ -150,12 +149,13 @@ export const Shell = ({
 
   const handleStopStandaloneEvent = useCallback(() => {
     if (!standalone) return;
-    setStandalone(false);
+    setStandalone(null);
     const lastEntryIndex = promptHistory.length - 1;
     const lastEntry = promptHistory[lastEntryIndex];
     const newValue = lastEntry.results.map((response) => {
       if (!response.isStandalone) return response;
-      return { ...response, show: false };
+      const newResponse: PromptResult = { ...response, hideResult: true };
+      return newResponse;
     });
     dispatch({
       type: PromptHistoryAction.UPDATE,
@@ -322,15 +322,18 @@ export const Shell = ({
                     <PromptPrefix username={username} domain={domain} />
                     {fullPrompt}
                   </span>
-                  {responses.map((response, j) => (
-                    <Fragment key={j}>
-                      {response.result !== `` ? (
-                        <>{response.result}</>
-                      ) : (
-                        <>&nbsp;</>
-                      )}
-                    </Fragment>
-                  ))}
+                  {responses.map((response, j) => {
+                    if (response.hideResult) return null;
+                    return (
+                      <Fragment key={j}>
+                        {response.result !== `` ? (
+                          <>{response.result}</>
+                        ) : (
+                          <>&nbsp;</>
+                        )}
+                      </Fragment>
+                    );
+                  })}
                 </Fragment>
               );
             })}
@@ -352,6 +355,9 @@ export const Shell = ({
               id="prompt"
               rows={1}
               tabIndex={0}
+              autoFocus={
+                typeof window !== `undefined` && !(`ontouchstart` in window)
+              }
               ref={textAreaRef}
               onKeyDown={handleUserTextAreaKeyDown}
               onChange={handleUserTextValueChange}

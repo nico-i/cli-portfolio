@@ -26,6 +26,7 @@ const SkillsRun = () => {
           locale
           name
           summary
+          priority
           proficiency
           icon_link {
             url
@@ -42,15 +43,17 @@ const SkillsRun = () => {
       locale: node.locale,
       name: node.name,
       summary: node.summary,
+      priority: node.priority,
       proficiency: node.proficiency,
       url: node?.icon_link?.url,
     }),
   );
 
   const skills = skillsByLocale[i18n.language].toSorted((a, b) => {
-    if (a.proficiency > b.proficiency) return -1;
-    if (a.proficiency < b.proficiency) return 1;
-    return 0;
+    if (a.priority === b.priority) {
+      return a.name.localeCompare(b.name);
+    }
+    return b.priority - a.priority;
   });
   const [currentOpenedSkill, setCurrentOpenedSkill] = useState<string | null>(
     null,
@@ -99,6 +102,7 @@ const SkillsRun = () => {
                       index === skillsCount - 1 &&
                       currentOpenedSkill === skill.name
                     }
+                    readMoreHref={skill.url}
                   >
                     {skill.summary}
                   </TableTextCell>

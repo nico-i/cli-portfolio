@@ -17,9 +17,9 @@ export const Link = ({ href, children }: Readonly<LinkProps>) => {
   if (!href) {
     return <span>{children}</span>;
   }
-
-  const fileExtLength = href.split(`.`).pop()?.length;
-  const isFile = fileExtLength && fileExtLength >= 3 && fileExtLength <= 4;
+  const hrefSplit = href.split(`/`).pop();
+  const dotSplit = hrefSplit?.split(`.`);
+  const isFile = dotSplit?.length === 2;
 
   return (
     <a

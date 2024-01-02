@@ -197,14 +197,16 @@ export const Shell = ({
     e,
   ) => {
     setCurrentPrompt(e.target.value);
+  };
+
+  useEffect(() => {
     if (!textAreaRef.current || !textAreaCopyRef.current) return;
     textAreaRef.current.style.height = `auto`; // reset height
     textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`; // auto grow the textarea to fit the text
     setIsMainFlexCol(
-      textAreaCopyRef.current.scrollHeight > charHeight &&
-        e.target.value !== ``,
+      textAreaCopyRef.current.scrollHeight > charHeight && currentPrompt !== ``,
     );
-  };
+  }, [charHeight, currentPrompt]);
 
   const handleUserTextAreaKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
     event,
@@ -363,8 +365,7 @@ export const Shell = ({
               onChange={handleUserTextValueChange}
               value={currentPrompt}
               className={
-                `
-                w-full
+                `w-full
                 focus:outline-none
                 overflow-hidden
                 resize-none 
@@ -372,45 +373,48 @@ export const Shell = ({
                 // overflow-hidden and resize-none are necessary for the auto grow textarea
               }
             />
-          </div>
-          {tabSuggestions.length > 0 && (
-            <div className="flex flex-col">
-              {tabSuggestions
-                .toSorted((a, b) => a.localeCompare(b))
-                .map((suggestion, i) => (
-                  <span key={i}>{suggestion}</span>
-                ))}
+            {tabSuggestions.length > 0 && (
+              <div className="flex flex-col">
+                {tabSuggestions
+                  .toSorted((a, b) => a.localeCompare(b))
+                  .map((suggestion, i) => (
+                    <span key={i}>{suggestion}</span>
+                  ))}
+              </div>
+            )}
+            {/* Hidden prompt copy for width measurement */}
+            <div
+              className="
+              invisible 
+              -z-10
+              absolute
+              top-0
+              left-0
+              flex
+              w-full"
+            >
+              <PromptPrefix
+                username={username}
+                domain={domain}
+                className="pointer-events-none"
+              />
+              <textarea
+                aria-hidden="true"
+                rows={1}
+                tabIndex={-1}
+                readOnly
+                disabled
+                ref={textAreaCopyRef}
+                value={currentPrompt}
+                className={`
+                w-full
+                pointer-events-none
+                `}
+              />
             </div>
-          )}
+          </div>
         </>
       )}
-      {/* Hidden prompt copy for width measurement */}
-      <div
-        className="
-        invisible 
-        -z-10
-        -mt-6
-        flex
-        w-full"
-      >
-        <PromptPrefix
-          username={username}
-          domain={domain}
-          className="pointer-events-none"
-        />
-        <textarea
-          rows={1}
-          tabIndex={-1}
-          readOnly
-          disabled
-          ref={textAreaCopyRef}
-          value={currentPrompt}
-          className={`
-            w-full
-            pointer-events-none
-            `}
-        />
-      </div>
     </main>
   );
 };

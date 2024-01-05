@@ -1,9 +1,7 @@
 export const ContactLinkCollectionName = `ContactLink`;
 
-export interface IconLink {
+export interface ContactLink {
   url: string;
-  text: string;
+  username: string;
   svgHtml: string;
 }
-
-export interface ContactLink extends IconLink {}

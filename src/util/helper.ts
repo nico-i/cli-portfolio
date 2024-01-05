@@ -39,10 +39,11 @@ export function parseStrapiCollectionToCollectionByLocale<
   parseNode: (node: any) => T,
 ): Record<string, T[]> {
   const collectionByLocale: Record<string, T[]> = {};
-
   if (!rawStaticQueryRes[`allStrapi${collectionName}`]) {
     throw new Error(`No collection found for ${collectionName}`);
   }
+
+  let defaultLocaleItem: T;
 
   rawStaticQueryRes[`allStrapi${collectionName}`].nodes.forEach((node: any) => {
     if (!node.locale) {
@@ -53,19 +54,22 @@ export function parseStrapiCollectionToCollectionByLocale<
       collectionByLocale[node.locale] = [];
     }
 
-    const defaultLocaleSection: T = parseNode(node);
+    if (node.locale === `en`) {
+      defaultLocaleItem = parseNode(node);
+    }
 
+    const currentLocaleItem = parseNode(node);
     Object.entries(node).forEach(([key, value]) => {
       // Use the default locale value if the value is null
-      if (value !== null) return;
-      const defaultLocaleNode: T | undefined = collectionByLocale[0]?.find(
-        (node) => node.id === defaultLocaleSection.id,
-      );
-      if (!defaultLocaleNode) return;
-      (defaultLocaleSection as any)[key] = (defaultLocaleNode as any)[key];
+      if (value !== null && (!Array.isArray(value) || value.length > 0)) {
+        return;
+      }
+      // value is either null or an empty array
+      (currentLocaleItem as Record<string, unknown>)[key] =
+        defaultLocaleItem[key];
     });
-
-    collectionByLocale[node.locale].push(defaultLocaleSection);
+    collectionByLocale[node.locale].push(currentLocaleItem);
   });
+  console.log(collectionByLocale);
   return collectionByLocale;
 }

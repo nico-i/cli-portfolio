@@ -289,7 +289,14 @@ export const Shell = ({
   return (
     <main
       id="shell"
-      className={`
+      className={clsx(
+        standalone
+          ? `flex
+          w-full
+          h-full
+          items-center
+          justify-center`
+          : `
         px-2.5
         lg:pt-8
         lg:pb-2.5
@@ -301,7 +308,8 @@ export const Shell = ({
         hover:cursor-text
         relative
         break-words
-        w-full`}
+        w-full`,
+      )}
       onClickCapture={(e) => {
         if (
           e.target instanceof HTMLDivElement &&

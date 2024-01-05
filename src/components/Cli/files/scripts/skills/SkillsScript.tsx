@@ -28,9 +28,7 @@ const SkillsRun = () => {
           summary
           priority
           proficiency
-          icon_link {
-            url
-          }
+          url
         }
       }
     }
@@ -45,7 +43,7 @@ const SkillsRun = () => {
       summary: node.summary,
       priority: node.priority,
       proficiency: node.proficiency,
-      url: node?.icon_link?.url,
+      url: node.url,
     }),
   );
 

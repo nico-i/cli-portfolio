@@ -8,6 +8,9 @@
       "help": "nutze ESC oder den X-Button zum Beenden",
       "help-mobile": "nutze den X-Button zum Beenden",
       "summary": "Zusammenfassung",
+      "tech-stack": "Technologie-Stack",
+      "time-frame": "Zeitrahmen",
+      "work-hours": "Arbeitsstunden insgesamt",
       "tldr": "Kurzbeschreibung",
       "read-more": "Mehr lesen",
       "show-less": "Weniger anzeigen"

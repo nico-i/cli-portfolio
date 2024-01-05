@@ -16,7 +16,7 @@ export enum SearchParams {
   cmd = `cmd`,
 }
 
-export interface StrapiCollection {
+export interface StrapiCollection extends Record<string, unknown> {
   id: string;
   locale: string;
 }

@@ -35,6 +35,7 @@
     "gatsby-plugin-sharp": "5.13.0",
     "gatsby-source-filesystem": "5.13.0",
     "gatsby-source-strapi": "3.3.1",
+    "gatsby-transformer-inline-svg": "1.2.0",
     "gatsby-transformer-remark": "6.13.0",
     "gatsby-transformer-sharp": "5.13.0",
     "i18next": "23.7.13",

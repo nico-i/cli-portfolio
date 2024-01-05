@@ -8,11 +8,14 @@ const ContactRun = () => {
     query GetContactLinks {
       allStrapiContactLink {
         nodes {
-          icon_link {
-            id
-            text
-            url
-            svgHtml
+          username
+          url
+          svg {
+            localFile {
+              svg {
+                content
+              }
+            }
           }
         }
       }
@@ -21,28 +24,35 @@ const ContactRun = () => {
 
   const iconClasses = `
     inline-block
+    text-neutral-0
     mr-2
     w-5
     h-5
     `;
 
-  const iconLinks: ContactLink[] = data.allStrapiContactLink.nodes.map(
-    (node: any) => node.icon_link,
+  const contactLinks: ContactLink[] = data.allStrapiContactLink.nodes.map(
+    (node: any): ContactLink => {
+      return {
+        username: node.username,
+        url: node.url,
+        svgHtml: node.svg.localFile.svg.content,
+      };
+    },
   );
 
   return (
     <div className="flex flex-col justify-start gap-1">
-      {iconLinks.map((iconLink, i: number) => {
-        const { svgHtml, text, url } = iconLink;
+      {contactLinks.map((contactLink, i: number) => {
+        const { svgHtml, username, url } = contactLink;
         return (
-          <div key={`${text}-${i}`} className="flex items-center">
+          <div key={`${username}-${i}`} className="flex items-center">
             <span
               dangerouslySetInnerHTML={{
                 __html: svgHtml,
               }}
               className={iconClasses}
             />
-            <Link href={url}>{text}</Link>
+            <Link href={url}>{username}</Link>
           </div>
         );
       })}

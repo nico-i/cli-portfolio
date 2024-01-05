@@ -1,4 +1,3 @@
-import { IconLink } from '@/components/Cli/files/html/contact/types';
 import { StrapiCollection } from '@/util/types';
 import { IGatsbyImageData } from 'gatsby-plugin-image';
 
@@ -9,12 +8,29 @@ export interface Image {
   imageData: IGatsbyImageData;
 }
 
+export interface ProjectLink {
+  text: string;
+  url: string;
+  svgHtml: string;
+}
+
+export interface ProjectTechnology {
+  name: string;
+  url: string;
+  svgHtml: string;
+}
+
 export interface Project extends StrapiCollection {
   title: string;
   headerImage: Image;
+  start: Date;
+  url: string;
+  end?: Date;
+  workHours: number;
   tldr: string;
   summary: string;
-  iconLinks?: IconLink[];
+  technologies: ProjectTechnology[];
+  links: ProjectLink[];
 }
 
 export interface ProjectsByLocale {

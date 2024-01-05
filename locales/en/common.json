@@ -8,6 +8,9 @@
       "help": "use ESC or the X button to exit",
       "help-mobile": "use X button to exit",
       "summary": "Summary",
+      "tech-stack": "Tech Stack",
+      "time-frame": "Time Frame",
+      "work-hours": "Total Work Hours",
       "tldr": "TL;DR",
       "read-more": "Read more",
       "show-less": "Show less"

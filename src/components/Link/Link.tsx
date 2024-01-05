@@ -17,9 +17,10 @@ export const Link = ({ href, children }: Readonly<LinkProps>) => {
   if (!href) {
     return <span>{children}</span>;
   }
+
   const hrefSplit = href.split(`/`).pop();
   const dotSplit = hrefSplit?.split(`.`);
-  const isFile = dotSplit?.length === 2;
+  const isFile = dotSplit?.length === 2 && !href.includes(`@`);
 
   return (
     <a

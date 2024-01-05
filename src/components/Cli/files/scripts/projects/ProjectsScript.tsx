@@ -3,6 +3,8 @@ import {
   Image,
   Project,
   ProjectCollectionName,
+  ProjectLink,
+  ProjectTechnology,
 } from '@/components/Cli/files/scripts/projects/types';
 import { CliFile } from '@/components/Cli/files/types/CliFile';
 import { parseStrapiCollectionToCollectionByLocale } from '@/util/helper';
@@ -18,7 +20,7 @@ const ProjectsRun = () => {
           id
           locale
           title
-          headerImage {
+          header_image {
             alternativeText
             localFile {
               childImageSharp {
@@ -27,15 +29,36 @@ const ProjectsRun = () => {
             }
           }
           tldr
+          url
           summary {
             data {
               summary
             }
           }
-          icon_links {
-            text
+          start
+          end
+          work_hours
+          technologies {
+            name
+            svg {
+              localFile {
+                svg {
+                  content
+                }
+              }
+            }
             url
-            svgHtml
+          }
+          links {
+            text
+            svg {
+              localFile {
+                svg {
+                  content
+                }
+              }
+            }
+            url
           }
         }
       }
@@ -47,13 +70,14 @@ const ProjectsRun = () => {
   const projectsByLocale = parseStrapiCollectionToCollectionByLocale<Project>(
     data,
     ProjectCollectionName,
-    (node: any) => {
-      const { alternativeText, localFile } = node.headerImage;
+    (node: any): Project => {
+      const { alternativeText, localFile } = node.header_image || {};
       const { summary } = node.summary.data;
       const headerImage: Image = {
         alt: alternativeText,
-        imageData: localFile.childImageSharp.gatsbyImageData,
+        imageData: localFile?.childImageSharp?.gatsbyImageData,
       };
+      console.log(node);
       return {
         id: node.id,
         locale: node.locale,
@@ -61,7 +85,24 @@ const ProjectsRun = () => {
         headerImage,
         tldr: node.tldr,
         summary,
-        iconLinks: node.icon_links,
+        start: new Date(Date.parse(node.start)),
+        end: node.end ? new Date(Date.parse(node.end)) : undefined,
+        url: node.url,
+        workHours: node.work_hours,
+        technologies: node.technologies.map(
+          (technology: any): ProjectTechnology => ({
+            name: technology.name,
+            svgHtml: technology.svg.localFile.svg.content,
+            url: technology.url,
+          }),
+        ),
+        links: node.links.map(
+          (link: any): ProjectLink => ({
+            text: link.text,
+            svgHtml: link.svg.localFile.svg.content,
+            url: link.url,
+          }),
+        ),
       };
     },
   );

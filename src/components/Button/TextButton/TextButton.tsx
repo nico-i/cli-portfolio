@@ -18,8 +18,7 @@ export const TextButton = ({
       className={clsx(
         `underline
         decoration-2
-        font-bold     
-        `,
+        font-bold`,
         className,
       )}
     >

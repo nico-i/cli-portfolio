@@ -33,9 +33,6 @@ const strapiConfig = {
     },
     {
       singularName: `contact-link`,
-      queryParams: {
-        locale: defaultLanguage,
-      },
     },
     {
       singularName: `skill`,
@@ -48,6 +45,9 @@ const strapiConfig = {
       queryParams: {
         locale: `all`,
       },
+    },
+    {
+      singularName: `project-link`,
     },
   ],
   singleTypes: [],
@@ -71,6 +71,7 @@ const config: GatsbyConfig = {
     `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
     `gatsby-transformer-sharp`,
+    `gatsby-transformer-inline-svg`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
